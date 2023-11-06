@@ -2,10 +2,13 @@ export class config{
     appName:string //english
     publisher:string
     version:string
-    sing:string //todo
+    sign:string //todo
     resource:{
         icon:string
-        bannerImg:string|string[]
+        bannerImg:{
+            id:string
+            path:string
+        }[]
         download:{
             url:string
             needRelease:boolean
@@ -17,7 +20,7 @@ export class config{
             targetPath:string
         }[]
     }
-    window:{
+    windowInstall:{
         title:string
         centerScreen:boolean
         x:number
@@ -28,6 +31,46 @@ export class config{
         width:number
         height:number
         background:string
+        captionArea:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+        }[]
+        btnMinimize:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            hoverBgColor:string
+            zIndex:number
+        }
+        btnClose:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            hoverBgColor:string
+            zIndex:number
+        }
+        banner:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            zIndex:number
+        }
         progressor:{
             left:number
             right:number
@@ -56,8 +99,8 @@ export class config{
             textUnderline:boolean
             hoverTextUnderline:boolean
             zIndex:number
-        }
-        btnMinimize:{
+        }    
+        btnFinish:{
             left:number
             right:number
             top:number
@@ -66,19 +109,14 @@ export class config{
             height:number
             bgColor:string
             hoverBgColor:string
+            color:string
+            hoverColor:string
+            text:string
+            fontSize:number
+            textUnderline:boolean
+            hoverTextUnderline:boolean
             zIndex:number
-        }
-        btnClose:{
-            left:number
-            right:number
-            top:number
-            bottom:number
-            width:number
-            height:number
-            bgColor:string
-            hoverBgColor:string
-            zIndex:number
-        }
+        }     
         checkboxAcceptLicence:{
             visible:boolean 
             left:number
@@ -161,10 +199,124 @@ export class config{
             createTaskbarIcon:boolean
         }
     }
+    windowUninstall:{
+        title:string
+        centerScreen:boolean
+        x:number
+        y:number
+        shadow:boolean
+        borderWidth:number
+        borderColor:number
+        width:number
+        height:number
+        background:string
+        captionArea:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+        }[]
+        btnMinimize:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            hoverBgColor:string
+            zIndex:number
+        }
+        btnClose:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            hoverBgColor:string
+            zIndex:number
+        }
+        banner:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            zIndex:number
+        }
+        progressor:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            thumbColor:string
+            animateType:string //todo
+            zIndex:number
+        }
+        btnUnInstall:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            hoverBgColor:string
+            color:string
+            hoverColor:string
+            text:string
+            fontSize:number
+            textUnderline:boolean
+            hoverTextUnderline:boolean
+            zIndex:number
+        }  
+        btnFinish:{
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            bgColor:string
+            hoverBgColor:string
+            color:string
+            hoverColor:string
+            text:string
+            fontSize:number
+            textUnderline:boolean
+            hoverTextUnderline:boolean
+            zIndex:number
+        }      
+        checkboxRemoveUserData:{
+            visible:boolean 
+            left:number
+            right:number
+            top:number
+            bottom:number
+            width:number
+            height:number
+            color:string
+            hoverColor:string
+            text:string
+            fontSize:number
+            textUnderline:boolean
+            hoverTextUnderline:boolean
+            zIndex:number
+        } 
+    }
     uninstall:{
         removeUserData:boolean
         uninstallReady:{
             openUrl:string
-        }        
+        }
     }
 }
