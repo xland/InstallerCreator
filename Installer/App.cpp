@@ -8,12 +8,15 @@
 
 
 namespace App {
+
     sk_sp<SkFontMgr> fontMgr;
     std::shared_ptr<SkFont> fontIcon{ nullptr };
     std::shared_ptr<SkFont> fontText{ nullptr };
 
 	void Init()
 	{
+
+
         SkGraphics::Init();
         HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
         if (FAILED(hr)) return;
@@ -47,4 +50,6 @@ namespace App {
         //auto fontData = SkData::MakeWithoutCopy(resData, resSize);
         //fontIcon = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
     }
+
+
 }
