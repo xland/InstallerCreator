@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Installer", "Installer\Inst
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Uninstaller", "Uninstaller\Uninstaller.vcxproj", "{CBDACBE6-2F91-4F63-A49E-A8B0A4867FD1}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxitems", "{B46C371D-1D9F-47AA-90B3-4B17F3378294}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -47,5 +49,11 @@ Global
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {7222A85C-4AB2-4B2A-92E2-C062B872269E}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Common\Common.vcxitems*{b46c371d-1d9f-47aa-90b3-4b17f3378294}*SharedItemsImports = 9
+		Common\Common.vcxitems*{c860b7b3-ff06-4b00-989b-eeeb71d1844d}*SharedItemsImports = 4
+		Common\Common.vcxitems*{ca7b24f8-475b-4d1b-b2fd-6b14fcbdca62}*SharedItemsImports = 4
+		Common\Common.vcxitems*{cbdacbe6-2f91-4f63-a49e-a8b0a4867fd1}*SharedItemsImports = 4
 	EndGlobalSection
 EndGlobal

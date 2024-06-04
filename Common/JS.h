@@ -1,6 +1,7 @@
 #pragma once
 extern "C" {
 #include <quickjs.h>
+#include <quickjs-libc.h>
 }
 class JS
 {
@@ -11,5 +12,6 @@ public:
 private:
 	static void regGlobal();
 	static JSValue jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv);
+	static void loadIndexJs(JSContext* ctx);
 };
 

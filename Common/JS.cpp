@@ -78,3 +78,21 @@ JSValue jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     printf("\n");
     return MakeVal(0, JS_TAG_UNDEFINED);
 }
+void loadIndexJs(JSContext* ctx)
+{
+    auto mainFilePath = "main.js";
+    size_t bufLen;
+    uint8_t* buf = js_load_file(ctx, &bufLen, mainFilePath);
+    if (!buf) {
+        perror("load file error:");
+        perror(mainFilePath);
+    }
+    char* bufStr = reinterpret_cast<char*>(const_cast<uint8_t*>(buf));
+    JSValue val = JS_Eval(ctx, bufStr, bufLen, mainFilePath, JS_EVAL_TYPE_MODULE);
+    if (JS_IsException(val)) {
+        js_std_dump_error(ctx);
+        return;
+    }
+    JS_FreeValue(ctx, val);
+    js_free(ctx, buf);
+}

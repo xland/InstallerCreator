@@ -22,5 +22,6 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)JS.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Util.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Win.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)WinDraw.cpp" />
   </ItemGroup>
 </Project>
