@@ -1,4 +1,5 @@
 #include "JS.h"
+#include "Win.h"
 #ifdef DEBUG
 #include <iostream>
 #include <fcntl.h>
@@ -23,6 +24,7 @@ void JS::Init()
         return;
     }
     regGlobal();
+    Win::Reg(ctx);
 }
 
 void JS::regGlobal()
