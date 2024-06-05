@@ -6,10 +6,12 @@
 #include <format>
 #include "JS.h"
 #include "Util.h"
+#include "Paint.h"
 
 namespace {
-	static JSClassID id{ 0 };
-	static JSClassDef jsWinClass = {
+
+    static JSClassID id;
+	static JSClassDef winClass = {
 		.class_name{"Win"},
 		.finalizer{[](JSRuntime* rt, JSValue val) {
 				auto win = (Win*)JS_GetOpaque(val, id);
@@ -23,45 +25,63 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
 	JSValue obj = JS_NewObjectClass(ctx, id);
     Win* win = new Win();
     std::wstring title;
-    if (argc == 1) {
-        const char* str = JS_ToCString(ctx, argv[0]);
+    const char* str = JS_ToCString(ctx, argv[0]);
+    if (str) {
         title = Util::ConvertToWideChar(str);
         JS_FreeCString(ctx, str);
-        win->initWindow(title);
-        win->centerScreen();
-    }    
-    else if (argc == 5) {
+    }
+    if (argc == 5) {
         int x, y, w, h;
-        if (JS_ToInt32(ctx, &x, argv[1])) {
+        if (JS_ToInt32(ctx, &w, argv[1])) {
             return JS_ThrowTypeError(ctx, "arg1 error");
-        }
-        else {
-            win->x = x;
-        }
-        if (JS_ToInt32(ctx, &y, argv[2])) {
-            return JS_ThrowTypeError(ctx, "arg2 error");
-        }
-        else {
-            win->y = y;
-        }
-        if (JS_ToInt32(ctx, &w, argv[3])) {
-            return JS_ThrowTypeError(ctx, "arg3 error");
         }
         else {
             win->w = w;
         }
-        if (JS_ToInt32(ctx, &h, argv[4])) {
-            return JS_ThrowTypeError(ctx, "arg4 error");
+        if (JS_ToInt32(ctx, &h, argv[2])) {
+            return JS_ThrowTypeError(ctx, "arg2 error");
         }
         else {
             win->h = h;
         }
+        if (JS_ToInt32(ctx, &x, argv[3])) {
+            return JS_ThrowTypeError(ctx, "arg3 error");
+        }
+        else {
+            win->x = x;
+        }
+        if (JS_ToInt32(ctx, &y, argv[4])) {
+            return JS_ThrowTypeError(ctx, "arg4 error");
+        }
+        else {
+            win->y = y;
+        }
         win->initWindow(title);
+        win->initCanvas();
+        win->show();
+        JS_SetOpaque(obj, win);
+        return obj;
     }
-    else {
-        win->initWindow(title);
-        win->centerScreen();
+    RECT screenRect;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
+    win->x = (screenRect.right - win->w) / 2;
+    win->y = (screenRect.bottom - win->h) / 2;
+    if (argc == 3) {
+        int w, h;
+        if (JS_ToInt32(ctx, &w, argv[1])) {
+            return JS_ThrowTypeError(ctx, "arg1 error");
+        }
+        else {
+            win->w = w;
+        }
+        if (JS_ToInt32(ctx, &h, argv[2])) {
+            return JS_ThrowTypeError(ctx, "arg2 error");
+        }
+        else {
+            win->h = h;
+        }
     }
+    win->initWindow(title);
     win->initCanvas();
     win->show();
 	JS_SetOpaque(obj, win);
@@ -72,7 +92,7 @@ void Win::Reg(JSContext* ctx)
 {
 	auto rt = JS_GetRuntime(ctx);
 	JS_NewClassID(rt, &id);
-	JS_NewClass(rt, id, &jsWinClass);
+	JS_NewClass(rt, id, &winClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	JS_SetPropertyStr(ctx, protoInstance, "setPos", JS_NewCFunction(ctx, &Win::setPos, "setPos", 2));
     JS_SetPropertyStr(ctx, protoInstance, "setSize", JS_NewCFunction(ctx, &Win::setSize, "setSize", 2));
@@ -91,12 +111,12 @@ void Win::Reg(JSContext* ctx)
 	//JS_SetPropertyStr(ctx, protoInstance, "destroy", JS_NewCFunction(ctx, destroy, "destroy", 0));
 	//JS_SetPropertyStr(ctx, protoInstance, "run", JS_NewCFunction(ctx, run, "run", 1));
 	//JS_SetPropertyStr(ctx, protoInstance, "bind", JS_NewCFunction(ctx, bind, "bind", 2));
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Win::constructor, jsWinClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Win::constructor, winClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 
 	JSValue global = JS_GetGlobalObject(ctx);
-	JS_SetPropertyStr(ctx, global, jsWinClass.class_name, ctroInstance);
+	JS_SetPropertyStr(ctx, global, winClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
 }
 
@@ -166,15 +186,6 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-
-void Win::initSizePos()
-{
-    RECT screenRect;
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
-    x = (screenRect.right - w) / 2;
-    y = (screenRect.bottom - h) / 2;
-}
-
 void Win::initWindow(std::wstring& title)
 {
 	static int num = 0;
@@ -207,15 +218,6 @@ void Win::show()
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
     SetCursor(LoadCursor(nullptr, IDC_ARROW));
-}
-
-void Win::centerScreen()
-{
-    RECT screenRect;
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
-    x = (screenRect.right - w) / 2;
-    y = (screenRect.bottom - h) / 2;
-    SetWindowPos(hwnd, NULL, x, y, w, h, SWP_NOZORDER | SWP_NOSIZE);
 }
 
 void Win::paintWindow()
@@ -281,14 +283,18 @@ JSValue Win::setSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
     else {
         win->h = h;
     }
-    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_NOSIZE);
+    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Win::setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
-    win->centerScreen();
+    RECT screenRect;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
+    win->x = (screenRect.right - win->w) / 2;
+    win->y = (screenRect.bottom - win->h) / 2;
+    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_NOSIZE);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -312,5 +318,23 @@ JSValue Win::refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 
 JSValue Win::drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    int x, y, w, h;
+    if (JS_ToInt32(ctx, &x, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    if (JS_ToInt32(ctx, &y, argv[2])) {
+        return JS_ThrowTypeError(ctx, "arg2 error");
+    }
+    if (JS_ToInt32(ctx, &w, argv[3])) {
+        return JS_ThrowTypeError(ctx, "arg3 error");
+    }
+    if (JS_ToInt32(ctx, &h, argv[4])) {
+        return JS_ThrowTypeError(ctx, "arg4 error");
+    }
+    auto paint = Paint::getPtr(argv[0]);
+    SkRect rect;
+    rect.setXYWH(x, y, w, h);
+    win->canvas->drawRect(rect, *paint);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

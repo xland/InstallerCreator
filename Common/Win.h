@@ -16,12 +16,10 @@ private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	Win();
 
-	void initSizePos();
 	void initWindow(std::wstring& title);
 	void paintWindow();
 	void initCanvas();
 	void show();
-	void centerScreen();
 
 
 	static JSValue setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
