@@ -1,5 +1,7 @@
 #include "Paint.h"
 #include "JS.h"
+#include "include/effects/SkGradientShader.h"
+#include <vector>
 
 namespace {	
 	static JSClassID id;
@@ -26,6 +28,8 @@ void Paint::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setStrokeCap", JS_NewCFunction(ctx, &Paint::setStrokeCap, "setStrokeCap", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setStrokeJoin", JS_NewCFunction(ctx, &Paint::setStrokeJoin, "setStrokeJoin", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setBlendMode", JS_NewCFunction(ctx, &Paint::setBlendMode, "setBlendMode", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setLinearShader", JS_NewCFunction(ctx, &Paint::setLinearShader, "setLinearShader", 0));
+	JS_SetPropertyStr(ctx, protoInstance, "setRadialShader", JS_NewCFunction(ctx, &Paint::setRadialShader, "setRadialShader", 0));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Paint::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
@@ -70,6 +74,45 @@ JSValue Paint::setColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
 		return JS_ThrowTypeError(ctx, "arg0 error");
 	}
 	paint->setColor(color);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Paint::setLinearShader(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto paint = (SkPaint*)JS_GetOpaque(thisVal, id);
+	uint32_t length = 0;
+	JS_ToUint32(ctx, &length, JS_GetPropertyStr(ctx, argv[3], "length"));
+	std::vector<SkColor> colors;
+	for (uint32_t i = 0; i < length; ++i) {
+		JSValue element = JS_GetPropertyUint32(ctx, argv[3], i);
+		unsigned int value = 0;
+		JS_ToUint32(ctx, &value, element);
+		colors.push_back(value);
+		JS_FreeValue(ctx, element);
+	}
+	SkPoint pos[2]{ SkPoint::Make(100, 100) ,SkPoint::Make(600, 600) };
+	auto shader = SkGradientShader::MakeLinear(pos, colors.data(), nullptr, length, SkTileMode::kClamp);
+	paint->setShader(shader);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Paint::setRadialShader(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto paint = (SkPaint*)JS_GetOpaque(thisVal, id);
+	uint32_t length = 0;
+	JS_ToUint32(ctx, &length, JS_GetPropertyStr(ctx, argv[3], "length"));
+	std::vector<SkColor> colors;
+	for (uint32_t i = 0; i < length; ++i) {
+		JSValue element = JS_GetPropertyUint32(ctx, argv[3], i);
+		unsigned int value = 0;
+		JS_ToUint32(ctx, &value, element);
+		colors.push_back(value);
+		JS_FreeValue(ctx, element);
+	}
+
+	auto shader = SkGradientShader::MakeRadial(SkPoint::Make(400, 400), 300, colors.data(), nullptr, length, SkTileMode::kClamp);
+	paint->setShader(shader);
+
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

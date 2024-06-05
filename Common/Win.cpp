@@ -83,7 +83,6 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
     }
     win->initWindow(title);
     win->initCanvas();
-    win->show();
 	JS_SetOpaque(obj, win);
 	return obj;
 }
@@ -99,8 +98,9 @@ void Win::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setPosCenterScreen", JS_NewCFunction(ctx, &Win::setPosCenterScreen, "setPosCenterScreen", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "fillColor", JS_NewCFunction(ctx, &Win::fillColor, "fillColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
-	JS_SetPropertyStr(ctx, protoInstance, "drawRect", JS_NewCFunction(ctx, &Win::drawRect, "drawRect", 0));
-	//JS_SetPropertyStr(ctx, protoInstance, "setSize", JS_NewCFunction(ctx, setSize, "setSize", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "drawRect", JS_NewCFunction(ctx, &Win::drawRect, "drawRect", 5));
+    JS_SetPropertyStr(ctx, protoInstance, "drawEllipse", JS_NewCFunction(ctx, &Win::drawEllipse, "drawEllipse", 5));
+	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, show, "show", 0));
 	//JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, setIcon, "setIcon", 2));
 	//JS_SetPropertyStr(ctx, protoInstance, "setProfile", JS_NewCFunction(ctx, setProfile, "setProfile", 2));
 	//JS_SetPropertyStr(ctx, protoInstance, "setProxy", JS_NewCFunction(ctx, setProxy, "setProxy", 1));
@@ -247,6 +247,13 @@ void Win::initCanvas()
     canvas = std::move(temp);
 }
 
+JSValue Win::show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    win->show();
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
 JSValue Win::setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
@@ -336,5 +343,28 @@ JSValue Win::drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     SkRect rect;
     rect.setXYWH(x, y, w, h);
     win->canvas->drawRect(rect, *paint);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::drawEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    int x, y, w, h;
+    if (JS_ToInt32(ctx, &x, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    if (JS_ToInt32(ctx, &y, argv[2])) {
+        return JS_ThrowTypeError(ctx, "arg2 error");
+    }
+    if (JS_ToInt32(ctx, &w, argv[3])) {
+        return JS_ThrowTypeError(ctx, "arg3 error");
+    }
+    if (JS_ToInt32(ctx, &h, argv[4])) {
+        return JS_ThrowTypeError(ctx, "arg4 error");
+    }
+    auto paint = Paint::getPtr(argv[0]);
+    SkRect rect;
+    rect.setXYWH(x, y, w, h);
+    win->canvas->drawOval(rect, *paint);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
