@@ -15,19 +15,27 @@ private:
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	Win();
-	void initWindow();
+
+	void initSizePos();
+	void initWindow(std::wstring& title);
 	void paintWindow();
 	void initCanvas();
+	void show();
+	void centerScreen();
 
 
 	static JSValue setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue fillColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
 
-	int x, y, w, h;
+	int x, y, w{ 1200 }, h{800};
 	HWND hwnd;
 	std::unique_ptr<SkCanvas> canvas;
 	SkAutoMalloc surfaceMemory;
+
+	HDC hCompatibleDC = NULL;
+	HBITMAP bottomHbitmap;
 };
 

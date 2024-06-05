@@ -32,3 +32,10 @@ void Util::InitDebuger() {
     }
 }
 #endif
+std::wstring Util::ConvertToWideChar(const char* str)
+{
+    int count = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
+    std::wstring wstr(count, 0);
+    MultiByteToWideChar(CP_UTF8, 0, str, -1, &wstr[0], count);
+    return wstr;
+}

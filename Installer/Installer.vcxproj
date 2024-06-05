@@ -108,6 +108,7 @@
       <AdditionalIncludeDirectories>D:\sdk\PLzmaSDK;D:\sdk\skia;D:\sdk\quickjs;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp20</LanguageStandard>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <LanguageStandard_C>stdc17</LanguageStandard_C>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -149,6 +150,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="App.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="main.js" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

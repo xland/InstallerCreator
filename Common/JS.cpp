@@ -18,28 +18,33 @@ void JS::Init()
 {
     rt = JS_NewRuntime();
     if (!rt) return;
+    JS_SetModuleLoaderFunc(rt, NULL, js_module_loader, NULL);
+    js_std_init_handlers(rt);
     ctx = JS_NewContext(rt);
     if (!ctx) {
         JS_FreeRuntime(rt);
         return;
     }
+    js_init_module_std(ctx, "std");
+    js_init_module_os(ctx, "os");
     regGlobal();
     Win::Reg(ctx);
+    loadIndexJs(ctx);
 }
 
 void JS::regGlobal()
 {
     JSValue globalObj = JS_GetGlobalObject(ctx);
     JSValue console = JS_NewObject(ctx);
-    JS_SetPropertyStr(ctx, console, "log", JS_NewCFunction(ctx, jsLog, "log", 1));
-    JS_SetPropertyStr(ctx, console, "warn", JS_NewCFunction(ctx, jsLog, "warn", 1));
-    JS_SetPropertyStr(ctx, console, "info", JS_NewCFunction(ctx, jsLog, "info", 1));
-    JS_SetPropertyStr(ctx, console, "error", JS_NewCFunction(ctx, jsLog, "error", 1));
+    JS_SetPropertyStr(ctx, console, "log", JS_NewCFunction(ctx, &JS::jsLog, "log", 1));
+    JS_SetPropertyStr(ctx, console, "warn", JS_NewCFunction(ctx, &JS::jsLog, "warn", 1));
+    JS_SetPropertyStr(ctx, console, "info", JS_NewCFunction(ctx, &JS::jsLog, "info", 1));
+    JS_SetPropertyStr(ctx, console, "error", JS_NewCFunction(ctx, &JS::jsLog, "error", 1));
     JS_SetPropertyStr(ctx, globalObj, "console", console);
     JS_FreeValue(ctx, globalObj);
 }
 
-constexpr JSCFunctionListEntry MakeJsFunc(const char* name, uint8_t length, JSCFunction* func)
+constexpr JSCFunctionListEntry JS::MakeJsFunc(const char* name, uint8_t length, JSCFunction* func)
 {
     return JSCFunctionListEntry{
         .name{name},
@@ -57,7 +62,7 @@ constexpr JSCFunctionListEntry MakeJsFunc(const char* name, uint8_t length, JSCF
         }
     };
 }
-constexpr JSValue MakeVal(int32_t val, int64_t tag)
+constexpr JSValue JS::MakeVal(int32_t val, int64_t tag)
 {
     return {
         .u{
@@ -66,7 +71,7 @@ constexpr JSValue MakeVal(int32_t val, int64_t tag)
         .tag{tag}
     };
 }
-JSValue jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+JSValue JS::jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
     printf("[Console]:    ");
     for (int i = 0; i < argc; i++) {
         const char* str = JS_ToCString(ctx, argv[i]);
@@ -78,7 +83,7 @@ JSValue jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* arg
     printf("\n");
     return MakeVal(0, JS_TAG_UNDEFINED);
 }
-void loadIndexJs(JSContext* ctx)
+void JS::loadIndexJs(JSContext* ctx)
 {
     auto mainFilePath = "main.js";
     size_t bufLen;
