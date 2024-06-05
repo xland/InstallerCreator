@@ -75,10 +75,11 @@ void Win::Reg(JSContext* ctx)
 	JS_NewClass(rt, id, &jsWinClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	JS_SetPropertyStr(ctx, protoInstance, "setPos", JS_NewCFunction(ctx, &Win::setPos, "setPos", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "setSize", JS_NewCFunction(ctx, &Win::setSize, "setSize", 2));
 	JS_SetPropertyStr(ctx, protoInstance, "setPosCenterScreen", JS_NewCFunction(ctx, &Win::setPosCenterScreen, "setPosCenterScreen", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "fillColor", JS_NewCFunction(ctx, &Win::fillColor, "fillColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
-	//JS_SetPropertyStr(ctx, protoInstance, "getUrl", JS_NewCFunction(ctx, getUrl, "getUrl", 0));
+	JS_SetPropertyStr(ctx, protoInstance, "drawRect", JS_NewCFunction(ctx, &Win::drawRect, "drawRect", 0));
 	//JS_SetPropertyStr(ctx, protoInstance, "setSize", JS_NewCFunction(ctx, setSize, "setSize", 2));
 	//JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, setIcon, "setIcon", 2));
 	//JS_SetPropertyStr(ctx, protoInstance, "setProfile", JS_NewCFunction(ctx, setProfile, "setProfile", 2));
@@ -247,6 +248,40 @@ void Win::initCanvas()
 JSValue Win::setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
+    int x, y;
+    if (JS_ToInt32(ctx, &x, argv[0])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    else {
+        win->x = x;
+    }
+    if (JS_ToInt32(ctx, &y, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg2 error");
+    }
+    else {
+        win->y = y;
+    }
+    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_NOSIZE);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::setSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    int w, h;
+    if (JS_ToInt32(ctx, &w, argv[0])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    else {
+        win->w = w;
+    }
+    if (JS_ToInt32(ctx, &h, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg2 error");
+    }
+    else {
+        win->h = h;
+    }
+    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_NOSIZE);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -272,5 +307,10 @@ JSValue Win::refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
     win->paintWindow();
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
