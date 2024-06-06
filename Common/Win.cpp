@@ -7,6 +7,7 @@
 #include "JS.h"
 #include "Util.h"
 #include "Paint.h"
+#include "Path.h"
 
 namespace {
     static float scaleFactor;
@@ -118,6 +119,8 @@ void Win::Reg(JSContext* ctx)
     JS_SetPropertyStr(ctx, protoInstance, "getPos", JS_NewCFunction(ctx, &Win::getPos, "getPos", 0));
     JS_SetPropertyStr(ctx, protoInstance, "setSize", JS_NewCFunction(ctx, &Win::setSize, "setSize", 2));
     JS_SetPropertyStr(ctx, protoInstance, "getSize", JS_NewCFunction(ctx, &Win::getSize, "getSize", 0));
+
+    JS_SetPropertyStr(ctx, protoInstance, "setCaptionPath", JS_NewCFunction(ctx, &Win::setCaptionPath, "setCaptionPath", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "setPosCenterScreen", JS_NewCFunction(ctx, &Win::setPosCenterScreen, "setPosCenterScreen", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, show, "show", 0));
@@ -156,12 +159,17 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
         case WM_LBUTTONDOWN:
         {
-            //obj->mouseDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            auto path = Path::getPtr(obj->captionPath);
+            if (path->contains(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))) {
+                obj->isCaptionMouseDown = true;
+                GetCursorPos(&obj->startPos);
+                SetCapture(hWnd);
+            }
             break;
         }
         case WM_LBUTTONUP:
         {
-            //obj->mouseUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            obj->isCaptionMouseDown = false;
             break;
         }
         case WM_MOUSELEAVE: {
@@ -170,7 +178,16 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
         case WM_MOUSEMOVE:
         {
-            //obj->mouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+            if (obj->isCaptionMouseDown) {
+                POINT point;
+                GetCursorPos(&point);
+                int dx = point.x - obj->startPos.x;
+                int dy = point.y - obj->startPos.y;
+                obj->x += dx;
+                obj->y += dy;
+                SetWindowPos(hWnd, nullptr, obj->x, obj->y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
+                obj->startPos = point;
+            }
             break;
         }
         case WM_CLOSE: {
@@ -342,6 +359,13 @@ JSValue Win::getSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
     JS_SetPropertyStr(ctx, ret, "w", JS_NewInt32(ctx, win->w));
     JS_SetPropertyStr(ctx, ret, "h", JS_NewInt32(ctx, win->h));
     return ret;
+}
+
+JSValue Win::setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    win->captionPath = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Win::setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

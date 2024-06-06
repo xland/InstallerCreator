@@ -24,10 +24,13 @@ private:
 
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
 	static JSValue setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue getPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue getSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
+	static JSValue setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -46,5 +49,8 @@ private:
 	std::vector<JSValue> printCB;
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;
+	JSValue captionPath;
+	bool isCaptionMouseDown;
+	POINT startPos;
 };
 

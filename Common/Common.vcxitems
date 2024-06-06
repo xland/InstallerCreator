@@ -17,6 +17,7 @@
     <ClInclude Include="$(MSBuildThisFileDirectory)JS.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Paint.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Path.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)Rect.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Util.h" />
     <ClInclude Include="$(MSBuildThisFileDirectory)Win.h" />
   </ItemGroup>
@@ -24,6 +25,7 @@
     <ClCompile Include="$(MSBuildThisFileDirectory)JS.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Paint.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Path.cpp" />
+    <ClCompile Include="$(MSBuildThisFileDirectory)Rect.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Util.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)Win.cpp" />
     <ClCompile Include="$(MSBuildThisFileDirectory)WinDraw.cpp" />
