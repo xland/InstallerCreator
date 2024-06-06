@@ -11,6 +11,13 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Uninstaller", "Uninstaller\
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxitems", "{B46C371D-1D9F-47AA-90B3-4B17F3378294}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Doc", "Doc\Doc.vcxitems", "{D93A8B5D-288E-4E9F-91FA-C24C1725AAE4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "解决方案项", "解决方案项", "{AD1E2DF5-AAD6-4CFC-9359-6C3D1FEA626A}"
+	ProjectSection(SolutionItems) = preProject
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -55,5 +62,6 @@ Global
 		Common\Common.vcxitems*{c860b7b3-ff06-4b00-989b-eeeb71d1844d}*SharedItemsImports = 4
 		Common\Common.vcxitems*{ca7b24f8-475b-4d1b-b2fd-6b14fcbdca62}*SharedItemsImports = 4
 		Common\Common.vcxitems*{cbdacbe6-2f91-4f63-a49e-a8b0a4867fd1}*SharedItemsImports = 4
+		Doc\Doc.vcxitems*{d93a8b5d-288e-4e9f-91fa-c24c1725aae4}*SharedItemsImports = 9
 	EndGlobalSection
 EndGlobal

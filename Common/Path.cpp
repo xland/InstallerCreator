@@ -8,8 +8,8 @@ namespace {
 	static JSClassDef paintClass = {
 		.class_name{"Path"},
 		.finalizer{[](JSRuntime* rt, JSValue val) {
-				auto paint = (Path*)JS_GetOpaque(val, id);
-				delete paint;
+				auto path = (SkPath*)JS_GetOpaque(val, id);
+				delete path;
 			}
 		}
 	};

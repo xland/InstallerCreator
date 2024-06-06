@@ -68,6 +68,7 @@ JSValue Paint::setStrokeWidth(JSContext* ctx, JSValueConst thisVal, int argc, JS
 	if (JS_ToFloat64(ctx, &strokeWidth, argv[0])) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
 	}
+
 	paint->setStrokeWidth(strokeWidth);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

@@ -1,6 +1,7 @@
 #include "JS.h"
 #include "Win.h"
 #include "Paint.h"
+#include "Path.h"
 #ifdef DEBUG
 #include <iostream>
 #include <fcntl.h>
@@ -31,6 +32,7 @@ void JS::Init()
     regGlobal();
     Win::Reg(ctx);
     Paint::Reg(ctx);
+    Path::Reg(ctx);
     loadIndexJs(ctx);
 }
 
