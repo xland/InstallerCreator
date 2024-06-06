@@ -9,7 +9,7 @@
 #include "Paint.h"
 
 namespace {
-
+    static float scaleFactor;
     static JSClassID id;
 	static JSClassDef winClass = {
 		.class_name{"Win"},
@@ -20,6 +20,16 @@ namespace {
 		}
 	};
 }
+Win::Win()
+{
+
+}
+Win::~Win()
+{
+    DeleteDC(hCompatibleDC);
+    DeleteObject(bottomHbitmap);
+}
+
 JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
@@ -36,51 +46,50 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
             return JS_ThrowTypeError(ctx, "arg1 error");
         }
         else {
-            win->w = w;
+            win->w = w*scaleFactor;
         }
         if (JS_ToInt32(ctx, &h, argv[2])) {
             return JS_ThrowTypeError(ctx, "arg2 error");
         }
         else {
-            win->h = h;
+            win->h = h * scaleFactor;
         }
         if (JS_ToInt32(ctx, &x, argv[3])) {
             return JS_ThrowTypeError(ctx, "arg3 error");
         }
         else {
-            win->x = x;
+            win->x = x * scaleFactor;
         }
         if (JS_ToInt32(ctx, &y, argv[4])) {
             return JS_ThrowTypeError(ctx, "arg4 error");
         }
         else {
-            win->y = y;
+            win->y = y * scaleFactor;
         }
         win->initWindow(title);
         win->initCanvas();
-        win->show();
         JS_SetOpaque(obj, win);
         return obj;
     }
-    RECT screenRect;
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
-    win->x = (screenRect.right - win->w) / 2;
-    win->y = (screenRect.bottom - win->h) / 2;
     if (argc == 3) {
         int w, h;
         if (JS_ToInt32(ctx, &w, argv[1])) {
             return JS_ThrowTypeError(ctx, "arg1 error");
         }
         else {
-            win->w = w;
+            win->w = w * scaleFactor;
         }
         if (JS_ToInt32(ctx, &h, argv[2])) {
             return JS_ThrowTypeError(ctx, "arg2 error");
         }
         else {
-            win->h = h;
+            win->h = h * scaleFactor;
         }
     }
+    RECT screenRect;
+    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
+    win->x = (screenRect.right - win->w) / 2;
+    win->y = (screenRect.bottom - win->h) / 2;
     win->initWindow(title);
     win->initCanvas();
 	JS_SetOpaque(obj, win);
@@ -89,19 +98,27 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
 
 void Win::Reg(JSContext* ctx)
 {
+    HDC hScreenDC = GetDC(NULL);
+    int systemDpiX = GetDeviceCaps(hScreenDC, LOGPIXELSX);
+    scaleFactor = (static_cast<float>(systemDpiX) / 96.0f);
+    ReleaseDC(NULL, hScreenDC);
+
+
 	auto rt = JS_GetRuntime(ctx);
 	JS_NewClassID(rt, &id);
 	JS_NewClass(rt, id, &winClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	JS_SetPropertyStr(ctx, protoInstance, "setPos", JS_NewCFunction(ctx, &Win::setPos, "setPos", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "getPos", JS_NewCFunction(ctx, &Win::getPos, "getPos", 0));
     JS_SetPropertyStr(ctx, protoInstance, "setSize", JS_NewCFunction(ctx, &Win::setSize, "setSize", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "getSize", JS_NewCFunction(ctx, &Win::getSize, "getSize", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "setPosCenterScreen", JS_NewCFunction(ctx, &Win::setPosCenterScreen, "setPosCenterScreen", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "fillColor", JS_NewCFunction(ctx, &Win::fillColor, "fillColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "drawRect", JS_NewCFunction(ctx, &Win::drawRect, "drawRect", 5));
     JS_SetPropertyStr(ctx, protoInstance, "drawEllipse", JS_NewCFunction(ctx, &Win::drawEllipse, "drawEllipse", 5));
 	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, show, "show", 0));
-	//JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, setIcon, "setIcon", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "addEventListener", JS_NewCFunction(ctx, addEventListener, "addEventListener", 2));
 	//JS_SetPropertyStr(ctx, protoInstance, "setProfile", JS_NewCFunction(ctx, setProfile, "setProfile", 2));
 	//JS_SetPropertyStr(ctx, protoInstance, "setProxy", JS_NewCFunction(ctx, setProxy, "setProxy", 1));
 	//JS_SetPropertyStr(ctx, protoInstance, "setPosition", JS_NewCFunction(ctx, setPosition, "setPosition", 2));
@@ -118,11 +135,6 @@ void Win::Reg(JSContext* ctx)
 	JSValue global = JS_GetGlobalObject(ctx);
 	JS_SetPropertyStr(ctx, global, winClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
-}
-
-Win::Win()
-{
-
 }
 
 LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
@@ -177,6 +189,22 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
             //obj->onTimeout(wParam);
             break;
         }
+        case WM_DPICHANGED:{
+            UINT dpi = LOWORD(wParam);
+            scaleFactor = static_cast<float>(dpi) / 96.0f;
+            obj->canvas->scale(scaleFactor, scaleFactor);
+            RECT* rect = (RECT*)lParam;
+            obj->x = rect->left;
+            obj->y = rect->top;
+            obj->w = rect->right - rect->left;
+            obj->h = rect->bottom - rect->top;
+            SetWindowPos(hWnd, NULL, obj->x, obj->y, obj->w, obj->h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE);
+            DeleteDC(obj->hCompatibleDC);
+            DeleteObject(obj->bottomHbitmap);
+            obj->initCanvas();
+            obj->paintWindow();
+            break;
+        }
         default:
         {
             break;
@@ -206,12 +234,6 @@ void Win::initWindow(std::wstring& title)
 	this->hwnd = CreateWindowEx(WS_EX_LAYERED, className.c_str(), title.c_str(), style, x, y, w, h, NULL, NULL, hinstance, static_cast<LPVOID>(this)); 
 }
 
-Win::~Win()
-{
-    DeleteDC(hCompatibleDC);
-    DeleteObject(bottomHbitmap);
-}
-
 void Win::show()
 {
     paintWindow();
@@ -222,6 +244,13 @@ void Win::show()
 
 void Win::paintWindow()
 {
+    canvas->clear(0x00000000);
+    for (size_t i = 0; i < printCB.size(); i++)
+    {
+        auto ctx = JS::GetCtx();
+        JSValue ret = JS_Call(ctx, printCB[i], JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+        JS_FreeValue(ctx, ret);
+    }
     HDC hdc = GetDC(hwnd);
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
     SetDIBits(hdc, bottomHbitmap, 0, h, surfaceMemory.get(), &info, DIB_RGB_COLORS);
@@ -245,6 +274,9 @@ void Win::initCanvas()
     SkImageInfo info = SkImageInfo::MakeN32Premul(w, h);
     auto temp = SkCanvas::MakeRasterDirect(info, surfaceMemory.get(), 4 * w);
     canvas = std::move(temp);
+    UINT dpi = GetDpiForWindow(hwnd);
+    auto scaleFactor = (static_cast<float>(dpi) / 96.0f);
+    canvas->scale(scaleFactor, scaleFactor);
 }
 
 JSValue Win::show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -274,6 +306,15 @@ JSValue Win::setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
+JSValue Win::getPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    JSValue ret = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, ret, "x", JS_NewInt32(ctx, win->x));
+    JS_SetPropertyStr(ctx, ret, "y", JS_NewInt32(ctx, win->y));
+    return ret;
+}
+
 JSValue Win::setSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
@@ -292,6 +333,15 @@ JSValue Win::setSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
     }
     SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::getSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    JSValue ret = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, ret, "w", JS_NewInt32(ctx, win->w));
+    JS_SetPropertyStr(ctx, ret, "h", JS_NewInt32(ctx, win->h));
+    return ret;
 }
 
 JSValue Win::setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -341,7 +391,7 @@ JSValue Win::drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     }
     auto paint = Paint::getPtr(argv[0]);
     SkRect rect;
-    rect.setXYWH(x, y, w, h);
+    rect.setXYWH(x, y, w , h);
     win->canvas->drawRect(rect, *paint);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
@@ -364,7 +414,22 @@ JSValue Win::drawEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValue
     }
     auto paint = Paint::getPtr(argv[0]);
     SkRect rect;
-    rect.setXYWH(x, y, w, h);
+    rect.setXYWH(x, y , w, h);
     win->canvas->drawOval(rect, *paint);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    const char* key = JS_ToCString(ctx, argv[0]);
+    if (!key) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    if (!JS_IsFunction(ctx, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    win->printCB.push_back(JS_DupValue(ctx, argv[1]));
+    JS_FreeCString(ctx, key);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

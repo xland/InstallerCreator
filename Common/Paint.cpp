@@ -90,7 +90,7 @@ JSValue Paint::setLinearShader(JSContext* ctx, JSValueConst thisVal, int argc, J
 		colors.push_back(value);
 		JS_FreeValue(ctx, element);
 	}
-	SkPoint pos[2]{ SkPoint::Make(100, 100) ,SkPoint::Make(600, 600) };
+	SkPoint pos[2]{ SkPoint::Make(300, 300) ,SkPoint::Make(500, 500) };
 	auto shader = SkGradientShader::MakeLinear(pos, colors.data(), nullptr, length, SkTileMode::kClamp);
 	paint->setShader(shader);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);

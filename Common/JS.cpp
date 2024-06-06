@@ -73,6 +73,10 @@ constexpr JSValue JS::MakeVal(int32_t val, int64_t tag)
         .tag{tag}
     };
 }
+JSContext* JS::GetCtx()
+{
+    return ctx;
+}
 JSValue JS::jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
     printf("[Console]:    ");
     for (int i = 0; i < argc; i++) {
