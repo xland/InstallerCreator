@@ -14,15 +14,15 @@ public:
 	static void Reg(JSContext* ctx);
 	~Win();
 private:
-	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	Win();
-
+	static Win* getPtr(JSValue& val);
+	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 	void initWindow(std::wstring& title);
 	void paintWindow();
 	void initCanvas();
 	void show();
 
+	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue getPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

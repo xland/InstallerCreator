@@ -15,6 +15,12 @@ namespace {
 	};
 }
 
+SkPaint* Paint::getPtr(JSValue& val)
+{
+	auto paint = (SkPaint*)JS_GetOpaque(val, id);
+	return paint;
+}
+
 void Paint::Reg(JSContext* ctx)
 {
 	auto rt = JS_GetRuntime(ctx);
@@ -155,10 +161,4 @@ JSValue Paint::setBlendMode(JSContext* ctx, JSValueConst thisVal, int argc, JSVa
 	}
 	paint->setBlendMode((SkBlendMode)blendMode);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-SkPaint* Paint::getPtr(JSValue& val)
-{
-	auto paint = (SkPaint*)JS_GetOpaque(val, id);
-	return paint;
 }
