@@ -74,8 +74,8 @@ JSValue Win::drawShadow(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
     if (JS_ToUint32(ctx, &spotColor, argv[2])) {
         return JS_ThrowTypeError(ctx, "arg2 error");
     }
-    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 20);// 定义阴影与 z 平面的关系    
+    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 30);// 定义阴影与 z 平面的关系    
     SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
-    SkShadowUtils::DrawShadow(win->canvas.get(), *path, zPlaneParams, lightPos, 20.f, ambientColor, spotColor, 0);
+    SkShadowUtils::DrawShadow(win->canvas.get(), *path, zPlaneParams, lightPos, 60.f, ambientColor, spotColor, 0);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

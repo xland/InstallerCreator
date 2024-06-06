@@ -2,6 +2,7 @@
 #include "Win.h"
 #include "Paint.h"
 #include "Path.h"
+#include "Rect.h"
 #ifdef DEBUG
 #include <iostream>
 #include <fcntl.h>
@@ -30,9 +31,10 @@ void JS::Init()
     js_init_module_std(ctx, "std");
     js_init_module_os(ctx, "os");
     regGlobal();
-    Win::Reg(ctx);
     Paint::Reg(ctx);
     Path::Reg(ctx);
+    Rect::Reg(ctx);
+    Win::Reg(ctx);
     loadIndexJs(ctx);
 }
 

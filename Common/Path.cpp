@@ -103,11 +103,11 @@ JSValue Path::addRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	}
 	double r;
 	if (JS_ToFloat64(ctx, &r, argv[2])) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
+		return JS_ThrowTypeError(ctx, "arg2 error");
 	}
 	double b;
 	if (JS_ToFloat64(ctx, &b, argv[3])) {
-		return JS_ThrowTypeError(ctx, "arg1 error");
+		return JS_ThrowTypeError(ctx, "arg3 error");
 	}
 	path->addRect(x, y, r, b);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
