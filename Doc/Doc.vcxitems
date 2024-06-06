@@ -16,5 +16,6 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)Build.md" />
     <None Include="$(MSBuildThisFileDirectory)Config.ts" />
+    <None Include="$(MSBuildThisFileDirectory)ToDo.md" />
   </ItemGroup>
 </Project>
