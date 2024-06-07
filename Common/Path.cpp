@@ -1,4 +1,5 @@
 #include "Path.h"
+#include "Rect.h"
 #include "include/core/SkRect.h"
 #include "JS.h"
 
@@ -93,47 +94,15 @@ JSValue Path::reset(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst
 JSValue Path::addRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto path = (SkPath*)JS_GetOpaque(thisVal, id);
-	double x;
-	if (JS_ToFloat64(ctx, &x, argv[0])) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	double y;
-	if (JS_ToFloat64(ctx, &y, argv[1])) {
-		return JS_ThrowTypeError(ctx, "arg1 error");
-	}
-	double r;
-	if (JS_ToFloat64(ctx, &r, argv[2])) {
-		return JS_ThrowTypeError(ctx, "arg2 error");
-	}
-	double b;
-	if (JS_ToFloat64(ctx, &b, argv[3])) {
-		return JS_ThrowTypeError(ctx, "arg3 error");
-	}
-	path->addRect(x, y, r, b);
+	auto rect = Rect::getPtr(argv[0]);
+	path->addRect(*rect);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Path::addEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto path = (SkPath*)JS_GetOpaque(thisVal, id);
-	double x;
-	if (JS_ToFloat64(ctx, &x, argv[0])) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	double y;
-	if (JS_ToFloat64(ctx, &y, argv[1])) {
-		return JS_ThrowTypeError(ctx, "arg1 error");
-	}
-	double r;
-	if (JS_ToFloat64(ctx, &r, argv[2])) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	double b;
-	if (JS_ToFloat64(ctx, &b, argv[3])) {
-		return JS_ThrowTypeError(ctx, "arg1 error");
-	}
-	SkRect rect;
-	rect.setLTRB(x, y, r,b);
-	path->addOval(rect);
+	auto rect = Rect::getPtr(argv[0]);
+	path->addOval(*rect);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

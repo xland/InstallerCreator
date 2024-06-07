@@ -159,8 +159,7 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
         case WM_LBUTTONDOWN:
         {
-            auto path = Path::getPtr(obj->captionPath);
-            if (path->contains(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))) {
+            if (obj->captionPath.contains(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))) {
                 obj->isCaptionMouseDown = true;
                 GetCursorPos(&obj->startPos);
                 SetCapture(hWnd);
@@ -364,7 +363,10 @@ JSValue Win::getSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 JSValue Win::setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
-    win->captionPath = JS_DupValue(ctx, argv[0]);
+    auto path = Path::getPtr(argv[0]);
+    SkMatrix matrix;
+    matrix.setScale(scaleFactor, scaleFactor);
+    path->transform(matrix, &win->captionPath);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

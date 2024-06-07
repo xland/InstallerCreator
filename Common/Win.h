@@ -1,5 +1,6 @@
 #pragma once
 #include <Windows.h>
+#include "include/core/SkPath.h"
 #include "include/core/SkPaint.h"
 #include "include/core/SkCanvas.h"
 #include "src/base/SkAutoMalloc.h"
@@ -49,7 +50,7 @@ private:
 	std::vector<JSValue> printCB;
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;
-	JSValue captionPath;
+	SkPath captionPath;
 	bool isCaptionMouseDown;
 	POINT startPos;
 };
