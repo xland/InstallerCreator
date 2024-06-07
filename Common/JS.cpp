@@ -1,3 +1,7 @@
+#include <fstream>
+#include <sstream>
+#include <filesystem>
+#include <fstream>
 #include "JS.h"
 #include "Win.h"
 #include "Paint.h"
@@ -21,15 +25,11 @@ void JS::Init()
 {
     rt = JS_NewRuntime();
     if (!rt) return;
-    JS_SetModuleLoaderFunc(rt, NULL, js_module_loader, NULL);
-    js_std_init_handlers(rt);
     ctx = JS_NewContext(rt);
     if (!ctx) {
         JS_FreeRuntime(rt);
         return;
     }
-    js_init_module_std(ctx, "std");
-    js_init_module_os(ctx, "os");
     regGlobal();
     Paint::Reg(ctx);
     Path::Reg(ctx);
@@ -96,18 +96,11 @@ JSValue JS::jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
 void JS::loadIndexJs(JSContext* ctx)
 {
     auto mainFilePath = "main.js";
-    size_t bufLen;
-    uint8_t* buf = js_load_file(ctx, &bufLen, mainFilePath);
-    if (!buf) {
-        perror("load file error:");
-        perror(mainFilePath);
-    }
-    char* bufStr = reinterpret_cast<char*>(const_cast<uint8_t*>(buf));
-    JSValue val = JS_Eval(ctx, bufStr, bufLen, mainFilePath, JS_EVAL_TYPE_MODULE);
+    std::ifstream file(mainFilePath);
+    std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
+    JSValue val = JS_Eval(ctx, content.c_str(), content.size(), mainFilePath, JS_EVAL_TYPE_MODULE);
     if (JS_IsException(val)) {
-        js_std_dump_error(ctx);
         return;
     }
     JS_FreeValue(ctx, val);
-    js_free(ctx, buf);
 }

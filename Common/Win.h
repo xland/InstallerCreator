@@ -51,7 +51,7 @@ private:
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;
 	SkPath captionPath;
-	bool isCaptionMouseDown;
+	bool isCaptionMouseDown{false};
 	POINT startPos;
 };
 
