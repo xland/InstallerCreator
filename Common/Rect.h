@@ -11,8 +11,8 @@ public:
 	static SkRect* getPtr(JSValue& val);
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
-	static JSValue newRectLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue newRectXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

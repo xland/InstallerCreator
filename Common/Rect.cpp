@@ -21,12 +21,12 @@ void Rect::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setXYWH", JS_NewCFunction(ctx, &Rect::setXYWH, "setXYWH", 4));
 	JS_SetPropertyStr(ctx, protoInstance, "contains", JS_NewCFunction(ctx, &Rect::contains, "contains", 2));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Rect::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Rect::newLTRB, "newLTRB", 4));
+	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Rect::newXYWH, "newXYWH", 4));
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 
 	JSValue global = JS_GetGlobalObject(ctx);
-	JS_SetPropertyStr(ctx, global, "newRectLTRB", JS_NewCFunction(ctx, &Rect::newRectLTRB, "newRectLTRB", 4));
-	JS_SetPropertyStr(ctx, global, "newRectXYWH", JS_NewCFunction(ctx, &Rect::newRectXYWH, "newRectXYWH", 4));
 	JS_SetPropertyStr(ctx, global, paintClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
 }
@@ -49,7 +49,7 @@ JSValue Rect::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSV
 	return obj;
 }
 
-JSValue Rect::newRectLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue Rect::newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto [l, t, r, b, err] = get4Arg(ctx, argv);
 	if (JS_IsException(err)) {
@@ -62,7 +62,7 @@ JSValue Rect::newRectLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValu
 	return obj;
 }
 
-JSValue Rect::newRectXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue Rect::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto [x, y, w, h,err] = get4Arg(ctx, argv);
 	if (JS_IsException(err)) {

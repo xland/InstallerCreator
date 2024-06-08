@@ -12,7 +12,7 @@ public:
 	static JSContext* GetCtx();
 private:
 	static void regGlobal();
-	static JSValue jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv);
+	static JSValue jsLog(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static void loadIndexJs(JSContext* ctx);	
 };
 

@@ -20,6 +20,8 @@ namespace {
 			} 
 		}
 	};
+    static std::map<unsigned int, JSValue> timeoutCB;
+    static std::map<unsigned int, JSValue> intervalCB;
 }
 Win::Win()
 {
@@ -131,6 +133,11 @@ void Win::Reg(JSContext* ctx)
     JS_SetPropertyStr(ctx, protoInstance, "drawEllipse", JS_NewCFunction(ctx, &Win::drawEllipse, "drawEllipse", 5));
     JS_SetPropertyStr(ctx, protoInstance, "drawShadow", JS_NewCFunction(ctx, &Win::drawShadow, "drawShadow", 3));
 
+    JS_SetPropertyStr(ctx, protoInstance, "setTimeout", JS_NewCFunction(ctx, &Win::setTimeout, "setTimeout", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "setInterval", JS_NewCFunction(ctx, &Win::setInterval, "setInterval", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "clearTimeout", JS_NewCFunction(ctx, &Win::clearTimeout, "clearTimeout", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "clearInterval", JS_NewCFunction(ctx, &Win::clearInterval, "clearInterval", 1));
+
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Win::constructor, winClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
@@ -165,6 +172,10 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
                 SetCapture(hWnd);
             }
             break;
+        }
+        case WM_TIMER: {
+            //return onTimeout(wparam);
+            return true;
         }
         case WM_LBUTTONUP:
         {
@@ -201,10 +212,6 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
             //obj->mouseWheel(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam));
             break;
         }
-        case WM_TIMER: {
-            //obj->onTimeout(wParam);
-            break;
-        }
         case WM_DPICHANGED:{
             UINT dpi = LOWORD(wParam);
             scaleFactor = static_cast<float>(dpi) / 96.0f;
@@ -228,6 +235,15 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
+}
+
+void Win::timeoutProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
+
+}
+
+void Win::intervalProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
+{
 }
 
 void Win::initWindow(std::wstring& title)
@@ -390,6 +406,7 @@ JSValue Win::refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 
 JSValue Win::addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
+    //todo unbind
     const char* key = JS_ToCString(ctx, argv[0]);
     if (!key) {
         return JS_ThrowTypeError(ctx, "arg0 error");
@@ -398,7 +415,49 @@ JSValue Win::addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JS
         return JS_ThrowTypeError(ctx, "arg1 error");
     }
     auto win = (Win*)JS_GetOpaque(thisVal, id);
-    win->printCB.push_back(JS_DupValue(ctx, argv[1]));
+    if (strcmp(key, "paint") == 0) {
+        win->printCB.push_back(JS_DupValue(ctx, argv[1]));
+    }    
     JS_FreeCString(ctx, key);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::setTimeout(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    unsigned int ms;
+    if (JS_ToUint32(ctx, &ms, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    static unsigned int timerId = 0;
+    timeoutCB.insert({ timerId,JS_DupValue(ctx, argv[0]) });
+    SetTimer(win->hwnd, timerId, ms, (TIMERPROC)timeoutProc);
+    auto ret = JS_NewUint32(ctx, timerId);
+    timerId += 1;
+    return ret;
+}
+
+JSValue Win::setInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    unsigned int ms;
+    if (JS_ToUint32(ctx, &ms, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    static unsigned int timerId = 0;
+    intervalCB.insert({ timerId,JS_DupValue(ctx, argv[0]) });
+    SetTimer(win->hwnd, timerId, ms, (TIMERPROC)intervalProc);
+    auto ret = JS_NewUint32(ctx, timerId);
+    timerId += 1;
+    return ret;
+}
+
+JSValue Win::clearTimeout(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    return JSValue();
+}
+
+JSValue Win::clearInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    return JSValue();
 }

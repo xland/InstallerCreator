@@ -81,7 +81,7 @@ JSContext* JS::GetCtx()
 {
     return ctx;
 }
-JSValue JS::jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst* argv) {
+JSValue JS::jsLog(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv) {
     printf("[Console]:    ");
     for (int i = 0; i < argc; i++) {
         const char* str = JS_ToCString(ctx, argv[i]);
@@ -93,6 +93,7 @@ JSValue JS::jsLog(JSContext* ctx, JSValueConst this_val, int argc, JSValueConst*
     printf("\n");
     return MakeVal(0, JS_TAG_UNDEFINED);
 }
+
 void JS::loadIndexJs(JSContext* ctx)
 {
     auto mainFilePath = "main.js";

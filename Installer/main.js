@@ -1,9 +1,9 @@
 ﻿let win = new Win("我的窗口", 800, 800);
-let rect = newRectXYWH(50, 50, 200, 200)
+let rect = Rect.newXYWH(50, 50, 200, 200)
 win.addEventListener("paint", () => {
     let paint = new Paint();
     paint.setColor(0xFF663388)
-    win.drawRect(paint, newRectXYWH(100, 100, 600, 600));
+    win.drawRect(paint, Rect.newXYWH(100, 100, 600, 600));
 
     //let path = new Path();
     //path.addEllipse(100, 100, 700, 700);
@@ -21,6 +21,8 @@ win.addEventListener("paint", () => {
 let path = new Path();
 path.addEllipse(rect);
 win.setCaptionPath(path);
+//console.log(222);
+win.setTimeout(() => { console.log(111); }, 1000);
 
 win.show();
 globalThis.win = win;

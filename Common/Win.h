@@ -5,6 +5,7 @@
 #include "include/core/SkCanvas.h"
 #include "src/base/SkAutoMalloc.h"
 #include <vector>
+#include <map>
 
 extern "C" {
 #include <quickjs.h>
@@ -18,6 +19,8 @@ private:
 	Win();
 	static Win* getPtr(JSValue& val);
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	static void CALLBACK timeoutProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
+	static void CALLBACK intervalProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
 	void initWindow(std::wstring& title);
 	void paintWindow();
 	void initCanvas();
@@ -36,6 +39,10 @@ private:
 	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
+	static JSValue setTimeout(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue clearTimeout(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue clearInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
 	static JSValue fillColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
