@@ -1,3 +1,5 @@
+![](./Doc/banner.png)
+
 # InstallerCreator (WIP)
 
 An installer creator which can create beautiful installation interfaces.
