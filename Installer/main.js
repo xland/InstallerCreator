@@ -22,7 +22,15 @@ let path = new Path();
 path.addEllipse(rect);
 win.setCaptionPath(path);
 //console.log(222);
-win.setTimeout(() => { console.log(111); }, 1000);
-
+//win.setTimeout(() => { console.log(111222); }, 1000);
+//win.setTimeout(() => { console.log(111333); }, 900);
+let i = 22;
+let id = win.setInterval(() => {
+    console.log(i);
+    i += 1;
+    if (i > 32) {
+        win.clearInterval(id);
+    }
+}, 1000);
 win.show();
 globalThis.win = win;

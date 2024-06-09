@@ -6,6 +6,13 @@
 #include "include/utils/SkShadowUtils.h"
 #include "include/core/SkPoint3.h"
 
+void Win::regDraw(JSContext* ctx, JSValue& proto) {
+    JS_SetPropertyStr(ctx, proto, "fillColor", JS_NewCFunction(ctx, &Win::fillColor, "fillColor", 1));
+    JS_SetPropertyStr(ctx, proto, "drawRect", JS_NewCFunction(ctx, &Win::drawRect, "drawRect", 5));
+    JS_SetPropertyStr(ctx, proto, "drawEllipse", JS_NewCFunction(ctx, &Win::drawEllipse, "drawEllipse", 5));
+    JS_SetPropertyStr(ctx, proto, "drawShadow", JS_NewCFunction(ctx, &Win::drawShadow, "drawShadow", 3));
+}
+
 JSValue Win::fillColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = getPtr(thisVal);

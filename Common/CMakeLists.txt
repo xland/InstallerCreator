@@ -4,5 +4,5 @@ file(GLOB_RECURSE COMMON
     "Path.cpp" "Path.h"
     "Rect.cpp" "Rect.h"
     "Util.cpp" "Util.h"
-    "Win.cpp" "Win.h" "WinDraw.cpp"
+    "Win.cpp" "Win.h" "WinDraw.cpp" "WinTimer.cpp" "WinSizePos.cpp"
 )

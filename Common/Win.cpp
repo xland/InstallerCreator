@@ -10,7 +10,6 @@
 #include "Path.h"
 
 namespace {
-    static float scaleFactor;
     static JSClassID id;
 	static JSClassDef winClass = {
 		.class_name{"Win"},
@@ -20,8 +19,6 @@ namespace {
 			} 
 		}
 	};
-    static std::map<unsigned int, JSValue> timeoutCB;
-    static std::map<unsigned int, JSValue> intervalCB;
 }
 Win::Win()
 {
@@ -43,6 +40,10 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
     Win* win = new Win();
+    HDC hScreenDC = GetDC(NULL);
+    int systemDpiX = GetDeviceCaps(hScreenDC, LOGPIXELSX);
+    win->scaleFactor = (static_cast<float>(systemDpiX) / 96.0f);
+    ReleaseDC(NULL, hScreenDC);
     std::wstring title;
     const char* str = JS_ToCString(ctx, argv[0]);
     if (str) {
@@ -55,25 +56,25 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
             return JS_ThrowTypeError(ctx, "arg1 error");
         }
         else {
-            win->w = w*scaleFactor;
+            win->w = w* win->scaleFactor;
         }
         if (JS_ToInt32(ctx, &h, argv[2])) {
             return JS_ThrowTypeError(ctx, "arg2 error");
         }
         else {
-            win->h = h * scaleFactor;
+            win->h = h * win->scaleFactor;
         }
         if (JS_ToInt32(ctx, &x, argv[3])) {
             return JS_ThrowTypeError(ctx, "arg3 error");
         }
         else {
-            win->x = x * scaleFactor;
+            win->x = x * win->scaleFactor;
         }
         if (JS_ToInt32(ctx, &y, argv[4])) {
             return JS_ThrowTypeError(ctx, "arg4 error");
         }
         else {
-            win->y = y * scaleFactor;
+            win->y = y * win->scaleFactor;
         }
         win->initWindow(title);
         win->initCanvas();
@@ -86,13 +87,13 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
             return JS_ThrowTypeError(ctx, "arg1 error");
         }
         else {
-            win->w = w * scaleFactor;
+            win->w = w * win->scaleFactor;
         }
         if (JS_ToInt32(ctx, &h, argv[2])) {
             return JS_ThrowTypeError(ctx, "arg2 error");
         }
         else {
-            win->h = h * scaleFactor;
+            win->h = h * win->scaleFactor;
         }
     }
     RECT screenRect;
@@ -107,41 +108,19 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
 
 void Win::Reg(JSContext* ctx)
 {
-    HDC hScreenDC = GetDC(NULL);
-    int systemDpiX = GetDeviceCaps(hScreenDC, LOGPIXELSX);
-    scaleFactor = (static_cast<float>(systemDpiX) / 96.0f);
-    ReleaseDC(NULL, hScreenDC);
-
-
 	auto rt = JS_GetRuntime(ctx);
 	JS_NewClassID(rt, &id);
 	JS_NewClass(rt, id, &winClass);
 	JSValue protoInstance = JS_NewObject(ctx);
-	JS_SetPropertyStr(ctx, protoInstance, "setPos", JS_NewCFunction(ctx, &Win::setPos, "setPos", 2));
-    JS_SetPropertyStr(ctx, protoInstance, "getPos", JS_NewCFunction(ctx, &Win::getPos, "getPos", 0));
-    JS_SetPropertyStr(ctx, protoInstance, "setSize", JS_NewCFunction(ctx, &Win::setSize, "setSize", 2));
-    JS_SetPropertyStr(ctx, protoInstance, "getSize", JS_NewCFunction(ctx, &Win::getSize, "getSize", 0));
-
-    JS_SetPropertyStr(ctx, protoInstance, "setCaptionPath", JS_NewCFunction(ctx, &Win::setCaptionPath, "setCaptionPath", 0));
-	JS_SetPropertyStr(ctx, protoInstance, "setPosCenterScreen", JS_NewCFunction(ctx, &Win::setPosCenterScreen, "setPosCenterScreen", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, show, "show", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "addEventListener", JS_NewCFunction(ctx, addEventListener, "addEventListener", 2));
-
-    JS_SetPropertyStr(ctx, protoInstance, "fillColor", JS_NewCFunction(ctx, &Win::fillColor, "fillColor", 1));
-    JS_SetPropertyStr(ctx, protoInstance, "drawRect", JS_NewCFunction(ctx, &Win::drawRect, "drawRect", 5));
-    JS_SetPropertyStr(ctx, protoInstance, "drawEllipse", JS_NewCFunction(ctx, &Win::drawEllipse, "drawEllipse", 5));
-    JS_SetPropertyStr(ctx, protoInstance, "drawShadow", JS_NewCFunction(ctx, &Win::drawShadow, "drawShadow", 3));
-
-    JS_SetPropertyStr(ctx, protoInstance, "setTimeout", JS_NewCFunction(ctx, &Win::setTimeout, "setTimeout", 2));
-    JS_SetPropertyStr(ctx, protoInstance, "setInterval", JS_NewCFunction(ctx, &Win::setInterval, "setInterval", 2));
-    JS_SetPropertyStr(ctx, protoInstance, "clearTimeout", JS_NewCFunction(ctx, &Win::clearTimeout, "clearTimeout", 1));
-    JS_SetPropertyStr(ctx, protoInstance, "clearInterval", JS_NewCFunction(ctx, &Win::clearInterval, "clearInterval", 1));
-
+    regSizePos(ctx,protoInstance);
+    regDraw(ctx, protoInstance);
+    regTimer(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Win::constructor, winClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
-
 	JSValue global = JS_GetGlobalObject(ctx);
 	JS_SetPropertyStr(ctx, global, winClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
@@ -172,10 +151,6 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
                 SetCapture(hWnd);
             }
             break;
-        }
-        case WM_TIMER: {
-            //return onTimeout(wparam);
-            return true;
         }
         case WM_LBUTTONUP:
         {
@@ -214,8 +189,8 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
         case WM_DPICHANGED:{
             UINT dpi = LOWORD(wParam);
-            scaleFactor = static_cast<float>(dpi) / 96.0f;
-            obj->canvas->scale(scaleFactor, scaleFactor);
+            obj->scaleFactor = static_cast<float>(dpi) / 96.0f;
+            obj->canvas->scale(obj->scaleFactor, obj->scaleFactor);
             RECT* rect = (RECT*)lParam;
             obj->x = rect->left;
             obj->y = rect->top;
@@ -237,14 +212,7 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
-void Win::timeoutProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
-{
 
-}
-
-void Win::intervalProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime)
-{
-}
 
 void Win::initWindow(std::wstring& title)
 {
@@ -318,84 +286,6 @@ JSValue Win::show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* 
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
-JSValue Win::setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    int x, y;
-    if (JS_ToInt32(ctx, &x, argv[0])) {
-        return JS_ThrowTypeError(ctx, "arg1 error");
-    }
-    else {
-        win->x = x;
-    }
-    if (JS_ToInt32(ctx, &y, argv[1])) {
-        return JS_ThrowTypeError(ctx, "arg2 error");
-    }
-    else {
-        win->y = y;
-    }
-    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_NOSIZE);
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-JSValue Win::getPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    JSValue ret = JS_NewObject(ctx);
-    JS_SetPropertyStr(ctx, ret, "x", JS_NewInt32(ctx, win->x));
-    JS_SetPropertyStr(ctx, ret, "y", JS_NewInt32(ctx, win->y));
-    return ret;
-}
-
-JSValue Win::setSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    int w, h;
-    if (JS_ToInt32(ctx, &w, argv[0])) {
-        return JS_ThrowTypeError(ctx, "arg1 error");
-    }
-    else {
-        win->w = w;
-    }
-    if (JS_ToInt32(ctx, &h, argv[1])) {
-        return JS_ThrowTypeError(ctx, "arg2 error");
-    }
-    else {
-        win->h = h;
-    }
-    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER);
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-JSValue Win::getSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    JSValue ret = JS_NewObject(ctx);
-    JS_SetPropertyStr(ctx, ret, "w", JS_NewInt32(ctx, win->w));
-    JS_SetPropertyStr(ctx, ret, "h", JS_NewInt32(ctx, win->h));
-    return ret;
-}
-
-JSValue Win::setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    auto path = Path::getPtr(argv[0]);
-    SkMatrix matrix;
-    matrix.setScale(scaleFactor, scaleFactor);
-    path->transform(matrix, &win->captionPath);
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-JSValue Win::setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    RECT screenRect;
-    SystemParametersInfo(SPI_GETWORKAREA, 0, &screenRect, 0);
-    win->x = (screenRect.right - win->w) / 2;
-    win->y = (screenRect.bottom - win->h) / 2;
-    SetWindowPos(win->hwnd, NULL, win->x, win->y, win->w, win->h, SWP_NOZORDER | SWP_NOSIZE);
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
 
 JSValue Win::refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
@@ -417,47 +307,11 @@ JSValue Win::addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JS
     auto win = (Win*)JS_GetOpaque(thisVal, id);
     if (strcmp(key, "paint") == 0) {
         win->printCB.push_back(JS_DupValue(ctx, argv[1]));
-    }    
+    }
+    else if (strcmp(key, "size") == 0) { //todo
+
+    }
     JS_FreeCString(ctx, key);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
-JSValue Win::setTimeout(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    unsigned int ms;
-    if (JS_ToUint32(ctx, &ms, argv[1])) {
-        return JS_ThrowTypeError(ctx, "arg1 error");
-    }
-    static unsigned int timerId = 0;
-    timeoutCB.insert({ timerId,JS_DupValue(ctx, argv[0]) });
-    SetTimer(win->hwnd, timerId, ms, (TIMERPROC)timeoutProc);
-    auto ret = JS_NewUint32(ctx, timerId);
-    timerId += 1;
-    return ret;
-}
-
-JSValue Win::setInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    unsigned int ms;
-    if (JS_ToUint32(ctx, &ms, argv[1])) {
-        return JS_ThrowTypeError(ctx, "arg1 error");
-    }
-    static unsigned int timerId = 0;
-    intervalCB.insert({ timerId,JS_DupValue(ctx, argv[0]) });
-    SetTimer(win->hwnd, timerId, ms, (TIMERPROC)intervalProc);
-    auto ret = JS_NewUint32(ctx, timerId);
-    timerId += 1;
-    return ret;
-}
-
-JSValue Win::clearTimeout(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    return JSValue();
-}
-
-JSValue Win::clearInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    return JSValue();
-}
