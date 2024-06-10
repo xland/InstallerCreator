@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <fstream>
 #include "include/core/SkGraphics.h"
-#include "include/core/SkFont.h"
 #include "include/core/SkFontMgr.h"
 #include "include/core/SkFontStyle.h"
 #include "include/ports/SkTypeface_win.h"
@@ -62,36 +61,17 @@ void JS::regGlobal()
     JS_FreeValue(ctx, globalObj);
 }
 
-constexpr JSCFunctionListEntry JS::MakeJsFunc(const char* name, uint8_t length, JSCFunction* func)
-{
-    return JSCFunctionListEntry{
-        .name{name},
-        .prop_flags{ JS_PROP_WRITABLE | JS_PROP_CONFIGURABLE },
-        .def_type{JS_DEF_CFUNC},
-        .magic{0},
-        .u = {
-            .func{
-                .length{length},
-                .cproto{JS_CFUNC_generic},
-                .cfunc{
-                    .generic{func}
-                }
-            }
-        }
-    };
-}
-constexpr JSValue JS::MakeVal(int32_t val, int64_t tag)
-{
-    return {
-        .u{
-            .int32{val}
-        },
-        .tag{tag}
-    };
-}
 JSContext* JS::GetCtx()
 {
     return ctx;
+}
+SkFont* JS::GetFont()
+{    
+    return fontMap.begin()->second;
+}
+SkFont* JS::GetFont(std::string& fontName)
+{
+    return fontMap[fontName];
 }
 JSValue JS::jsLog(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv) {
     printf("[Console]:    ");

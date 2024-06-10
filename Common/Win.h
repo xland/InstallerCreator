@@ -43,6 +43,7 @@ private:
 	static JSValue drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue drawEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue drawShadow(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue drawText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	//Timer
 	static void regTimer(JSContext* ctx, JSValue& proto);
 	static void CALLBACK timeoutProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
