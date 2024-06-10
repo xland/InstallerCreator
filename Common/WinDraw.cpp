@@ -1,4 +1,4 @@
-#include "Win.h"
+﻿#include "Win.h"
 #include "include/utils/SkShadowUtils.h"
 #include "include/core/SkPoint3.h"
 #include "include/core/SkPaint.h"
@@ -68,8 +68,8 @@ JSValue Win::drawShadow(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
     if (JS_ToUint32(ctx, &spotColor, argv[2])) {
         return JS_ThrowTypeError(ctx, "arg2 error");
     }
-    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 30);// ������Ӱ�� z ƽ��Ĺ�ϵ    
-    SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// �����Դ��λ�úͰ뾶
+    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 30);// 定义阴影与 z 平面的关系    
+    SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
     SkShadowUtils::DrawShadow(win->canvas.get(), *path, zPlaneParams, lightPos, 60.f, ambientColor, spotColor, 0);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
@@ -91,32 +91,59 @@ JSValue Win::drawText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     auto paint = Paint::getPtr(argv[1]);
     //SkTextUtils::Draw(win->canvas.get(), str.data(), length, SkTextEncoding::kUTF16, 160, 160, *font, *paint, SkTextUtils::kLeft_Align);
 
+    /*auto fFontCollection = sk_make_sp<skia::textlayout::FontCollection>();
+    fFontCollection->setDefaultFontManager(SkFontMgr_New_GDI());
+    skia::textlayout::TextStyle fTStyle;
+    fTStyle.setFontFamilies({ SkString("Microsoft YaHei") });
+    fTStyle.setColor(SK_ColorBLACK);
+    const char* text =
+        "中文问"
+        "around and go to the next line. Sometimes, short sentence. Longer "
+        "sentences are okay too because they are necessary. Very short. "
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+        "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
+        "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea "
+        "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
+        "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint "
+        "occaecat cupidatat non proident, sunt in culpa qui officia deserunt "
+        "mollit anim id est laborum. "
+        "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod "
+        "tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim "
+        "veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea "
+        "commodo consequat. Duis aute irure dolor in reprehenderit in voluptate "
+        "velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint "
+        "occaecat cupidatat non proident, sunt in culpa qui officia deserunt "
+        "mollit anim id est laborum.";
+    skia::textlayout::ParagraphStyle paragraph_style;
+    auto builder = skia::textlayout::ParagraphBuilder::make(paragraph_style, fFontCollection);
+    builder->pushStyle(fTStyle);
+    builder->addText(text);
+    builder->pop();*/
 
-    skia::textlayout::TextStyle style;
-    style.setForegroundColor(*paint);
-    style.setFontFamilies({ SkString("Microsoft YaHei") });
-    style.setFontSize(10.5);
-    skia::textlayout::ParagraphStyle paraStyle;
-    paraStyle.setTextStyle(style);
-    paraStyle.setTextAlign(skia::textlayout::TextAlign::kRight);
 
-    sk_sp<SkUnicode> unicode = SkUnicodes::ICU::Make();
-    if (!unicode) {
-        printf("Could not load unicode data\n");
-        return JS::MakeVal(0, JS_TAG_UNDEFINED);
-    }
+    skia::textlayout::ParagraphStyle paragraph_style;
+    paragraph_style.turnHintingOff(); // 可选，关闭提示提高渲染速度
 
-    auto fontMgr = SkFontMgr_New_GDI();
-    auto fontCollection = sk_make_sp<skia::textlayout::FontCollection>();
-    fontCollection->setDefaultFontManager(fontMgr);
+    // 初始化TextStyle，指定字体支持中文
+    skia::textlayout::TextStyle text_style;
+    text_style.setFontFamilies({ SkString("Noto Sans CJK SC") }); // 一个支持中文的字体系列
+    text_style.setColor(SK_ColorBLACK); // 文本颜色
+    text_style.setFontSize(24); // 字体大小
+    auto fFontCollection = sk_make_sp<skia::textlayout::FontCollection>();
+    fFontCollection->setDefaultFontManager(SkFontMgr_New_GDI());
+    // 创建ParagraphBuilder
+    auto builder = skia::textlayout::ParagraphBuilder::make(paragraph_style, fFontCollection);
+    builder->pushStyle(text_style);
+    // 添加中文文本，UTF-8编码
+    std::wstring wstr = L"你好，世界！";
+    std::u16string chinese_text(wstr.begin(), wstr.end());
+    builder->addText(chinese_text);
 
-    using skia::textlayout::ParagraphBuilder;
-    std::unique_ptr<ParagraphBuilder> builder = ParagraphBuilder::make(paraStyle, fontCollection, unicode);
-    builder->addText(strData);
-
+    // 构建Paragraph
     std::unique_ptr<skia::textlayout::Paragraph> paragraph = builder->Build();
-    paragraph->layout(800 - 20);
-    paragraph->paint(win->canvas.get(), 10, 10);
+    auto fParagraph = builder->Build();
+    fParagraph->layout(300 - 20);
+    fParagraph->paint(win->canvas.get(), 160, 160);
     
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

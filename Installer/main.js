@@ -12,7 +12,7 @@ win.addEventListener("paint", () => {
     win.drawEllipse(paint, rect);
     paint.setColor(0xFF660022)
 
-    win.drawText("测试测试", paint, bodyRect,0,0);
+    win.drawText("测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试", paint, bodyRect,0,0);
 })
 let path = new Path();
 path.addEllipse(rect);
