@@ -7,9 +7,10 @@ extern "C" {
 class Paint
 {
 public:
-	static void Reg(JSContext* ctx);
+	static void Reg(JSContext* ctx);	
+	static SkPaint* getPtr(JSValue& val);
+private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
-
 	static JSValue setStroke(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setStrokeWidth(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -19,8 +20,5 @@ public:
 	static JSValue setStrokeCap(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setStrokeJoin(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setBlendMode(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	
-	static SkPaint* getPtr(JSValue& val);
-private:
 };
 

@@ -2,6 +2,12 @@
 #include <sstream>
 #include <filesystem>
 #include <fstream>
+#include "include/core/SkGraphics.h"
+#include "include/core/SkFont.h"
+#include "include/core/SkFontMgr.h"
+#include "include/core/SkFontStyle.h"
+#include "include/ports/SkTypeface_win.h"
+#include "include/core/SkData.h"
 #include "JS.h"
 #include "Win.h"
 #include "Paint.h"
@@ -19,6 +25,7 @@
 namespace {
     JSContext* ctx;
     JSRuntime* rt;
+    std::map<std::string, SkFont*> fontMap;
 }
 
 void JS::Init()
@@ -47,6 +54,11 @@ void JS::regGlobal()
     JS_SetPropertyStr(ctx, console, "info", JS_NewCFunction(ctx, &JS::jsLog, "info", 1));
     JS_SetPropertyStr(ctx, console, "error", JS_NewCFunction(ctx, &JS::jsLog, "error", 1));
     JS_SetPropertyStr(ctx, globalObj, "console", console);
+
+    JSValue font = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, font, "init", JS_NewCFunction(ctx, &JS::initFont, "init", 1));
+    JS_SetPropertyStr(ctx, globalObj, "font", font);
+
     JS_FreeValue(ctx, globalObj);
 }
 
@@ -91,6 +103,43 @@ JSValue JS::jsLog(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* 
         }
     }
     printf("\n");
+    return MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue JS::initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv) {
+    if (argc < 1) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    auto fontMgr = SkFontMgr_New_GDI();
+    uint32_t length = 0;
+    JS_ToUint32(ctx, &length, JS_GetPropertyStr(ctx, argv[0], "length"));
+    for (uint32_t i = 0; i < length; ++i) {
+        auto fontNameVal = JS_GetPropertyUint32(ctx, argv[0],i);
+        const char* fontName = JS_ToCString(ctx, fontNameVal);
+        if (!fontName) {
+            return JS_ThrowTypeError(ctx, "arg arr item error");
+        }
+        std::string name{ fontName };
+        JS_FreeCString(ctx, fontName);
+        if (name.ends_with(".ttf")) {
+            std::ifstream file(name, std::ios::binary | std::ios::ate);
+            if (!file.is_open()) {
+                return JS_ThrowTypeError(ctx, "arg arr item error");
+            }
+            size_t fileSize = file.tellg();
+            std::vector<uint8_t> buffer(fileSize);
+            file.seekg(0, std::ios::beg);
+            file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
+            file.close();
+            auto fontData = SkData::MakeWithoutCopy(buffer.data(), fileSize);
+            auto font = new SkFont(fontMgr->makeFromData(fontData));
+            fontMap.insert({ name,font });
+        }
+        else {
+            auto font = new SkFont(fontMgr->matchFamilyStyle(fontName, {}));
+            fontMap.insert({ fontName,font });
+        }
+    }
     return MakeVal(0, JS_TAG_UNDEFINED);
 }
 

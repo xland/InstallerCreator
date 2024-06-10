@@ -1,4 +1,6 @@
-﻿let win = new Win("我的窗口", 800, 800);
+﻿font.init(["Microsoft YaHei"]);
+
+let win = new Win("我的窗口", 800, 800);
 let rect = Rect.newXYWH(50, 50, 200, 200)
 win.addEventListener("paint", () => {
     let paint = new Paint();

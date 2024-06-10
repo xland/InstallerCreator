@@ -302,6 +302,7 @@ JSValue Win::addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JS
         return JS_ThrowTypeError(ctx, "arg0 error");
     }
     if (!JS_IsFunction(ctx, argv[1])) {
+        JS_FreeCString(ctx, key);
         return JS_ThrowTypeError(ctx, "arg1 error");
     }
     auto win = (Win*)JS_GetOpaque(thisVal, id);
