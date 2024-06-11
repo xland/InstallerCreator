@@ -8,11 +8,6 @@
 #include "include/core/SkFontStyle.h"
 #include "include/ports/SkTypeface_win.h"
 #include "include/core/SkData.h"
-#include "modules/skparagraph/include/Paragraph.h"
-#include "modules/skparagraph/include/ParagraphBuilder.h"
-#include "modules/skparagraph/include/ParagraphStyle.h"
-#include "modules/skparagraph/include/TextStyle.h"
-#include "modules/skunicode/include/SkUnicode_icu.h"
 #include "Util.h"
 #include "Paint.h"
 #include "Rect.h"
@@ -88,29 +83,12 @@ JSValue Win::drawText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     JS_FreeCString(ctx, strData);
     auto length = wcslen(str.data()) * 2;
     auto font = JS::GetFont();
+    font->setSize(66);
+
+    SkRect lineRect;
+    font->measureText(str.data(), length, SkTextEncoding::kUTF16, &lineRect);
+
     auto paint = Paint::getPtr(argv[1]);
-
-
-    auto fFontCollection = sk_make_sp<skia::textlayout::FontCollection>();
-    fFontCollection->setDefaultFontManager(SkFontMgr_New_GDI());
-
-    skia::textlayout::ParagraphStyle paragraph_style;
-    paragraph_style.turnHintingOff();
-
-    skia::textlayout::TextStyle textStyle;
-    textStyle.setFontFamilies({ SkString("Microsoft YaHei") });
-    textStyle.setColor(SK_ColorBLACK);
-    textStyle.setBackgroundPaint(*paint);
-    textStyle.setFontSize(24);
-    auto builder = skia::textlayout::ParagraphBuilder::make(paragraph_style, fFontCollection);
-    builder->pushStyle(textStyle);
-
-    std::wstring wstr = L"你好，世界！";
-    std::u16string chinese_text(wstr.begin(), wstr.end());
-    builder->addText(chinese_text);
-    auto fParagraph = builder->Build();
-    fParagraph->layout(360);
-    fParagraph->paint(win->canvas.get(), 160, 160);
-    
+    SkTextUtils::Draw(win->canvas.get(), str.data(), length, SkTextEncoding::kUTF16, 100-lineRect.fLeft, 100-lineRect.fTop, *font, *paint, SkTextUtils::kLeft_Align);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

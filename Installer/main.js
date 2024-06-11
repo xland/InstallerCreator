@@ -8,11 +8,11 @@ win.addEventListener("paint", () => {
     win.drawRect(paint, bodyRect);
     paint.setAntiAlias(true);
     paint.setStroke(false);
-    paint.setColor(0xFF008800)
-    win.drawEllipse(paint, rect);
     paint.setColor(0xFF660022)
 
-    win.drawText("测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试", paint, bodyRect,0,0);
+    win.drawText("测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试测试", paint, bodyRect, 0, 0);
+    //paint.setColor(0xFF008800)
+    //win.drawEllipse(paint, rect);
 })
 let path = new Path();
 path.addEllipse(rect);
