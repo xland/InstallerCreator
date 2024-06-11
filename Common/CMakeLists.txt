@@ -1,4 +1,5 @@
 file(GLOB_RECURSE COMMON
+    "App.cpp" "App.h"
     "JS.cpp" "JS.h"
     "Paint.cpp" "Paint.h"
     "Path.cpp" "Path.h"

@@ -4,7 +4,6 @@ endif()
 
 set(SRC
     main.cpp
-    App.cpp App.h
     main.js
 )
 add_executable(Installer ${SRC} ${COMMON})
