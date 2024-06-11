@@ -5,11 +5,10 @@
 #include "include/core/SkFontMgr.h"
 #include "include/core/SkFontStyle.h"
 #include "include/ports/SkTypeface_win.h"
+#include "include/core/SkStream.h"
 
 
 namespace App {
-
-    sk_sp<SkFontMgr> fontMgr;
     std::shared_ptr<SkFont> fontIcon{ nullptr };
     std::shared_ptr<SkFont> fontText{ nullptr };
 
@@ -18,9 +17,8 @@ namespace App {
         SkGraphics::Init();
         HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
         if (FAILED(hr)) return;
-        fontMgr = SkFontMgr_New_GDI();
-        fontText = std::make_shared<SkFont>(fontMgr->matchFamilyStyle("Microsoft YaHei", {}));
-        initFontIcon();
+//Skia:::
+//We haven't yet created a way to encode the ICU data for assembly on Windows,so we use a helper library to load icudtl.dat from the harddrive.
         return;
 	}
 

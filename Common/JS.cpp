@@ -121,6 +121,32 @@ JSValue JS::initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
         }
     }
     return MakeVal(0, JS_TAG_UNDEFINED);
+
+
+
+
+//    SkString file_path;
+//    file_path.printf("%s/%s", fResourceDir.c_str(), path.c_str());
+//    std::unique_ptr<SkStreamAsset> file = SkFILEStream::Make(file_path.c_str());
+//    if (!file) {
+//        return false;
+//    }
+//#if defined(SK_TYPEFACE_FACTORY_FREETYPE)
+//    sk_sp<SkTypeface> face =
+//        SkTypeface_FreeType::MakeFromStream(std::move(file), SkFontArguments());
+//#elif defined(SK_TYPEFACE_FACTORY_CORETEXT)
+//    sk_sp<SkTypeface> face = SkTypeface_Mac::MakeFromStream(std::move(file), SkFontArguments());
+//#elif defined(SK_TYPEFACE_FACTORY_DIRECTWRITE)
+//    sk_sp<SkTypeface> face = DWriteFontTypeface::MakeFromStream(std::move(file), SkFontArguments());
+//#else
+//    sk_sp<SkTypeface> face = nullptr;
+//#endif
+//    if (familyName.empty()) {
+//        fFontProvider->registerTypeface(std::move(face));
+//    }
+//    else {
+//        fFontProvider->registerTypeface(std::move(face), SkString(familyName.c_str()));
+//    }
 }
 
 void JS::loadIndexJs(JSContext* ctx)
