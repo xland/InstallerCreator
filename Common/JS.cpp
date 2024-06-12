@@ -9,9 +9,9 @@
 #include "include/core/SkData.h"
 #include "JS.h"
 #include "Win.h"
-#include "Paint.h"
 #include "Path.h"
 #include "Rect.h"
+#include "Div.h"
 #ifdef DEBUG
 #include <iostream>
 #include <fcntl.h>
@@ -37,9 +37,9 @@ void JS::Init()
         return;
     }
     regGlobal();
-    Paint::Reg(ctx);
     Path::Reg(ctx);
     Rect::Reg(ctx);
+    Div::Reg(ctx);
     Win::Reg(ctx);
     loadIndexJs(ctx);
 }

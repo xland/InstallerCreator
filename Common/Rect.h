@@ -1,21 +1,25 @@
 #pragma once
+
 #include "include/core/SkRect.h"
-extern "C" {
-#include <quickjs.h>
-}
-class Rect
+#include "Element.h"
+class Rect:public Element
 {
 public:
 	static void Reg(JSContext* ctx);
 	~Rect();
-	static SkRect* getPtr(JSValue& val);
+	void Paint(Win* win) override;
+	SkRect rect;
+protected:
+	Rect();
+	static void RegRectBase(JSContext* ctx, JSValue& protoInstance);
 private:
-	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
+	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
 	static JSValue newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static std::tuple<double, double, double, double,JSValue> get4Arg(JSContext* ctx, JSValueConst* argv);
+
+	
 };
 

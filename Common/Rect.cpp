@@ -1,15 +1,31 @@
 #include "Rect.h"
 #include "JS.h"
+#include "Win.h"
 
-static JSClassID id;
-static JSClassDef paintClass = {
-	.class_name{"Rect"},
-	.finalizer{[](JSRuntime* rt, JSValue val) {
-			auto rect = (SkRect*)JS_GetOpaque(val, id);
-			delete rect;
+namespace {
+	static JSClassID id;
+	static JSClassDef paintClass = {
+		.class_name{"Rect"},
+		.finalizer{[](JSRuntime* rt, JSValue val) {
+				auto rect = (Rect*)JS_GetOpaque(val, id);
+				delete rect;
+			}
 		}
-	}
-};
+	};
+}
+
+Rect::Rect()
+{
+}
+void Rect::RegRectBase(JSContext* ctx, JSValue& protoInstance)
+{
+	JS_SetPropertyStr(ctx, protoInstance, "setLTRB", JS_NewCFunction(ctx, &Rect::setLTRB, "setLTRB", 4));
+	JS_SetPropertyStr(ctx, protoInstance, "setXYWH", JS_NewCFunction(ctx, &Rect::setXYWH, "setXYWH", 4));
+	JS_SetPropertyStr(ctx, protoInstance, "contains", JS_NewCFunction(ctx, &Rect::contains, "contains", 2));
+}
+Rect::~Rect()
+{
+}
 
 void Rect::Reg(JSContext* ctx)
 {
@@ -17,9 +33,8 @@ void Rect::Reg(JSContext* ctx)
 	JS_NewClassID(rt, &id);
 	JS_NewClass(rt, id, &paintClass);
 	JSValue protoInstance = JS_NewObject(ctx);
-	JS_SetPropertyStr(ctx, protoInstance, "setLTRB", JS_NewCFunction(ctx, &Rect::setLTRB, "setLTRB", 4));
-	JS_SetPropertyStr(ctx, protoInstance, "setXYWH", JS_NewCFunction(ctx, &Rect::setXYWH, "setXYWH", 4));
-	JS_SetPropertyStr(ctx, protoInstance, "contains", JS_NewCFunction(ctx, &Rect::contains, "contains", 2));
+	RegBase(ctx, protoInstance);
+	RegRectBase(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Rect::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Rect::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Rect::newXYWH, "newXYWH", 4));
@@ -31,21 +46,16 @@ void Rect::Reg(JSContext* ctx)
 	JS_FreeValue(ctx, global);
 }
 
-Rect::~Rect()
+void Rect::Paint(Win* win)
 {
+	win->canvas->drawRect(rect, paint);
 }
 
-SkRect* Rect::getPtr(JSValue& val)
-{
-	auto rect = (SkRect*)JS_GetOpaque(val, id);
-	return rect;
-}
-
-JSValue Rect::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv)
+JSValue Rect::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
-	SkRect* rect = new SkRect();
-	JS_SetOpaque(obj, rect);
+	auto self = new Rect();
+	JS_SetOpaque(obj, self);
 	return obj;
 }
 
@@ -56,9 +66,9 @@ JSValue Rect::newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 		return err;
 	}
 	JSValue obj = JS_NewObjectClass(ctx, id);
-	SkRect* rect = new SkRect();
-	rect->setLTRB(l, t, r, b);
-	JS_SetOpaque(obj, rect);
+	auto self = new Rect();
+	self->rect.setLTRB(l, t, r, b);
+	JS_SetOpaque(obj, self);
 	return obj;
 }
 
@@ -69,9 +79,9 @@ JSValue Rect::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 		return err;
 	}
 	JSValue obj = JS_NewObjectClass(ctx, id);
-	SkRect* rect = new SkRect();
-	rect->setXYWH(x, y, w, h);
-	JS_SetOpaque(obj, rect);
+	auto self = new Rect();
+	self->rect.setXYWH(x, y, w, h);
+	JS_SetOpaque(obj, self);
 	return obj;
 }
 
@@ -81,8 +91,8 @@ JSValue Rect::setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	if (JS_IsException(err)) {
 		return err;
 	}
-	auto rect = (SkRect*)JS_GetOpaque(thisVal, id);
-	rect->setLTRB(l, t, r, b);
+	auto rect = (Rect*)JS_GetOpaque(thisVal, id);
+	rect->rect.setLTRB(l, t, r, b);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -92,8 +102,8 @@ JSValue Rect::setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	if (JS_IsException(err)) {
 		return err;
 	}
-	auto rect = (SkRect*)JS_GetOpaque(thisVal, id);
-	rect->setXYWH(x, y, w, h);
+	auto rect = (Rect*)JS_GetOpaque(thisVal, id);
+	rect->rect.setXYWH(x, y, w, h);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -107,29 +117,7 @@ JSValue Rect::contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 	if (JS_ToFloat64(ctx, &arg2, argv[1])) {
 		return JS_ThrowTypeError(ctx, "arg1 error");
 	}
-	auto rect = (SkRect*)JS_GetOpaque(thisVal, id);
-	auto flag = rect->contains(arg1, arg2);
+	auto rect = (Rect*)JS_GetOpaque(thisVal, id);
+	auto flag = rect->rect.contains(arg1, arg2);
 	return JS_NewBool(ctx, flag);
-}
-
-std::tuple<double, double, double, double, JSValue> Rect::get4Arg(JSContext* ctx, JSValueConst* argv)
-{
-	JSValue err = JS::MakeVal(0, JS_TAG_UNDEFINED);
-	double arg1;
-	if (JS_ToFloat64(ctx, &arg1, argv[0])) {
-		err = JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	double arg2;
-	if (JS_ToFloat64(ctx, &arg2, argv[1])) {
-		err = JS_ThrowTypeError(ctx, "arg1 error");
-	}
-	double arg3;
-	if (JS_ToFloat64(ctx, &arg3, argv[2])) {
-		err = JS_ThrowTypeError(ctx, "arg2 error");
-	}
-	double arg4;
-	if (JS_ToFloat64(ctx, &arg4, argv[3])) {
-		err = JS_ThrowTypeError(ctx, "arg3 error");
-	}
-	return {arg1,arg2,arg3,arg4,err};
 }

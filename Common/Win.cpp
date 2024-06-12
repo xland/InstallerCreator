@@ -6,8 +6,8 @@
 #include <format>
 #include "JS.h"
 #include "Util.h"
-#include "Paint.h"
 #include "Path.h"
+#include "Element.h"
 
 namespace {
     static JSClassID id;
@@ -113,8 +113,9 @@ void Win::Reg(JSContext* ctx)
 	JS_NewClass(rt, id, &winClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
-	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, show, "show", 0));
-	JS_SetPropertyStr(ctx, protoInstance, "addEventListener", JS_NewCFunction(ctx, addEventListener, "addEventListener", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, &Win::show, "show", 0));
+    JS_SetPropertyStr(ctx, protoInstance, "addElement", JS_NewCFunction(ctx, &Win::addElement, "addElement", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "addEventListener", JS_NewCFunction(ctx, &Win::addEventListener, "addEventListener", 2));
     regSizePos(ctx,protoInstance);
     regDraw(ctx, protoInstance);
     regTimer(ctx, protoInstance);
@@ -200,7 +201,7 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
             DeleteDC(obj->hCompatibleDC);
             DeleteObject(obj->bottomHbitmap);
             obj->initCanvas();
-            obj->paintWindow();
+            obj->paint();
             break;
         }
         default:
@@ -211,8 +212,6 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
     }
     return DefWindowProc(hWnd, msg, wParam, lParam);
 }
-
-
 
 void Win::initWindow(std::wstring& title)
 {
@@ -236,20 +235,18 @@ void Win::initWindow(std::wstring& title)
 
 void Win::show()
 {
-    paintWindow();
+    paint();
     ShowWindow(hwnd, SW_SHOW);
     UpdateWindow(hwnd);
     SetCursor(LoadCursor(nullptr, IDC_ARROW));
 }
 
-void Win::paintWindow()
+void Win::paint()
 {
     canvas->clear(0x00000000);
-    for (size_t i = 0; i < printCB.size(); i++)
-    {
-        auto ctx = JS::GetCtx();
-        JSValue ret = JS_Call(ctx, printCB[i], JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
-        JS_FreeValue(ctx, ret);
+    for (size_t i = 0; i < elements.size(); i++) {
+        auto element = Element::GetPtr(elements[i]);
+        element->Paint(this);
     }
     HDC hdc = GetDC(hwnd);
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
@@ -259,7 +256,6 @@ void Win::paintWindow()
     SIZE sizeWnd = { w, h };
     UpdateLayeredWindow(hwnd, hdc, NULL, &sizeWnd, hCompatibleDC, &pSrc, NULL, &blend, ULW_ALPHA);
     ReleaseDC(hwnd, hdc);
-    //surfaceMemory.reset(0); //实践证明这样即节省内存，速度也不会慢
 }
 
 void Win::initCanvas()
@@ -286,11 +282,29 @@ JSValue Win::show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* 
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
+JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+
+    if (JS_IsArray(ctx,argv[0])) {
+        uint32_t length = 0;
+        JS_ToUint32(ctx, &length, JS_GetPropertyStr(ctx, argv[0], "length"));
+        for (uint32_t i = 0; i < length; ++i) {
+            JSValue element = JS_GetPropertyUint32(ctx, argv[0], i);
+            win->elements.push_back(JS_DupValue(ctx, element));
+        }
+    }
+    else {
+        win->elements.push_back(JS_DupValue(ctx, argv[0]));
+    }    
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
 
 JSValue Win::refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
-    win->paintWindow();
+    win->paint();
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

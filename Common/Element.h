@@ -1,14 +1,23 @@
 #pragma once
+
 #include "include/core/SkPaint.h"
-#include "include/core/SkCanvas.h"
 extern "C" {
 #include <quickjs.h>
 }
-class Paint
+#include "JS.h"
+
+class Win;
+class Element
 {
 public:
-	static void Reg(JSContext* ctx);	
-	static SkPaint* getPtr(JSValue& val);
+	~Element();
+	virtual void Paint(Win* win) = 0;
+	static Element* GetPtr(JSValue& val);
+protected:
+	Element();
+	static void RegBase(JSContext* ctx,JSValue& protoInstance);
+	static std::tuple<double, double, double, double, JSValue> get4Arg(JSContext* ctx, JSValueConst* argv);
+	SkPaint paint;
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue setStroke(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

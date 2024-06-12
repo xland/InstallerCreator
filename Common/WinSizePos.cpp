@@ -7,7 +7,7 @@ void Win::regSizePos(JSContext* ctx, JSValue& proto) {
     JS_SetPropertyStr(ctx, proto, "getPos", JS_NewCFunction(ctx, &Win::getPos, "getPos", 0));
     JS_SetPropertyStr(ctx, proto, "setSize", JS_NewCFunction(ctx, &Win::setSize, "setSize", 2));
     JS_SetPropertyStr(ctx, proto, "getSize", JS_NewCFunction(ctx, &Win::getSize, "getSize", 0));
-    JS_SetPropertyStr(ctx, proto, "setCaptionPath", JS_NewCFunction(ctx, &Win::setCaptionPath, "setCaptionPath", 0));
+    //JS_SetPropertyStr(ctx, proto, "setCaptionPath", JS_NewCFunction(ctx, &Win::setCaptionPath, "setCaptionPath", 0));
     JS_SetPropertyStr(ctx, proto, "setPosCenterScreen", JS_NewCFunction(ctx, &Win::setPosCenterScreen, "setPosCenterScreen", 0));
 }
 
@@ -69,15 +69,15 @@ JSValue Win::getSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
     return ret;
 }
 
-JSValue Win::setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto win = getPtr(thisVal);
-    auto path = Path::getPtr(argv[0]);
-    SkMatrix matrix;
-    matrix.setScale(win->scaleFactor, win->scaleFactor);
-    path->transform(matrix, &win->captionPath);
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
+//JSValue Win::setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+//{
+//    auto win = getPtr(thisVal);
+//    auto path = Path::getPtr(argv[0]);
+//    SkMatrix matrix;
+//    matrix.setScale(win->scaleFactor, win->scaleFactor);
+//    path->transform(matrix, &win->captionPath);
+//    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+//}
 
 JSValue Win::setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {

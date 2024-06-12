@@ -15,18 +15,20 @@ class Win
 public:
 	static void Reg(JSContext* ctx);
 	~Win();
+	std::unique_ptr<SkCanvas> canvas;
 private:
 	Win();
 	static Win* getPtr(JSValue& val);
 	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
 	void initWindow(std::wstring& title);
-	void paintWindow();
 	void initCanvas();
 	void show();
+	void paint();
 
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	//SizePos
@@ -39,7 +41,6 @@ private:
 	static JSValue setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	//Draw
 	static void regDraw(JSContext* ctx, JSValue& proto);
-	static JSValue fillColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue drawEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue drawShadow(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -57,9 +58,9 @@ private:
 	int x, y, w{ 1200 }, h{800};
 	float scaleFactor;
 	HWND hwnd;
-	std::unique_ptr<SkCanvas> canvas;
 	SkAutoMalloc surfaceMemory;
 	std::vector<JSValue> printCB;
+	std::vector<JSValue> elements;
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;
 	SkPath captionPath;
