@@ -1,11 +1,22 @@
-﻿font.init(["Microsoft YaHei"]);
+﻿font.init(["Microsoft YaHei","iconfont.ttf"]);
 
 let win = new Win("我的窗口", 800, 800);
+let closeDiv = Div.newXYWH(720, 50, 30, 30);
+closeDiv.setColor(0xFFAA66CC);
+closeDiv.setFontFamily("iconfont.ttf")
+closeDiv.setAlign(1, 1);
+closeDiv.setText(`\\ue6e6`)
+closeDiv.setTextColor(0xFFFFFFFF)
+
 let div = Div.newXYWH(50, 50, 700, 700);
 div.setColor(0xFF663388);
+div.setTextColor(0xFFAA3322)
+div.setFontFamily("Microsoft YaHei")
 div.setText("繁荣昌盛！永世安宁！")
 div.setAlign(1, 1);
-win.addElement(div);
+div.setFontSize(22);
+
+win.addElement([closeDiv, div]);
 
 //let rect = Rect.newXYWH(50, 50, 200, 200)
 //win.addEventListener("paint", () => {

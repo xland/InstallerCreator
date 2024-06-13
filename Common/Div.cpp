@@ -1,6 +1,6 @@
 #include "Div.h"
 #include "include/utils/SkTextUtils.h"
-
+#include "src/base/SkUTF.h"
 #include "Util.h"
 #include "Win.h"
 
@@ -31,30 +31,6 @@ Div::~Div()
 {
 }
 
-void Div::Paint(Win* win)
-{
-	Rect::Paint(win);
-	auto length = wcslen(text.data()) * 2;
-	auto font = JS::GetFont();
-	font->setSize(66);
-	SkRect lineRect;
-	font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
-	SkPaint paint1;
-	paint1.setColor(0xFF000000);
-	float left{ rect.fLeft - lineRect.fLeft };
-	float top{ rect.fTop - lineRect.fTop };
-	if (verticalAlign == 1) {
-		top += (rect.height()-lineRect.height()) / 2;
-	}
-	if (horizontalAlign == 1) {
-		left += (rect.width() - lineRect.width()) / 2;
-	}
-	SkTextUtils::Draw(win->canvas.get(), text.data(), length, 
-		SkTextEncoding::kUTF16, 
-		left, top, 
-		*font, paint1, 
-		SkTextUtils::kLeft_Align);
-}
 
 void Div::Reg(JSContext* ctx)
 {
@@ -66,12 +42,14 @@ void Div::Reg(JSContext* ctx)
 	RegRectBase(ctx, protoInstance);
 	JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Div::setText, "setText", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &Div::setAlign, "setAlign", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "setTextColor", JS_NewCFunction(ctx, &Div::setTextColor, "setTextColor", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &Div::setFontSize, "setFontSize", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Div::setFontFamily, "setFontFamily", 1));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Div::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Div::newXYWH, "newXYWH", 4));
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
-
 	JSValue global = JS_GetGlobalObject(ctx);
 	JS_SetPropertyStr(ctx, global, paintClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
@@ -103,12 +81,75 @@ JSValue Div::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 	return obj;
 }
 
+
+void Div::Paint(Win* win)
+{
+	Rect::Paint(win);
+	font->setSize(fontSize);
+	SkPaint textPaint;
+	textPaint.setAntiAlias(true);
+	textPaint.setColor(color);
+	if (isIcon) {
+		SkRect lineRect;
+		font->measureText(iconCode, strlen(iconCode), SkTextEncoding::kUTF8, &lineRect);
+		float left{ rect.fLeft - lineRect.fLeft };
+		float top{ rect.fTop - lineRect.fTop };
+		if (verticalAlign == 1) {
+			top += (rect.height() - lineRect.height()) / 2;
+		}
+		else if (verticalAlign == 2) {
+			top = rect.fBottom - lineRect.fBottom;
+		}
+		if (horizontalAlign == 1) {
+			left += (rect.width() - lineRect.width()) / 2;
+		}
+		else if (horizontalAlign == 2) {
+			left = rect.fRight - lineRect.width();
+		}
+		win->canvas->drawSimpleText(iconCode, strlen(iconCode), SkTextEncoding::kUTF8, left, top, *font, paint);
+	}
+	else
+	{
+		auto length = wcslen(text.data()) * 2;
+		SkRect lineRect;
+		font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
+		float left{ rect.fLeft - lineRect.fLeft };
+		float top{ rect.fTop - lineRect.fTop };
+		if (verticalAlign == 1) {
+			top += (rect.height() - lineRect.height()) / 2;
+		}
+		else if (verticalAlign == 2) {
+			top = rect.fBottom - lineRect.fBottom;
+		}
+		if (horizontalAlign == 1) {
+			left += (rect.width() - lineRect.width()) / 2;
+		}
+		else if (horizontalAlign == 2) {
+			left = rect.fRight - lineRect.width();
+		}
+		SkTextUtils::Draw(win->canvas.get(), text.data(), length,
+			SkTextEncoding::kUTF16,
+			left, top,
+			*font, textPaint,
+			SkTextUtils::kLeft_Align);
+	}
+}
+
 JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto div = (Div*)JS_GetOpaque(thisVal, id);
 	const char* strData = JS_ToCString(ctx, argv[0]);
 	if (!strData) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	if (strData[0] == '\\' && strData[1] == 'u') {
+		div->isIcon = true;
+		div->iconCode = strData;
+		//std::string_view cstr_view(strData);
+		//auto icon = std::u8string(cstr_view.begin(), cstr_view.end());
+		//auto b = std::u8string(u8"\ue6e6");
+		//div->iconCode = std::string(icon.begin(), icon.end());
+		return JS::MakeVal(0, JS_TAG_UNDEFINED);
 	}
 	div->text = Util::ConvertToWideChar(strData); 
 	JS_FreeCString(ctx, strData);
@@ -128,5 +169,40 @@ JSValue Div::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	auto div = (Div*)JS_GetOpaque(thisVal, id);
 	div->verticalAlign = vAlign;
 	div->horizontalAlign = vAlign;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Div::setTextColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	unsigned int color;
+	if (JS_ToUint32(ctx, &color, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	div->color = color;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Div::setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	double fontSize;
+	if (JS_ToFloat64(ctx, &fontSize, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	div->fontSize = fontSize;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Div::setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	const char* fontName = JS_ToCString(ctx, argv[0]);
+	if (!fontName) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	auto name = std::string{ fontName };
+	div->font = JS::GetFont(name);
+	JS_FreeCString(ctx, fontName);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
