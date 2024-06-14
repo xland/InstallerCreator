@@ -151,11 +151,25 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
                 GetCursorPos(&obj->startPos);
                 SetCapture(hWnd);
             }
+            else {
+                int i = obj->elements.size() - 1;
+                if (i < 0) return true;
+                for (; i >= 0; i--) {
+                    auto element = Element::GetPtr(obj->elements[i]);
+                    element->MouseDown();
+                }
+            }
             break;
         }
         case WM_LBUTTONUP:
         {
             obj->isCaptionMouseDown = false;
+            int i = obj->elements.size() - 1;
+            if (i < 0) return true;
+            for (; i >= 0; i--) {
+                auto element = Element::GetPtr(obj->elements[i]);
+                element->MouseUp();
+            }
             break;
         }
         case WM_MOUSELEAVE: {

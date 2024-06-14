@@ -49,6 +49,8 @@ void Div::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Div::setFontFamily, "setFontFamily", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Div::onMouseEnter, "onMouseEnter", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Div::onMouseLeave, "onMouseLeave", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseDown", JS_NewCFunction(ctx, &Div::onMouseDown, "onMouseDown", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseUp", JS_NewCFunction(ctx, &Div::onMouseUp, "onMouseUp", 1));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Div::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Div::newXYWH, "newXYWH", 4));
@@ -151,6 +153,34 @@ void Div::MouseMove(const float& x, const float& y)
 	}
 }
 
+void Div::MouseDown()
+{
+	if (!isMouseEnter) {
+		return;
+	}
+	auto ctx = JS::GetCtx();
+	if (!JS_IsFunction(ctx, mouseEnterCB)) {
+		return;
+	}
+	isMouseDown = true;
+	JSValue ret = JS_Call(ctx, mouseDownCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+	JS_FreeValue(ctx, ret);
+}
+
+void Div::MouseUp()
+{
+	if (!isMouseDown) {
+		return;
+	}
+	auto ctx = JS::GetCtx();
+	if (!JS_IsFunction(ctx, mouseEnterCB)) {
+		return;
+	}
+	isMouseDown = false;
+	JSValue ret = JS_Call(ctx, mouseUpCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+	JS_FreeValue(ctx, ret);
+}
+
 JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto div = (Div*)JS_GetOpaque(thisVal, id);	
@@ -242,6 +272,20 @@ JSValue Div::onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValu
 {
 	auto div = (Div*)JS_GetOpaque(thisVal, id);
 	div->mouseLeaveCB = JS_DupValue(ctx, argv[0]);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Div::onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	div->mouseDownCB = JS_DupValue(ctx, argv[0]);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Div::onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	div->mouseUpCB = JS_DupValue(ctx, argv[0]);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

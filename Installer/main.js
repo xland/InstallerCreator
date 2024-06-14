@@ -1,7 +1,25 @@
 ﻿font.init(["Microsoft YaHei","iconfont.ttf"]);
 
 let win = new Win("我的窗口", 800, 800);
-let closeDiv = Div.newXYWH(720, 50, 30, 30);
+
+let minimizeDiv = Div.newLTRB(680, 50, 715, 80);
+minimizeDiv.setColor(0xFFAA66FF);
+minimizeDiv.setFontFamily("iconfont.ttf");
+minimizeDiv.setAlign(1, 1);
+minimizeDiv.setText(0xE6E7);
+minimizeDiv.setFontSize(14);
+minimizeDiv.setTextColor(0xFF000000);
+minimizeDiv.onMouseEnter(() => {
+    minimizeDiv.setTextColor(0xFFFFFFFF);
+    minimizeDiv.setColor(0xFF662288);
+    win.refresh();
+});
+minimizeDiv.onMouseLeave(() => {
+    minimizeDiv.setColor(0xFFAA66FF);
+    win.refresh();
+});
+
+let closeDiv = Div.newLTRB(715, 50, 750, 80);
 closeDiv.setColor(0xFFAA66FF);
 closeDiv.setFontFamily("iconfont.ttf");
 closeDiv.setAlign(1, 1);
@@ -12,13 +30,17 @@ closeDiv.onMouseEnter(() => {
     closeDiv.setTextColor(0xFFFFFFFF);
     closeDiv.setColor(0xFF662288);
     win.refresh();
-    console.log("enter");
 });
 closeDiv.onMouseLeave(() => {
     closeDiv.setColor(0xFFAA66FF);
     win.refresh();
-    console.log("out");
 });
+closeDiv.onMouseDown(() => {
+    console.log("mouse down")
+})
+closeDiv.onMouseUp(() => {
+    console.log("mouse up")
+})
 
 let div = Div.newXYWH(50, 50, 700, 700);
 div.setColor(0xFF663388);
@@ -28,7 +50,7 @@ div.setText("繁荣昌盛！永世安宁！")
 div.setAlign(1, 1);
 div.setFontSize(22);
 
-win.addElement([div,closeDiv]);
+win.addElement([div, closeDiv, minimizeDiv]);
 
 //let rect = Rect.newXYWH(50, 50, 200, 200)
 //win.addEventListener("paint", () => {
