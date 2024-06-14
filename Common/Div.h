@@ -20,8 +20,16 @@ private:
 	static JSValue setTextColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
+	static JSValue onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue offMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue offMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
+	std::tuple<double, double> getTextPos(const SkRect& lineRect);
+
 	std::wstring  text;
-	const char* iconCode;
+	std::string iconStr;
 	SkFont* font;
 	float fontSize;
 	unsigned int color;

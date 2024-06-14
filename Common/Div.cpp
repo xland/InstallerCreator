@@ -1,6 +1,8 @@
 #include "Div.h"
 #include "include/utils/SkTextUtils.h"
-#include "src/base/SkUTF.h"
+#include <string>
+#include <format>
+#include <iostream>
 #include "Util.h"
 #include "Win.h"
 
@@ -45,6 +47,10 @@ void Div::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setTextColor", JS_NewCFunction(ctx, &Div::setTextColor, "setTextColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &Div::setFontSize, "setFontSize", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Div::setFontFamily, "setFontFamily", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Div::onMouseEnter, "onMouseEnter", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Div::onMouseLeave, "onMouseLeave", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "offMouseEnter", JS_NewCFunction(ctx, &Div::offMouseEnter, "offMouseEnter", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "offMouseLeave", JS_NewCFunction(ctx, &Div::offMouseLeave, "offMouseLeave", 1));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Div::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Div::newXYWH, "newXYWH", 4));
@@ -81,6 +87,24 @@ JSValue Div::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 	return obj;
 }
 
+std::tuple<double, double> Div::getTextPos(const SkRect& lineRect)
+{
+	float left{ rect.fLeft - lineRect.fLeft };
+	float top{ rect.fTop - lineRect.fTop };
+	if (verticalAlign == 1) {
+		top += (rect.height() - lineRect.height()) / 2;
+	}
+	else if (verticalAlign == 2) {
+		top = rect.fBottom - lineRect.fBottom;
+	}
+	if (horizontalAlign == 1) {
+		left += (rect.width() - lineRect.width()) / 2;
+	}
+	else if (horizontalAlign == 2) {
+		left = rect.fRight - lineRect.width();
+	}
+	return {left,top};
+}
 
 void Div::Paint(Win* win)
 {
@@ -91,68 +115,46 @@ void Div::Paint(Win* win)
 	textPaint.setColor(color);
 	if (isIcon) {
 		SkRect lineRect;
-		font->measureText(iconCode, strlen(iconCode), SkTextEncoding::kUTF8, &lineRect);
-		float left{ rect.fLeft - lineRect.fLeft };
-		float top{ rect.fTop - lineRect.fTop };
-		if (verticalAlign == 1) {
-			top += (rect.height() - lineRect.height()) / 2;
-		}
-		else if (verticalAlign == 2) {
-			top = rect.fBottom - lineRect.fBottom;
-		}
-		if (horizontalAlign == 1) {
-			left += (rect.width() - lineRect.width()) / 2;
-		}
-		else if (horizontalAlign == 2) {
-			left = rect.fRight - lineRect.width();
-		}
-		win->canvas->drawSimpleText(iconCode, strlen(iconCode), SkTextEncoding::kUTF8, left, top, *font, paint);
+		font->measureText(iconStr.c_str(), 4, SkTextEncoding::kUTF8, &lineRect);
+		auto [left, top] = getTextPos(lineRect);
+		win->canvas->drawSimpleText(iconStr.c_str(), 4, SkTextEncoding::kUTF8, left, top, *font, textPaint);
 	}
 	else
 	{
 		auto length = wcslen(text.data()) * 2;
 		SkRect lineRect;
 		font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
-		float left{ rect.fLeft - lineRect.fLeft };
-		float top{ rect.fTop - lineRect.fTop };
-		if (verticalAlign == 1) {
-			top += (rect.height() - lineRect.height()) / 2;
-		}
-		else if (verticalAlign == 2) {
-			top = rect.fBottom - lineRect.fBottom;
-		}
-		if (horizontalAlign == 1) {
-			left += (rect.width() - lineRect.width()) / 2;
-		}
-		else if (horizontalAlign == 2) {
-			left = rect.fRight - lineRect.width();
-		}
-		SkTextUtils::Draw(win->canvas.get(), text.data(), length,
-			SkTextEncoding::kUTF16,
-			left, top,
-			*font, textPaint,
-			SkTextUtils::kLeft_Align);
+		auto [left, top] = getTextPos(lineRect);
+		win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, left, top, *font, textPaint);
 	}
 }
 
 JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
-	const char* strData = JS_ToCString(ctx, argv[0]);
-	if (!strData) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	if (strData[0] == '\\' && strData[1] == 'u') {
+	auto div = (Div*)JS_GetOpaque(thisVal, id);	
+	if (JS_IsNumber(argv[0])) {
+		uint32_t iconCode;
+		if (JS_ToUint32(ctx, &iconCode, argv[0])) {
+			return JS_ThrowTypeError(ctx, "arg0 error");
+		}
 		div->isIcon = true;
-		div->iconCode = strData;
-		//std::string_view cstr_view(strData);
-		//auto icon = std::u8string(cstr_view.begin(), cstr_view.end());
-		//auto b = std::u8string(u8"\ue6e6");
-		//div->iconCode = std::string(icon.begin(), icon.end());
-		return JS::MakeVal(0, JS_TAG_UNDEFINED);
+		std::u8string utf8Str;
+		utf8Str += static_cast<char8_t>((iconCode >> 12) | 0xE0);
+		utf8Str += static_cast<char8_t>(((iconCode >> 6) & 0x3F) | 0x80);
+		utf8Str += static_cast<char8_t>((iconCode & 0x3F) | 0x80);
+		div->iconStr = std::string(utf8Str.begin(), utf8Str.end());
+		//std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> converter;
+		//std::string iconCodeStr = converter.to_bytes(iconCode);
 	}
-	div->text = Util::ConvertToWideChar(strData); 
-	JS_FreeCString(ctx, strData);
+	else
+	{
+		const char* strData = JS_ToCString(ctx, argv[0]);
+		if (!strData) {
+			return JS_ThrowTypeError(ctx, "arg0 error");
+		}
+		div->text = Util::ConvertToWideChar(strData);
+		JS_FreeCString(ctx, strData);
+	}
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -206,3 +208,25 @@ JSValue Div::setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSVal
 	JS_FreeCString(ctx, fontName);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
+
+JSValue Div::onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	return JSValue();
+}
+
+JSValue Div::onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	return JSValue();
+}
+
+JSValue Div::offMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	return JSValue();
+}
+
+JSValue Div::offMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	return JSValue();
+}
+
+
