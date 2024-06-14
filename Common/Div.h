@@ -10,6 +10,7 @@ public:
 	static void Reg(JSContext* ctx);
 	~Div(); 
 	void Paint(Win* win) override;
+	void MouseMove(const float& x, const float& y) override;
 private:
 	Div();
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
@@ -23,10 +24,12 @@ private:
 
 	static JSValue onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue offMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue offMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
 	std::tuple<double, double> getTextPos(const SkRect& lineRect);
+
+	JSValue mouseEnterCB;
+	JSValue mouseLeaveCB;
+	bool isMouseEnter{false};
 
 	std::wstring  text;
 	std::string iconStr;

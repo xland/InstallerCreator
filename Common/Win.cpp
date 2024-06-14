@@ -174,6 +174,16 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
                 SetWindowPos(hWnd, nullptr, obj->x, obj->y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
                 obj->startPos = point;
             }
+            else {
+                auto x = (float)GET_X_LPARAM(lParam) / obj->scaleFactor;
+                auto y = (float)GET_Y_LPARAM(lParam) / obj->scaleFactor;
+                int i = obj->elements.size() - 1;
+                if (i < 0) return true;
+                for (; i >=0; i--) {
+                    auto element = Element::GetPtr(obj->elements[i]);
+                    element->MouseMove(x, y);
+                }
+            }
             break;
         }
         case WM_CLOSE: {

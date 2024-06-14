@@ -8,6 +8,17 @@ closeDiv.setAlign(1, 1);
 closeDiv.setText(0xE6E6);
 closeDiv.setFontSize(14);
 closeDiv.setTextColor(0xFF000000);
+closeDiv.onMouseEnter(() => {
+    closeDiv.setTextColor(0xFFFFFFFF);
+    closeDiv.setColor(0xFF662288);
+    win.refresh();
+    console.log("enter");
+});
+closeDiv.onMouseLeave(() => {
+    closeDiv.setColor(0xFFAA66FF);
+    win.refresh();
+    console.log("out");
+});
 
 let div = Div.newXYWH(50, 50, 700, 700);
 div.setColor(0xFF663388);

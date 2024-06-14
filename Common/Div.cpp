@@ -49,8 +49,6 @@ void Div::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Div::setFontFamily, "setFontFamily", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Div::onMouseEnter, "onMouseEnter", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Div::onMouseLeave, "onMouseLeave", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "offMouseEnter", JS_NewCFunction(ctx, &Div::offMouseEnter, "offMouseEnter", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "offMouseLeave", JS_NewCFunction(ctx, &Div::offMouseLeave, "offMouseLeave", 1));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Div::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Div::newXYWH, "newXYWH", 4));
@@ -126,6 +124,30 @@ void Div::Paint(Win* win)
 		font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
 		auto [left, top] = getTextPos(lineRect);
 		win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, left, top, *font, textPaint);
+	}
+}
+
+void Div::MouseMove(const float& x, const float& y)
+{
+	auto flag = rect.contains(x, y);
+	if (flag == isMouseEnter) {
+		return;
+	}
+	isMouseEnter = flag;
+	auto ctx = JS::GetCtx();
+	if (flag) {
+		if (!JS_IsFunction(ctx,mouseEnterCB)) {
+			return;
+		}
+		JSValue ret = JS_Call(ctx, mouseEnterCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+		JS_FreeValue(ctx, ret);
+	}
+	else {
+		if (!JS_IsFunction(ctx, mouseLeaveCB)) {
+			return;
+		}
+		JSValue ret = JS_Call(ctx, mouseLeaveCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+		JS_FreeValue(ctx, ret);
 	}
 }
 
@@ -211,22 +233,16 @@ JSValue Div::setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSVal
 
 JSValue Div::onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	return JSValue();
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	div->mouseEnterCB = JS_DupValue(ctx, argv[0]);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Div::onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	return JSValue();
-}
-
-JSValue Div::offMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	return JSValue();
-}
-
-JSValue Div::offMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	return JSValue();
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	div->mouseLeaveCB = JS_DupValue(ctx, argv[0]);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 
