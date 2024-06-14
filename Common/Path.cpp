@@ -16,12 +16,17 @@ namespace {
 		}
 	};
 }
-
+Path::~Path()
+{
+}
+Path::Path()
+{
+}
 JSValue Path::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
-	SkPath* path = new SkPath();
-	JS_SetOpaque(obj, path);
+	auto self = new Path();
+	JS_SetOpaque(obj, self);
 	return obj;
 }
 
@@ -47,9 +52,7 @@ void Path::Reg(JSContext* ctx)
 	JS_FreeValue(ctx, global);
 }
 
-Path::~Path()
-{
-}
+
 void Path::Paint(Win* win)
 {
 	win->canvas->drawPath(path, paint);
@@ -72,7 +75,18 @@ JSValue Path::lineTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 
 JSValue Path::arcTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	//todo
+	auto path = (Path*)JS_GetOpaque(thisVal, id);
+	auto rect = (Rect*)Element::GetPtr(argv[0]);
+	double startAngle;
+	if (JS_ToFloat64(ctx, &startAngle, argv[1])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	double sweepAngle;
+	if (JS_ToFloat64(ctx, &sweepAngle, argv[2])) {
+		return JS_ThrowTypeError(ctx, "arg1 error");
+	}
+	bool flag = JS_ToBool(ctx, argv[3]);
+	path->path.arcTo(rect->rect,startAngle,sweepAngle,flag);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

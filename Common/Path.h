@@ -10,8 +10,10 @@ public:
 	static void Reg(JSContext* ctx);
 	~Path();
 	void Paint(Win* win) override;
-private:
+	SkPath path;
+protected:
 	Path();
+private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue lineTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue arcTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -19,6 +21,6 @@ private:
 	static JSValue reset(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	SkPath path;
+
 };
 
