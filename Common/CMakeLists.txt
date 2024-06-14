@@ -5,6 +5,7 @@ file(GLOB_RECURSE COMMON
     "Rect.cpp" "Rect.h"
     "Div.cpp" "Div.h"
     "Path.cpp" "Path.h"
+    "Shadow.cpp" "Shadow.h"
     "Util.cpp" "Util.h"
     "Win.cpp" "Win.h" "WinDraw.cpp" "WinTimer.cpp" "WinSizePos.cpp"
 )
