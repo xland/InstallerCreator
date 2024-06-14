@@ -54,9 +54,9 @@ let path = new Path();
 path.addRect(Rect.newLTRB(50, 50, 680, 80));
 win.setCaptionPath(path);
 
-let shadowPath = new Path();
-shadowPath.addRect(Rect.newXYWH(50, 50, 700, 700))
-win.drawShadow(shadowPath);
+//let shadowPath = new Path();
+//shadowPath.addRect(Rect.newXYWH(50, 50, 700, 700))
+//win.drawShadow(shadowPath);
 win.addElement([div, closeDiv, minimizeDiv]);
 
 //let rect = Rect.newXYWH(50, 50, 200, 200)

@@ -22,6 +22,15 @@ Path::~Path()
 Path::Path()
 {
 }
+void Path::RegPathBase(JSContext* ctx, JSValue& protoInstance)
+{
+	JS_SetPropertyStr(ctx, protoInstance, "lineTo", JS_NewCFunction(ctx, &Path::lineTo, "lineTo", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "moveTo", JS_NewCFunction(ctx, &Path::moveTo, "moveTo", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "arcTo", JS_NewCFunction(ctx, &Path::arcTo, "moveTo", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "reset", JS_NewCFunction(ctx, &Path::reset, "reset", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "addRect", JS_NewCFunction(ctx, &Path::addRect, "addRect", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "addEllipse", JS_NewCFunction(ctx, &Path::addEllipse, "addEllipse", 1));
+}
 JSValue Path::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
@@ -37,12 +46,7 @@ void Path::Reg(JSContext* ctx)
 	JS_NewClass(rt, id, &pathClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
-	JS_SetPropertyStr(ctx, protoInstance, "lineTo", JS_NewCFunction(ctx, &Path::lineTo, "lineTo", 2));
-	JS_SetPropertyStr(ctx, protoInstance, "moveTo", JS_NewCFunction(ctx, &Path::moveTo, "moveTo", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "arcTo", JS_NewCFunction(ctx, &Path::arcTo, "moveTo", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "reset", JS_NewCFunction(ctx, &Path::reset, "reset", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "addRect", JS_NewCFunction(ctx, &Path::addRect, "addRect", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "addEllipse", JS_NewCFunction(ctx, &Path::addEllipse, "addEllipse", 1));
+	RegPathBase(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Path::constructor, pathClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);

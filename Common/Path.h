@@ -13,6 +13,7 @@ public:
 	SkPath path;
 protected:
 	Path();
+	static void RegPathBase(JSContext* ctx, JSValue& protoInstance);
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue lineTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

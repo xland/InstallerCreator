@@ -8,7 +8,7 @@
 
 namespace {
 	static JSClassID id;
-	static JSClassDef paintClass = {
+	static JSClassDef divClass = {
 		.class_name{"Div"},
 		.finalizer{[](JSRuntime* rt, JSValue val) {
 				auto div = (Div*)JS_GetOpaque(val, id);
@@ -38,7 +38,7 @@ void Div::Reg(JSContext* ctx)
 {
 	auto rt = JS_GetRuntime(ctx);
 	JS_NewClassID(rt, &id);
-	JS_NewClass(rt, id, &paintClass);
+	JS_NewClass(rt, id, &divClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
 	RegRectBase(ctx, protoInstance);
@@ -51,13 +51,13 @@ void Div::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Div::onMouseLeave, "onMouseLeave", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "onMouseDown", JS_NewCFunction(ctx, &Div::onMouseDown, "onMouseDown", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "onMouseUp", JS_NewCFunction(ctx, &Div::onMouseUp, "onMouseUp", 1));
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, divClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Div::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Div::newXYWH, "newXYWH", 4));
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 	JSValue global = JS_GetGlobalObject(ctx);
-	JS_SetPropertyStr(ctx, global, paintClass.class_name, ctroInstance);
+	JS_SetPropertyStr(ctx, global, divClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
 }
 
