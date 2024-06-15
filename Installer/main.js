@@ -18,6 +18,9 @@ minimizeDiv.onMouseLeave(() => {
     minimizeDiv.setColor(0xFFAA66FF);
     win.refresh();
 });
+minimizeDiv.onMouseDown(() => {
+    win.minimize();
+})
 
 let closeDiv = Div.newLTRB(715, 50, 750, 80);
 closeDiv.setColor(0xFFAA66FF);
@@ -36,10 +39,7 @@ closeDiv.onMouseLeave(() => {
     win.refresh();
 });
 closeDiv.onMouseDown(() => {
-    console.log("mouse down")
-})
-closeDiv.onMouseUp(() => {
-    console.log("mouse up")
+    win.close();
 })
 
 let div = Div.newXYWH(50, 50, 700, 700);
@@ -55,6 +55,9 @@ path.addRect(Rect.newLTRB(50, 50, 680, 80));
 win.setCaptionPath(path);
 
 let shadow = new Shadow();
+shadow.setAmbientColor(0x33000000);
+shadow.setSpotColor(0x00000000);
+shadow.setShadowSize(30);
 shadow.addRect(Rect.newXYWH(50, 50, 700, 700))
 win.addElement([shadow,div, closeDiv, minimizeDiv]);
 

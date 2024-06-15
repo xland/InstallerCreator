@@ -114,10 +114,11 @@ void Win::Reg(JSContext* ctx)
 	JSValue protoInstance = JS_NewObject(ctx);
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, &Win::show, "show", 0));
+    JS_SetPropertyStr(ctx, protoInstance, "minimize", JS_NewCFunction(ctx, &Win::minimize, "minimize", 0));
+    JS_SetPropertyStr(ctx, protoInstance, "close", JS_NewCFunction(ctx, &Win::close, "close", 0));
     JS_SetPropertyStr(ctx, protoInstance, "addElement", JS_NewCFunction(ctx, &Win::addElement, "addElement", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "addEventListener", JS_NewCFunction(ctx, &Win::addEventListener, "addEventListener", 2));
     regSizePos(ctx,protoInstance);
-    regDraw(ctx, protoInstance);
     regTimer(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Win::constructor, winClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
@@ -202,7 +203,7 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
         case WM_CLOSE: {
             //App::removeWindow(hWnd);
-            return true;
+            break;
         }
         case WM_MOUSEWHEEL: {
             POINT pt;
@@ -303,6 +304,20 @@ JSValue Win::show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* 
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
     win->show();
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::minimize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    ShowWindow(win->hwnd, SW_MINIMIZE);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::close(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    PostMessage(win->hwnd, WM_CLOSE, 0, 0);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

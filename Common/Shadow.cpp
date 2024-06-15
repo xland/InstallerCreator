@@ -26,9 +26,9 @@ Shadow::~Shadow()
 
 void Shadow::Paint(Win* win)
 {
-	SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, 30);// 定义阴影与 z 平面的关系    
+	SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// 定义阴影与 z 平面的关系    
 	SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
-	SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 60.f, ambientColor, spotColor, 0);
+	SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2*shadowSize, ambientColor, spotColor, 0);
 }
 
 JSValue Shadow::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv)
@@ -45,6 +45,36 @@ JSValue Shadow::setPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
 	shadow->path = path->path; //这里是个复制操作
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
+JSValue Shadow::setAmbientColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	unsigned int ambientColor;
+	if (JS_ToUint32(ctx, &ambientColor, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg1 error");
+	}
+	auto shadow = (Shadow*)JS_GetOpaque(thisVal, id);
+	shadow->ambientColor = ambientColor;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Shadow::setSpotColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	unsigned int spotColor;
+	if (JS_ToUint32(ctx, &spotColor, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg1 error");
+	}
+	auto shadow = (Shadow*)JS_GetOpaque(thisVal, id);
+	shadow->spotColor = spotColor;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Shadow::setShadowSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	double size;
+	if (JS_ToFloat64(ctx, &size, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	auto shadow = (Shadow*)JS_GetOpaque(thisVal, id);
+	shadow->shadowSize = size;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
 void Shadow::Reg(JSContext* ctx)
 {
 	auto rt = JS_GetRuntime(ctx);
@@ -54,6 +84,9 @@ void Shadow::Reg(JSContext* ctx)
 	RegBase(ctx, protoInstance);
 	RegPathBase(ctx, protoInstance);
 	JS_SetPropertyStr(ctx, protoInstance, "setPath", JS_NewCFunction(ctx, &Shadow::setPath, "setPath", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setAmbientColor", JS_NewCFunction(ctx, &Shadow::setAmbientColor, "setAmbientColor", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setSpotColor", JS_NewCFunction(ctx, &Shadow::setSpotColor, "setSpotColor", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setShadowSize", JS_NewCFunction(ctx, &Shadow::setShadowSize, "setShadowSize", 1));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Shadow::constructor, shadowClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);

@@ -11,8 +11,12 @@ protected:
 private:
 	uint32_t ambientColor;
 	uint32_t spotColor;
+	float shadowSize{30.f};
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue setPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setAmbientColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setSpotColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setShadowSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 };
 
 //shadow的path可能是窗口的轮廓,所以得考虑复用path的问题。

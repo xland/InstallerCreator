@@ -28,6 +28,8 @@ private:
 
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue minimize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue close(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -39,12 +41,6 @@ private:
 	static JSValue getSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setPosCenterScreen(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	//Draw
-	static void regDraw(JSContext* ctx, JSValue& proto);
-	static JSValue drawRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue drawEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue drawShadow(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue drawText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	//Timer
 	static void regTimer(JSContext* ctx, JSValue& proto);
 	static void CALLBACK timeoutProc(HWND hWnd, UINT uMsg, UINT_PTR idEvent, DWORD dwTime);
