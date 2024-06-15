@@ -40,6 +40,7 @@ private:
 	static void regGlobal();
 	static JSValue jsLog(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue quit(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static void loadIndexJs(JSContext* ctx);	
 };
 

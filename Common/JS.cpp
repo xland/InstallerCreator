@@ -60,6 +60,10 @@ void JS::regGlobal()
     JS_SetPropertyStr(ctx, font, "init", JS_NewCFunction(ctx, &JS::initFont, "init", 1));
     JS_SetPropertyStr(ctx, globalObj, "font", font);
 
+    JSValue app = JS_NewObject(ctx);
+    JS_SetPropertyStr(ctx, app, "quit", JS_NewCFunction(ctx, &JS::quit, "quit", 0));
+    JS_SetPropertyStr(ctx, globalObj, "app", app);
+
     JS_FreeValue(ctx, globalObj);
 }
 
@@ -123,10 +127,6 @@ JSValue JS::initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
         }
     }
     return MakeVal(0, JS_TAG_UNDEFINED);
-
-
-
-
 //    SkString file_path;
 //    file_path.printf("%s/%s", fResourceDir.c_str(), path.c_str());
 //    std::unique_ptr<SkStreamAsset> file = SkFILEStream::Make(file_path.c_str());
@@ -149,6 +149,12 @@ JSValue JS::initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 //    else {
 //        fFontProvider->registerTypeface(std::move(face), SkString(familyName.c_str()));
 //    }
+}
+
+JSValue JS::quit(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    PostQuitMessage(0);
+    return MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 void JS::loadIndexJs(JSContext* ctx)

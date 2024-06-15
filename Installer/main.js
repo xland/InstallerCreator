@@ -39,7 +39,8 @@ closeDiv.onMouseLeave(() => {
     win.refresh();
 });
 closeDiv.onMouseDown(() => {
-    win.close();
+    //win.close();
+    app.quit();
 })
 
 let div = Div.newXYWH(50, 50, 700, 700);
