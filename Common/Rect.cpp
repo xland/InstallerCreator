@@ -91,7 +91,7 @@ JSValue Rect::setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	if (JS_IsException(err)) {
 		return err;
 	}
-	auto rect = (Rect*)JS_GetOpaque(thisVal, id);
+	auto rect = (Rect*)Element::GetPtr(thisVal);
 	rect->rect.setLTRB(l, t, r, b);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
@@ -102,7 +102,7 @@ JSValue Rect::setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	if (JS_IsException(err)) {
 		return err;
 	}
-	auto rect = (Rect*)JS_GetOpaque(thisVal, id);
+	auto rect = (Rect*)Element::GetPtr(thisVal);
 	rect->rect.setXYWH(x, y, w, h);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
@@ -117,7 +117,7 @@ JSValue Rect::contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 	if (JS_ToFloat64(ctx, &arg2, argv[1])) {
 		return JS_ThrowTypeError(ctx, "arg1 error");
 	}
-	auto rect = (Rect*)JS_GetOpaque(thisVal, id);
+	auto rect = (Rect*)Element::GetPtr(thisVal);
 	auto flag = rect->rect.contains(arg1, arg2);
 	return JS_NewBool(ctx, flag);
 }

@@ -3,6 +3,7 @@
 #include "include/core/SkRect.h"
 #include "Win.h"
 #include "JS.h"
+#include "Shadow.h"
 
 
 namespace {
@@ -64,7 +65,7 @@ void Path::Paint(Win* win)
 
 JSValue Path::lineTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto path = (Path*)JS_GetOpaque(thisVal, id);
+	auto path = (Path*)Element::GetPtr(thisVal);
 	double x;
 	if (JS_ToFloat64(ctx, &x, argv[0])) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -79,7 +80,7 @@ JSValue Path::lineTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 
 JSValue Path::arcTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto path = (Path*)JS_GetOpaque(thisVal, id);
+	auto path = (Path*)Element::GetPtr(thisVal);
 	auto rect = (Rect*)Element::GetPtr(argv[0]);
 	double startAngle;
 	if (JS_ToFloat64(ctx, &startAngle, argv[1])) {
@@ -96,7 +97,7 @@ JSValue Path::arcTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst
 
 JSValue Path::moveTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto path = (Path*)JS_GetOpaque(thisVal, id);
+	auto path = (Path*)Element::GetPtr(thisVal);
 	double x;
 	if (JS_ToFloat64(ctx, &x, argv[0])) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -111,14 +112,14 @@ JSValue Path::moveTo(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 
 JSValue Path::reset(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto path = (Path*)JS_GetOpaque(thisVal, id);
+	auto path = (Path*)Element::GetPtr(thisVal);
 	path->path.reset();
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Path::addRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto path = (Path*)JS_GetOpaque(thisVal, id);
+	auto path = (Path*)Element::GetPtr(thisVal);
 	auto rect = (Rect*)Element::GetPtr(argv[0]);
 	path->path.addRect(rect->rect);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
@@ -126,7 +127,7 @@ JSValue Path::addRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 
 JSValue Path::addEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto path = (Path*)JS_GetOpaque(thisVal, id);
+	auto path = (Path*)Element::GetPtr(thisVal);
 	auto rect = (Rect*)Element::GetPtr(argv[0]);
 	path->path.addOval(rect->rect);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);

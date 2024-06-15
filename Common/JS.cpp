@@ -12,6 +12,7 @@
 #include "Path.h"
 #include "Rect.h"
 #include "Div.h"
+#include "Shadow.h"
 #ifdef DEBUG
 #include <iostream>
 #include <fcntl.h>
@@ -37,6 +38,7 @@ void JS::Init()
         return;
     }
     regGlobal();
+    Shadow::Reg(ctx);
     Path::Reg(ctx);
     Rect::Reg(ctx);
     Div::Reg(ctx);
