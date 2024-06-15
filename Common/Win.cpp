@@ -1,5 +1,4 @@
 #include "Win.h"
-#include <windowsx.h>
 #include <dwmapi.h>
 #include <map>
 #include <string>
@@ -126,116 +125,6 @@ void Win::Reg(JSContext* ctx)
 	JSValue global = JS_GetGlobalObject(ctx);
 	JS_SetPropertyStr(ctx, global, winClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
-}
-
-LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-{
-    if (msg == WM_NCCREATE)
-    {
-        CREATESTRUCT* pCS = reinterpret_cast<CREATESTRUCT*>(lParam);
-        LPVOID pThis = pCS->lpCreateParams;
-        SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
-    }
-    auto obj = reinterpret_cast<Win*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
-    if (obj)
-    {
-        switch (msg)
-        {
-        case WM_NCCALCSIZE:
-        {
-            return false;
-        }
-        case WM_LBUTTONDOWN:
-        {
-            if (obj->captionPath.contains(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))) {
-                obj->isCaptionMouseDown = true;
-                GetCursorPos(&obj->startPos);
-                SetCapture(hWnd);
-            }
-            else {
-                int i = obj->elements.size() - 1;
-                if (i < 0) return true;
-                for (; i >= 0; i--) {
-                    auto element = Element::GetPtr(obj->elements[i]);
-                    element->MouseDown();
-                }
-            }
-            break;
-        }
-        case WM_LBUTTONUP:
-        {
-            obj->isCaptionMouseDown = false;
-            int i = obj->elements.size() - 1;
-            if (i < 0) return true;
-            for (; i >= 0; i--) {
-                auto element = Element::GetPtr(obj->elements[i]);
-                element->MouseUp();
-            }
-            break;
-        }
-        case WM_MOUSELEAVE: {
-            //obj->mouseLeave();
-            return true;
-        }
-        case WM_MOUSEMOVE:
-        {
-            if (obj->isCaptionMouseDown) {
-                POINT point;
-                GetCursorPos(&point);
-                int dx = point.x - obj->startPos.x;
-                int dy = point.y - obj->startPos.y;
-                obj->x += dx;
-                obj->y += dy;
-                SetWindowPos(hWnd, nullptr, obj->x, obj->y, 0, 0, SWP_NOZORDER | SWP_NOOWNERZORDER | SWP_NOSIZE);
-                obj->startPos = point;
-            }
-            else {
-                auto x = (float)GET_X_LPARAM(lParam) / obj->scaleFactor;
-                auto y = (float)GET_Y_LPARAM(lParam) / obj->scaleFactor;
-                int i = obj->elements.size() - 1;
-                if (i < 0) return true;
-                for (; i >=0; i--) {
-                    auto element = Element::GetPtr(obj->elements[i]);
-                    element->MouseMove(x, y);
-                }
-            }
-            break;
-        }
-        case WM_CLOSE: {
-            //App::removeWindow(hWnd);
-            break;
-        }
-        case WM_MOUSEWHEEL: {
-            POINT pt;
-            pt.x = GET_X_LPARAM(lParam);
-            pt.y = GET_Y_LPARAM(lParam);
-            ScreenToClient(hWnd, &pt);
-            //obj->mouseWheel(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam));
-            break;
-        }
-        case WM_DPICHANGED:{
-            UINT dpi = LOWORD(wParam);
-            obj->scaleFactor = static_cast<float>(dpi) / 96.0f;
-            obj->canvas->scale(obj->scaleFactor, obj->scaleFactor);
-            RECT* rect = (RECT*)lParam;
-            obj->x = rect->left;
-            obj->y = rect->top;
-            obj->w = rect->right - rect->left;
-            obj->h = rect->bottom - rect->top;
-            SetWindowPos(hWnd, NULL, obj->x, obj->y, obj->w, obj->h, SWP_NOZORDER | SWP_NOACTIVATE | SWP_NOSIZE);
-            DeleteDC(obj->hCompatibleDC);
-            DeleteObject(obj->bottomHbitmap);
-            obj->initCanvas();
-            obj->paint();
-            break;
-        }
-        default:
-        {
-            break;
-        }
-        }
-    }
-    return DefWindowProc(hWnd, msg, wParam, lParam);
 }
 
 void Win::initWindow(std::wstring& title)
@@ -368,4 +257,3 @@ JSValue Win::addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JS
     JS_FreeCString(ctx, key);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-

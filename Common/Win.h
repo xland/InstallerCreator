@@ -19,8 +19,6 @@ public:
 private:
 	Win();
 	static Win* getPtr(JSValue& val);
-	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
-
 	void initWindow(std::wstring& title);
 	void initCanvas();
 	void show();
@@ -49,7 +47,12 @@ private:
 	static JSValue setInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue clearTimeout(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue clearInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-
+	//Msg
+	static LRESULT CALLBACK RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam);
+	void lBtnDown(const LPARAM& lParam);
+	void lBtnUp();
+	void mouseMove(const LPARAM& lParam);
+	void dpiChanged(const WPARAM& wParam, const LPARAM& lParam);
 
 	int x, y, w{ 1200 }, h{800};
 	float scaleFactor;
@@ -60,6 +63,7 @@ private:
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;
 	SkPath captionPath;
+	SkPath captionPathScale;
 	bool isCaptionMouseDown{false};
 	POINT startPos;
 };

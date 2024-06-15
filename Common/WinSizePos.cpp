@@ -74,9 +74,7 @@ JSValue Win::setCaptionPath(JSContext* ctx, JSValueConst thisVal, int argc, JSVa
 {
     auto win = getPtr(thisVal);
     auto path = (Path*)Element::GetPtr(argv[0]);
-    SkMatrix matrix;
-    matrix.setScale(win->scaleFactor, win->scaleFactor);
-    path->path.transform(matrix, &win->captionPath);
+    win->captionPath = path->path;
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
