@@ -52,6 +52,7 @@ private:
 	void lBtnDown(const LPARAM& lParam);
 	void lBtnUp();
 	void mouseMove(const LPARAM& lParam);
+	void mouseLeave();
 	void dpiChanged(const WPARAM& wParam, const LPARAM& lParam);
 
 	int x, y, w{ 1200 }, h{800};
@@ -64,6 +65,7 @@ private:
 	HBITMAP bottomHbitmap;
 	SkPath captionPath;
 	SkPath captionPathScale;
+	bool isTrackMouseEvent{ false };
 	bool isCaptionMouseDown{false};
 	POINT startPos;
 };

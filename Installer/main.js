@@ -8,13 +8,14 @@ minimizeDiv.setFontFamily("iconfont.ttf");
 minimizeDiv.setAlign(1, 1);
 minimizeDiv.setText(0xE6E7);
 minimizeDiv.setFontSize(14);
-minimizeDiv.setTextColor(0xFF000000);
+minimizeDiv.setTextColor(0xFFFFFFFF);
 minimizeDiv.onMouseEnter(() => {
-    minimizeDiv.setTextColor(0xFFFFFFFF);
+    minimizeDiv.setTextColor(0xFF000000);
     minimizeDiv.setColor(0xFF662288);
     win.refresh();
 });
 minimizeDiv.onMouseLeave(() => {
+    minimizeDiv.setTextColor(0xFFFFFFFF);
     minimizeDiv.setColor(0xFFAA66FF);
     win.refresh();
 });
@@ -28,13 +29,14 @@ closeDiv.setFontFamily("iconfont.ttf");
 closeDiv.setAlign(1, 1);
 closeDiv.setText(0xE6E6);
 closeDiv.setFontSize(14);
-closeDiv.setTextColor(0xFF000000);
+closeDiv.setTextColor(0xFFFFFFFF);
 closeDiv.onMouseEnter(() => {
-    closeDiv.setTextColor(0xFFFFFFFF);
+    closeDiv.setTextColor(0xFF000000);
     closeDiv.setColor(0xFF662288);
     win.refresh();
 });
 closeDiv.onMouseLeave(() => {
+    closeDiv.setTextColor(0xFFFFFFFF);
     closeDiv.setColor(0xFFAA66FF);
     win.refresh();
 });

@@ -29,14 +29,14 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
             obj->lBtnUp();
             break;
         }
-        case WM_MOUSELEAVE: {
-            //obj->mouseLeave();
-            return true;
-        }
         case WM_MOUSEMOVE:
         {
             obj->mouseMove(lParam);
             break;
+        }
+        case WM_MOUSELEAVE: {
+            obj->mouseLeave();
+            return true;
         }
         case WM_CLOSE: {
             //App::removeWindow(hWnd);
@@ -96,6 +96,14 @@ void Win::lBtnUp()
 
 void Win::mouseMove(const LPARAM& lParam)
 {
+    if (!isTrackMouseEvent) {
+        TRACKMOUSEEVENT tme = {};
+        tme.cbSize = sizeof(TRACKMOUSEEVENT);
+        tme.dwFlags = TME_HOVER | TME_LEAVE;
+        tme.hwndTrack = hwnd;
+        tme.dwHoverTime = 1;
+        isTrackMouseEvent = TrackMouseEvent(&tme);
+    }
     if (isCaptionMouseDown) {
         POINT point;
         GetCursorPos(&point);
@@ -115,6 +123,21 @@ void Win::mouseMove(const LPARAM& lParam)
             auto element = Element::GetPtr(elements[i]);
             element->MouseMove(x, y);
         }
+    }
+}
+
+void Win::mouseLeave()
+{
+    TRACKMOUSEEVENT tme = {};
+    tme.cbSize = sizeof(TRACKMOUSEEVENT);
+    tme.dwFlags = TME_CANCEL | TME_HOVER | TME_LEAVE;
+    tme.hwndTrack = hwnd;
+    TrackMouseEvent(&tme);
+    isTrackMouseEvent = false;
+    for (auto& obj : elements)
+    {
+        auto element = Element::GetPtr(obj);
+        element->MouseMove(-888888, -888888);
     }
 }
 
