@@ -4,6 +4,7 @@ file(GLOB_RECURSE COMMON
     "Element.cpp" "Element.h"
     "Rect.cpp" "Rect.h"
     "Div.cpp" "Div.h"
+    "Img.cpp" "Img.h"
     "Path.cpp" "Path.h"
     "Shadow.cpp" "Shadow.h"
     "Util.cpp" "Util.h"

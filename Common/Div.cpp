@@ -22,6 +22,10 @@ Div::Div()
 {
 
 }
+
+Div::~Div()
+{
+}
 JSValue Div::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
@@ -29,10 +33,6 @@ JSValue Div::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVal
 	JS_SetOpaque(obj, self);
 	return obj;
 }
-Div::~Div()
-{
-}
-
 
 void Div::Reg(JSContext* ctx)
 {

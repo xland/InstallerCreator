@@ -12,6 +12,7 @@
 #include "Path.h"
 #include "Rect.h"
 #include "Div.h"
+#include "Img.h"
 #include "Shadow.h"
 #ifdef DEBUG
 #include <iostream>
@@ -43,6 +44,7 @@ void JS::Init()
     Rect::Reg(ctx);
     Div::Reg(ctx);
     Win::Reg(ctx);
+    Img::Reg(ctx);
     loadIndexJs(ctx);
 }
 
