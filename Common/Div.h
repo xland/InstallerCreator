@@ -13,6 +13,7 @@ public:
 	void MouseMove(const float& x, const float& y) override;
 	void MouseDown() override;
 	void MouseUp() override;
+	void Dispose() override;
 private:
 	Div();
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);

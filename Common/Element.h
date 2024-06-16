@@ -15,6 +15,7 @@ public:
 	virtual void MouseMove(const float& x, const float& y) {};
 	virtual void MouseDown() {};
 	virtual void MouseUp() {};
+	virtual void Dispose() {};
 	static Element* GetPtr(JSValue& val);
 protected:
 	Element();

@@ -182,6 +182,15 @@ void Div::MouseUp()
 	JS_FreeValue(ctx, ret);
 }
 
+void Div::Dispose()
+{
+	auto ctx = JS::GetCtx();
+	JS_FreeValue(ctx, mouseEnterCB);
+	JS_FreeValue(ctx, mouseLeaveCB);
+	JS_FreeValue(ctx, mouseDownCB);
+	JS_FreeValue(ctx, mouseUpCB);
+}
+
 JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto div = (Div*)JS_GetOpaque(thisVal, id);	

@@ -13,10 +13,10 @@ namespace {
 	static JSClassDef winClass = {
 		.class_name{"Win"},
 		.finalizer{[](JSRuntime* rt, JSValue val) {
-				auto win = (Win*)JS_GetOpaque(val, id);
-				delete win;
-			} 
-		}
+                auto win = (Win*)JS_GetOpaque(val, id);
+                delete win;
+            }
+        }
 	};
 }
 Win::Win()
@@ -116,7 +116,6 @@ void Win::Reg(JSContext* ctx)
     JS_SetPropertyStr(ctx, protoInstance, "minimize", JS_NewCFunction(ctx, &Win::minimize, "minimize", 0));
     JS_SetPropertyStr(ctx, protoInstance, "close", JS_NewCFunction(ctx, &Win::close, "close", 0));
     JS_SetPropertyStr(ctx, protoInstance, "addElement", JS_NewCFunction(ctx, &Win::addElement, "addElement", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "addEventListener", JS_NewCFunction(ctx, &Win::addEventListener, "addEventListener", 2));
     regSizePos(ctx,protoInstance);
     regTimer(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Win::constructor, winClass.class_name, 5, JS_CFUNC_constructor, 0);
@@ -172,6 +171,18 @@ void Win::paint()
     ReleaseDC(hwnd, hdc);
 }
 
+void Win::closed()
+{
+    auto ctx = JS::GetCtx();
+    for (size_t i = 0; i < elements.size(); i++)
+    {
+        auto ele = Element::GetPtr(elements[i]);
+        ele->Dispose();
+        JS_FreeValue(ctx, elements[i]);
+    }
+    PostQuitMessage(0);
+}
+
 void Win::initCanvas()
 {
     HDC hdc = GetDC(hwnd);
@@ -206,7 +217,7 @@ JSValue Win::minimize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 JSValue Win::close(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
-    PostMessage(win->hwnd, WM_CLOSE, 0, 0);
+    PostMessage(win->hwnd, WM_CLOSE, 0, 0);    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -233,27 +244,5 @@ JSValue Win::refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
     win->paint();
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-JSValue Win::addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    //todo unbind
-    const char* key = JS_ToCString(ctx, argv[0]);
-    if (!key) {
-        return JS_ThrowTypeError(ctx, "arg0 error");
-    }
-    if (!JS_IsFunction(ctx, argv[1])) {
-        JS_FreeCString(ctx, key);
-        return JS_ThrowTypeError(ctx, "arg1 error");
-    }
-    auto win = (Win*)JS_GetOpaque(thisVal, id);
-    if (strcmp(key, "paint") == 0) {
-        win->printCB.push_back(JS_DupValue(ctx, argv[1]));
-    }
-    else if (strcmp(key, "size") == 0) { //todo
-
-    }
-    JS_FreeCString(ctx, key);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

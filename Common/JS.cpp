@@ -45,7 +45,7 @@ JSContext* JS::GetCtx()
 
 void JS::Dispose()
 {
-    App::Dispose();
+    //App::Dispose();
     JS_FreeContext(ctx);
     JS_FreeRuntime(rt);
 }

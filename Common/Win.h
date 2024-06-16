@@ -23,6 +23,7 @@ private:
 	void initCanvas();
 	void show();
 	void paint();
+	void closed();
 
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue show(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -30,7 +31,6 @@ private:
 	static JSValue close(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue addEventListener(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	//SizePos
 	static void regSizePos(JSContext* ctx, JSValue& proto);
 	static JSValue setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -59,7 +59,6 @@ private:
 	float scaleFactor;
 	HWND hwnd;
 	SkAutoMalloc surfaceMemory;
-	std::vector<JSValue> printCB;
 	std::vector<JSValue> elements;
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;

@@ -13,6 +13,7 @@
 
 
 namespace {
+    JSValue app;
     std::map<std::string, SkFont*> fontMap;
 }
 
@@ -27,13 +28,15 @@ void App::Reg(JSContext* ctx)
 {
     SkGraphics::Init();
     JSValue globalObj = JS_GetGlobalObject(ctx);
-    JSValue app = JS_NewObject(ctx);
+    app = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, app, "initFont", JS_NewCFunction(ctx, &App::initFont, "initFont", 1));
     JS_SetPropertyStr(ctx, app, "quit", JS_NewCFunction(ctx, &App::quit, "quit", 0));
     JS_SetPropertyStr(ctx, globalObj, "app", app);
     JS_FreeValue(ctx, globalObj);
 }
 void App::Dispose() {
+    auto ctx = JS::GetCtx();
+    JS_FreeValue(ctx, app);
     for (const auto& pair : fontMap) {
         delete pair.second;
     }
