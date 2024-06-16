@@ -1,7 +1,7 @@
 #include "Img.h"
 #include "Win.h"
+#include "Util.h"
 #include "include/core/SkData.h"
-#include "include/core/SkImage.h"
 #include "include/core/SkImageInfo.h"
 #include "include/core/SkStream.h"
 #include "include/codec/SkCodec.h"
@@ -40,7 +40,8 @@ void Img::Reg(JSContext* ctx)
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
 	RegRectBase(ctx, protoInstance);
-	JS_SetPropertyStr(ctx, protoInstance, "setImg", JS_NewCFunction(ctx, &Img::setImg, "setImg", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setSrc", JS_NewCFunction(ctx, &Img::setSrc, "setSrc", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setAlpha", JS_NewCFunction(ctx, &Img::setAlpha, "setAlpha", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setFillType", JS_NewCFunction(ctx, &Img::setFillType, "setFillType", 1));
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Img::constructor, divClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Img::newLTRB, "newLTRB", 4));
@@ -53,15 +54,37 @@ void Img::Reg(JSContext* ctx)
 }
 void Img::Paint(Win* win)
 {
-	auto data = SkData::MakeFromFileName("img.png");
-	auto img = SkImages::DeferredFromEncodedData(data);
 	SkSamplingOptions option{ SkFilterMode::kLinear, SkMipmapMode::kLinear };
-	win->canvas->drawImageRect(img, rect, option);
+	auto src = SkRect::MakeXYWH(0, 0, img->width(), img->height());
+	SkPaint paint;
+	paint.setAlpha(alpha);
+	win->canvas->drawImageRect(img, src, rect, option, &paint, SkCanvas::kFast_SrcRectConstraint);
+	//win->canvas->drawImage(img, 50, 50);
 }
 
-JSValue Img::setImg(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue Img::setSrc(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	return JSValue();
+	auto img = (Img*)JS_GetOpaque(thisVal, id);
+	const char* strData = JS_ToCString(ctx, argv[0]);
+	if (!strData) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	//auto src = Util::ConvertToWideChar(strData);
+	JS_FreeCString(ctx, strData);
+	auto data = SkData::MakeFromFileName(strData);
+	img->img = SkImages::DeferredFromEncodedData(data);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Img::setAlpha(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto img = (Img*)JS_GetOpaque(thisVal, id);
+	double alpha;
+	if (JS_ToFloat64(ctx, &alpha, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	img->alpha = static_cast<unsigned>(std::round(alpha * 255.f));
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Img::setFillType(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

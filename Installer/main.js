@@ -64,7 +64,8 @@ shadow.setShadowSize(30);
 shadow.addRect(Rect.newXYWH(50, 50, 700, 700))
 
 let img = Img.newXYWH(50, 50, 700, 700);
-
+img.setSrc("img.png");
+img.setAlpha(0.5)
 win.addElement([shadow, div, img,closeDiv, minimizeDiv]);
 
 //let rect = Rect.newXYWH(50, 50, 200, 200)
