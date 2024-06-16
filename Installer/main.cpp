@@ -1,4 +1,4 @@
-#include <Windows.h>
+﻿#include <Windows.h>
 #include "App.h"
 #include "JS.h"
 #include "Util.h"
@@ -9,8 +9,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
     Util::InitDebuger();
 #endif
     JS::Init();
-    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-    if (FAILED(hr)) return;
+    (void)CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE); //明确忽略返回值
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0))
     {
@@ -18,5 +17,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance, _In_opt_ HINSTANCE hPrevInstance
         DispatchMessage(&msg);
     }
     CoUninitialize();
+    JS::Dispose();
     return 0;
 }

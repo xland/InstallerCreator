@@ -41,7 +41,8 @@ closeDiv.onMouseLeave(() => {
     win.refresh();
 });
 closeDiv.onMouseDown(() => {
-    //win.close();
+    globalThis.win = null;
+    win.close();
     app.quit();
 })
 
@@ -66,7 +67,7 @@ shadow.addRect(Rect.newXYWH(50, 50, 700, 700))
 let img = Img.newXYWH(50, 50, 700, 700);
 img.setSrc("img.png");
 img.setAlpha(0.5)
-win.addElement([shadow, div, img,closeDiv, minimizeDiv]);
+win.addElement([closeDiv]);
 
 //let rect = Rect.newXYWH(50, 50, 200, 200)
 //win.addEventListener("paint", () => {
