@@ -62,7 +62,10 @@ shadow.setAmbientColor(0x33000000);
 shadow.setSpotColor(0x00000000);
 shadow.setShadowSize(30);
 shadow.addRect(Rect.newXYWH(50, 50, 700, 700))
-win.addElement([shadow,div, closeDiv, minimizeDiv]);
+
+let img = Img.newXYWH(50, 50, 700, 700);
+
+win.addElement([shadow, div, img,closeDiv, minimizeDiv]);
 
 //let rect = Rect.newXYWH(50, 50, 200, 200)
 //win.addEventListener("paint", () => {
