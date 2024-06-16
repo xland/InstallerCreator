@@ -1,9 +1,6 @@
 #pragma once
 #include "include/core/SkPath.h"
 #include "Element.h"
-extern "C" {
-#include <quickjs.h>
-}
 class Path:public Element
 {
 public:

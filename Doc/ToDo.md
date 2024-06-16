@@ -1,1 +1,3 @@
-- ╪хх╩спакRect╤тоСё╛╬м╟яж╝г╟╣дAPI╦дЁиRect
+- WinХ╕│Ф°┴Х┐╫Е┼⌡Е┬═И≥╓Е┘┐Г╢═
+- WinХ╕│Х┐╫DisposeО╪▄App DisposeД╧▀Е┴█Х╕│Ф┼┼Win DisposeФ▌┴
+- 

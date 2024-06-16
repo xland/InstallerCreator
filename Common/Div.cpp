@@ -5,6 +5,7 @@
 #include <iostream>
 #include "Util.h"
 #include "Win.h"
+#include "App.h"
 
 namespace {
 	static JSClassID id;
@@ -256,7 +257,7 @@ JSValue Div::setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSVal
 		return JS_ThrowTypeError(ctx, "arg0 error");
 	}
 	auto name = std::string{ fontName };
-	div->font = JS::GetFont(name);
+	div->font = App::GetFont(name);
 	JS_FreeCString(ctx, fontName);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

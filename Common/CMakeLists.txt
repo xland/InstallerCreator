@@ -1,6 +1,8 @@
 file(GLOB_RECURSE COMMON
-    "App.cpp" "App.h"
     "JS.cpp" "JS.h"
+    "App.cpp" "App.h"
+    "Console.cpp" "Console.h"
+    "Sys.cpp" "Sys.h"
     "Element.cpp" "Element.h"
     "Rect.cpp" "Rect.h"
     "Div.cpp" "Div.h"

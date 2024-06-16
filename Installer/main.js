@@ -1,4 +1,4 @@
-﻿font.init(["Microsoft YaHei","iconfont.ttf"]);
+﻿app.initFont(["Microsoft YaHei","iconfont.ttf"]);
 
 let win = new Win("我的窗口", 800, 800);
 
