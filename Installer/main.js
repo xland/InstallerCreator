@@ -2,18 +2,18 @@
 let win = new Win("我的窗口", 800, 600); //默认为透明窗口
 
 let closeDiv = Div.newLTRB(715, 50, 750, 80);
-closeDiv.setColor(0xFFAA66FF);
+closeDiv.setColor(0x00000000);
 closeDiv.setFontFamily("iconfont.ttf");
 closeDiv.setAlign(1, 1);
 closeDiv.setText(0xE6E6);
 closeDiv.setFontSize(14);
-closeDiv.setTextColor(0xFFFFFFFF);
+closeDiv.setTextColor(0x88000000);
 closeDiv.onMouseEnter(() => {
-    closeDiv.setColor(0xFF662288);
+    closeDiv.setColor(0x33000000);
     win.refresh();
 });
 closeDiv.onMouseLeave(() => {
-    closeDiv.setColor(0xFFAA66FF);
+    closeDiv.setColor(0x00000000);
     win.refresh();
 });
 closeDiv.onMouseDown(() => {
@@ -23,18 +23,18 @@ closeDiv.onMouseDown(() => {
 
 
 let minimizeDiv = Div.newLTRB(680, 50, 715, 80);
-minimizeDiv.setColor(0xFFAA66FF);
+minimizeDiv.setColor(0x00000000);
 minimizeDiv.setFontFamily("iconfont.ttf");
 minimizeDiv.setAlign(1, 1);
 minimizeDiv.setText(0xE6E7);
 minimizeDiv.setFontSize(14);
-minimizeDiv.setTextColor(0xFFFFFFFF);
+minimizeDiv.setTextColor(0x88000000);
 minimizeDiv.onMouseEnter(() => {
-    minimizeDiv.setColor(0xFF662288);
+    minimizeDiv.setColor(0x33000000);
     win.refresh();
 });
 minimizeDiv.onMouseLeave(() => {
-    minimizeDiv.setColor(0xFFAA66FF);
+    minimizeDiv.setColor(0x00000000);
     win.refresh();
 });
 minimizeDiv.onMouseDown(() => {
@@ -43,7 +43,7 @@ minimizeDiv.onMouseDown(() => {
 
 
 let div = Div.newXYWH(50, 50, 700, 500);
-div.setColor(0xFF663388);
+div.setColor(0xFFFFFFFF);
 div.setTextColor(0xFFAA3322)
 div.setAlign(1, 1);
 div.setFontSize(22);
@@ -54,10 +54,18 @@ shadow.setSpotColor(0x00000000);
 shadow.setShadowSize(30);
 shadow.addRect(Rect.newXYWH(50, 50, 700, 500))
 
-let img = Img.newXYWH(50, 50, 700, 350);
-img.setSrc("img.png");
-img.setAlpha(0.5)
-win.addElement([shadow, div, img, closeDiv, minimizeDiv]);
+let banner1 = Img.newXYWH(50, 50, 700, 350);
+banner1.setSrc("banner1.png");
+let banner2 = Img.newXYWH(50, 50, 700, 350);
+banner2.setSrc("banner2.png");
+banner2.setAlpha(0);
+let banner3 = Img.newXYWH(50, 50, 700, 350);
+banner3.setSrc("banner3.png");
+banner3.setAlpha(0);
+let bannerArr = [banner1, banner2, banner3];
+
+win.addElement([shadow, div, ...bannerArr, closeDiv, minimizeDiv]);
+
 
 let path = new Path();
 path.addRect(Rect.newLTRB(50, 50, 680, 80));
@@ -65,5 +73,33 @@ win.setCaptionPath(path);
 
 win.show();
 
+
+let curIndex = 0;
+let span = 3000;
+let alpha = 1;
+win.setInterval(() => {
+    if (span > 0) {
+        span -= 20; //等待
+        return;
+    }
+    let nextIndex = curIndex + 1;
+    if (nextIndex >= bannerArr.length) {
+        nextIndex = 0;
+    }
+    alpha -= 0.02;
+    bannerArr[curIndex].setAlpha(alpha);
+    bannerArr[nextIndex].setAlpha(1-alpha);
+    if (alpha <= 0) {
+        alpha = 1;
+        span = 3000;
+        curIndex = nextIndex;
+        for (let i = 0; i < bannerArr.length; i++) {
+            if (i != curIndex) {
+                bannerArr[i].setAlpha(0);
+            }
+        }
+    }
+    win.refresh();
+},20)
 
 globalThis.win = win;

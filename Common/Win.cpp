@@ -219,6 +219,7 @@ JSValue Win::minimize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 JSValue Win::close(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
+    win->DisposeTimer();
     PostMessage(win->hwnd, WM_CLOSE, 0, 0);    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

@@ -106,3 +106,16 @@ JSValue Win::clearInterval(JSContext* ctx, JSValueConst thisVal, int argc, JSVal
     }
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
+
+void Win::DisposeTimer()
+{
+    auto ctx = JS::GetCtx();
+    for (const auto& [key, value] : timeoutCB) {
+        KillTimer(hwnd, key);
+        JS_FreeValue(ctx, value);
+    }
+    for (const auto& [key, value] : intervalCB) {
+        KillTimer(hwnd, key);
+        JS_FreeValue(ctx, value);
+    }
+}
