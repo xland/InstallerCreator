@@ -43,9 +43,23 @@ JSContext* JS::GetCtx()
     return ctx;
 }
 
+JSRuntime* JS::GetRt()
+{
+    return rt;
+}
+
 void JS::Dispose()
 {
     //App::Dispose();
+    JS_RunGC(JS::GetRt());
+    JSContext* pending_ctx;
+    int err;
+    while ((err = JS_ExecutePendingJob(rt, &pending_ctx)) > 0) {
+        int a = 1;
+    }
+    if (err < 0) {
+        fprintf(stderr, "Error in executing pending job\n");
+    }
     JS_FreeContext(ctx);
     JS_FreeRuntime(rt);
 }

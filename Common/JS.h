@@ -34,6 +34,7 @@ public:
 		};
 	};
 	static JSContext* GetCtx();
+	static JSRuntime* GetRt();
 	static void Dispose();
 private:
 	static void loadIndexJs(JSContext* ctx);	

@@ -160,7 +160,7 @@ void Div::MouseDown()
 		return;
 	}
 	auto ctx = JS::GetCtx();
-	if (!JS_IsFunction(ctx, mouseEnterCB)) {
+	if (!JS_IsFunction(ctx, mouseDownCB)) {
 		return;
 	}
 	isMouseDown = true;
@@ -174,7 +174,7 @@ void Div::MouseUp()
 		return;
 	}
 	auto ctx = JS::GetCtx();
-	if (!JS_IsFunction(ctx, mouseEnterCB)) {
+	if (!JS_IsFunction(ctx, mouseUpCB)) {
 		return;
 	}
 	isMouseDown = false;
@@ -189,6 +189,7 @@ void Div::Dispose()
 	JS_FreeValue(ctx, mouseLeaveCB);
 	JS_FreeValue(ctx, mouseDownCB);
 	JS_FreeValue(ctx, mouseUpCB);
+	JS_RunGC(JS::GetRt());
 }
 
 JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
