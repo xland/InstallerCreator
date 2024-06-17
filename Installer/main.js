@@ -65,7 +65,7 @@ startBtn.setBorderRadius(6,6,6,6)
 startBtn.setAlign(1, 1);
 startBtn.setColor(0xFF4096ff);
 startBtn.setTextColor(0xFFFFFFFF)
-startBtn.setFontSize(16);
+startBtn.setFontSize(15);
 startBtn.setFontFamily("Microsoft YaHei");
 startBtn.setText("开始安装")
 startBtn.onMouseEnter(() => {
@@ -79,7 +79,12 @@ startBtn.onMouseLeave(() => {
     win.refresh();
 })
 startBtn.onMouseDown(() => {
-
+    startBtn.setColor(0xFF0958d9);
+    win.refresh();
+})
+startBtn.onMouseUp(() => {
+    startBtn.setColor(0xFF1677ff);
+    win.refresh();
 })
 
 let titleDiv = Div.newLTRB(50, 50, 750, 80)
