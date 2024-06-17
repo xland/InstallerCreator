@@ -41,7 +41,7 @@ minimizeDiv.onMouseDown(() => {
     win.minimize();
 })
 
-let div = Div.newXYWH(50, 80, 700, 500);
+let div = Div.newLTRB(50, 80, 750, 550);
 div.setColor(0xFFE6E6E6);
 
 let shadow = new Shadow();
