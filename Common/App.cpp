@@ -31,6 +31,7 @@ void App::Reg(JSContext* ctx)
     app = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, app, "initFont", JS_NewCFunction(ctx, &App::initFont, "initFont", 1));
     JS_SetPropertyStr(ctx, app, "quit", JS_NewCFunction(ctx, &App::quit, "quit", 0));
+    JS_SetPropertyStr(ctx, app, "setCursor", JS_NewCFunction(ctx, &App::setCursor, "setCursor", 1));
     JS_SetPropertyStr(ctx, globalObj, "app", app);
     JS_FreeValue(ctx, globalObj);
 }
@@ -53,6 +54,22 @@ SkFont* App::GetFont(std::string& fontName)
 JSValue App::quit(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     PostQuitMessage(0);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue App::setCursor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    const char* strData = JS_ToCString(ctx, argv[0]);
+    if (!strData) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    std::string cursorStr{strData};
+    JS_FreeCString(ctx, strData);
+    if (cursorStr == "pointer") {
+        SetCursor(LoadCursor(NULL, IDC_HAND));
+    }
+    else if (cursorStr == "default") {
+        SetCursor(LoadCursor(NULL, IDC_ARROW));
+    }    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue App::initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv) {

@@ -14,6 +14,7 @@ public:
 private:
 	static JSValue initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue quit(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setCursor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
 };
 

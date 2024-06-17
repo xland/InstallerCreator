@@ -20,6 +20,7 @@ private:
 	static JSValue newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setTextColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -43,6 +44,8 @@ private:
 	std::string iconStr;
 	SkFont* font;
 	float fontSize;
+	float indentVertical{0.f};
+	float indentHorizontal{ 0.f };
 	unsigned int color;
 	unsigned int verticalAlign;  //×ÝÏò
 	unsigned int horizontalAlign; //ºáÏò

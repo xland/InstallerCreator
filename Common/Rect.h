@@ -1,6 +1,7 @@
 #pragma once
 
 #include "include/core/SkRect.h"
+#include "include/core/SkRRect.h"
 #include "Element.h"
 class Rect:public Element
 {
@@ -9,6 +10,7 @@ public:
 	~Rect();
 	void Paint(Win* win) override;
 	SkRect rect;
+	SkRRect rrect;
 protected:
 	Rect();
 	static void RegRectBase(JSContext* ctx, JSValue& protoInstance);
@@ -19,6 +21,7 @@ private:
 	static JSValue setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
 	
 };

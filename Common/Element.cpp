@@ -21,7 +21,6 @@ void Element::RegBase(JSContext* ctx,JSValue& protoInstance)
 	JS_SetPropertyStr(ctx, protoInstance, "setStroke", JS_NewCFunction(ctx, &Element::setStroke, "setStroke", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setStrokeWidth", JS_NewCFunction(ctx, &Element::setStrokeWidth, "setStrokeWidth", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setColor", JS_NewCFunction(ctx, &Element::setColor, "setColor", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "setAntiAlias", JS_NewCFunction(ctx, &Element::setAntiAlias, "setAntiAlias", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setStrokeCap", JS_NewCFunction(ctx, &Element::setStrokeCap, "setStrokeCap", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setStrokeJoin", JS_NewCFunction(ctx, &Element::setStrokeJoin, "setStrokeJoin", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setBlendMode", JS_NewCFunction(ctx, &Element::setBlendMode, "setBlendMode", 1));
@@ -97,14 +96,6 @@ JSValue Element::setRadialShader(JSContext* ctx, JSValueConst thisVal, int argc,
 	auto shader = SkGradientShader::MakeRadial(SkPoint::Make(400, 400), 300, colors.data(), nullptr, length, SkTileMode::kClamp);
 	ele->paint.setShader(shader);
 
-	return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-JSValue Element::setAntiAlias(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	auto ele = GetPtr(thisVal);
-	bool flag = JS_ToBool(ctx, argv[0]);
-	ele->paint.setAntiAlias(flag);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

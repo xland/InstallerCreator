@@ -19,6 +19,10 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         {
             return false;
         }
+        case WM_SETCURSOR:
+        {
+            return true;
+        }
         case WM_LBUTTONDOWN:
         {
             obj->lBtnDown(lParam);

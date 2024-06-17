@@ -45,6 +45,7 @@ void Div::Reg(JSContext* ctx)
 	RegRectBase(ctx, protoInstance);
 	JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Div::setText, "setText", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &Div::setAlign, "setAlign", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "setIndent", JS_NewCFunction(ctx, &Div::setIndent, "setIndent", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setTextColor", JS_NewCFunction(ctx, &Div::setTextColor, "setTextColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &Div::setFontSize, "setFontSize", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Div::setFontFamily, "setFontFamily", 1));
@@ -92,17 +93,24 @@ std::tuple<double, double> Div::getTextPos(const SkRect& lineRect)
 {
 	float left{ rect.fLeft - lineRect.fLeft };
 	float top{ rect.fTop - lineRect.fTop };
-	if (verticalAlign == 1) {
+	if (verticalAlign == 0) {
+		top += indentVertical;
+	}
+	else if (verticalAlign == 1) {
 		top += (rect.height() - lineRect.height()) / 2;
 	}
 	else if (verticalAlign == 2) {
-		top = rect.fBottom - lineRect.fBottom;
+		top = rect.fBottom - lineRect.fBottom-indentVertical;
 	}
-	if (horizontalAlign == 1) {
+
+	if (horizontalAlign == 0) {
+		left += indentHorizontal;
+	}
+	else if (horizontalAlign == 1) {
 		left += (rect.width() - lineRect.width()) / 2;
 	}
 	else if (horizontalAlign == 2) {
-		left = rect.fRight - lineRect.width();
+		left = rect.fRight - lineRect.width()-indentHorizontal;
 	}
 	return {left,top};
 }
@@ -227,6 +235,22 @@ JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
+JSValue Div::setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	double indentVertical;
+	if (JS_ToFloat64(ctx, &indentVertical, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	double indentHorizontal;
+	if (JS_ToFloat64(ctx, &indentHorizontal, argv[1])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	div->indentVertical = indentVertical;
+	div->indentHorizontal = indentHorizontal;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
 JSValue Div::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	unsigned int vAlign;
@@ -239,7 +263,7 @@ JSValue Div::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     }
 	auto div = (Div*)JS_GetOpaque(thisVal, id);
 	div->verticalAlign = vAlign;
-	div->horizontalAlign = vAlign;
+	div->horizontalAlign = hAlign;
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

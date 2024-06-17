@@ -22,6 +22,7 @@ void Rect::RegRectBase(JSContext* ctx, JSValue& protoInstance)
 	JS_SetPropertyStr(ctx, protoInstance, "setLTRB", JS_NewCFunction(ctx, &Rect::setLTRB, "setLTRB", 4));
 	JS_SetPropertyStr(ctx, protoInstance, "setXYWH", JS_NewCFunction(ctx, &Rect::setXYWH, "setXYWH", 4));
 	JS_SetPropertyStr(ctx, protoInstance, "contains", JS_NewCFunction(ctx, &Rect::contains, "contains", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "setBorderRadius", JS_NewCFunction(ctx, &Rect::setBorderRadius, "setBorderRadius", 4));
 }
 Rect::~Rect()
 {
@@ -48,7 +49,13 @@ void Rect::Reg(JSContext* ctx)
 
 void Rect::Paint(Win* win)
 {
-	win->canvas->drawRect(rect, paint);
+	paint.setAntiAlias(true);
+	if (rrect.isEmpty()) {
+		win->canvas->drawRect(rect, paint);
+	}
+	else {
+		win->canvas->drawRRect(rrect, paint);
+	}
 }
 
 JSValue Rect::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
@@ -83,6 +90,23 @@ JSValue Rect::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	self->rect.setXYWH(x, y, w, h);
 	JS_SetOpaque(obj, self);
 	return obj;
+}
+
+JSValue Rect::setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto [r1, r2, r3, r4, err] = get4Arg(ctx, argv);
+	if (JS_IsException(err)) {
+		return err;
+	}
+	auto rect = (Rect*)Element::GetPtr(thisVal);
+	SkVector radii[4] = {
+		{r1, r1},  // ×óÉÏ½Ç
+		{r2, r2},  // ÓÒÉÏ½Ç
+		{r3, r3},  // ÓÒÏÂ½Ç
+		{r4, r4}   // ×óÏÂ½Ç
+	};
+	rect->rrect.setRectRadii(rect->rect, radii);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Rect::setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
