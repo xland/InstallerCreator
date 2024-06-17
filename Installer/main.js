@@ -1,5 +1,5 @@
 ﻿app.initFont(["Microsoft YaHei","iconfont.ttf"]);
-let win = new Win("我的窗口", 800, 800);
+let win = new Win("我的窗口", 800, 600); //默认为透明窗口
 
 let closeDiv = Div.newLTRB(715, 50, 750, 80);
 closeDiv.setColor(0xFFAA66FF);
@@ -42,11 +42,9 @@ minimizeDiv.onMouseDown(() => {
 })
 
 
-let div = Div.newXYWH(50, 50, 700, 700);
+let div = Div.newXYWH(50, 50, 700, 500);
 div.setColor(0xFF663388);
 div.setTextColor(0xFFAA3322)
-div.setFontFamily("Microsoft YaHei")
-div.setText("繁荣昌盛！永世安宁！")
 div.setAlign(1, 1);
 div.setFontSize(22);
 
@@ -54,9 +52,9 @@ let shadow = new Shadow();
 shadow.setAmbientColor(0x33000000);
 shadow.setSpotColor(0x00000000);
 shadow.setShadowSize(30);
-shadow.addRect(Rect.newXYWH(50, 50, 700, 700))
+shadow.addRect(Rect.newXYWH(50, 50, 700, 500))
 
-let img = Img.newXYWH(50, 50, 700, 700);
+let img = Img.newXYWH(50, 50, 700, 350);
 img.setSrc("img.png");
 img.setAlpha(0.5)
 win.addElement([shadow, div, img, closeDiv, minimizeDiv]);

@@ -110,18 +110,24 @@ std::tuple<double, double> Div::getTextPos(const SkRect& lineRect)
 void Div::Paint(Win* win)
 {
 	Rect::Paint(win);
-	font->setSize(fontSize);
-	SkPaint textPaint;
-	textPaint.setAntiAlias(true);
-	textPaint.setColor(color);
-	if (isIcon) {
+	if (isIcon && !iconStr.empty()) {
+		font->setSize(fontSize);
+		SkPaint textPaint;
+		textPaint.setAntiAlias(true);
+		textPaint.setColor(color);
+
 		SkRect lineRect;
 		font->measureText(iconStr.c_str(), 4, SkTextEncoding::kUTF8, &lineRect);
 		auto [left, top] = getTextPos(lineRect);
 		win->canvas->drawSimpleText(iconStr.c_str(), 4, SkTextEncoding::kUTF8, left, top, *font, textPaint);
 	}
-	else
+	else if(!text.empty())
 	{
+		font->setSize(fontSize);
+		SkPaint textPaint;
+		textPaint.setAntiAlias(true);
+		textPaint.setColor(color);
+
 		auto length = wcslen(text.data()) * 2;
 		SkRect lineRect;
 		font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
