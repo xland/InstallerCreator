@@ -51,7 +51,6 @@ JSRuntime* JS::GetRt()
 void JS::Dispose()
 {
     JS_FreeContext(ctx);
-    JS_RunGC(rt);
     JS_FreeRuntime(rt);
 }
 
