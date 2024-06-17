@@ -13,6 +13,7 @@ namespace {
 	static JSClassDef winClass = {
 		.class_name{"Win"},
 		.finalizer{[](JSRuntime* rt, JSValue val) {
+                auto ctx = JS::GetCtx();
                 auto win = (Win*)JS_GetOpaque(val, id);
                 delete win;
             }
@@ -180,6 +181,7 @@ void Win::closed()
         ele->Dispose();
         JS_FreeValue(ctx, elements[i]);
     }
+    elements.clear();
     PostQuitMessage(0);
 }
 
@@ -230,11 +232,11 @@ JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
         JS_ToUint32(ctx, &length, JS_GetPropertyStr(ctx, argv[0], "length"));
         for (uint32_t i = 0; i < length; ++i) {
             JSValue element = JS_GetPropertyUint32(ctx, argv[0], i);
-            win->elements.push_back(JS_DupValue(ctx, element));
+            win->elements.push_back(element);
         }
     }
     else {
-        win->elements.push_back(JS_DupValue(ctx, argv[0]));
+        win->elements.push_back(argv[0]);
     }    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

@@ -189,7 +189,7 @@ void Div::Dispose()
 	JS_FreeValue(ctx, mouseLeaveCB);
 	JS_FreeValue(ctx, mouseDownCB);
 	JS_FreeValue(ctx, mouseUpCB);
-	JS_RunGC(JS::GetRt());
+	//JS_RunGC(JS::GetRt());
 }
 
 JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

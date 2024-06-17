@@ -40,6 +40,7 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
         case WM_CLOSE: {
             obj->closed();
+            return true;
             break;
         }
         case WM_MOUSEWHEEL: {

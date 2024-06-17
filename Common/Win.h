@@ -16,6 +16,7 @@ public:
 	static void Reg(JSContext* ctx);
 	~Win();
 	std::unique_ptr<SkCanvas> canvas;
+	std::vector<JSValue> elements;
 private:
 	Win();
 	static Win* getPtr(JSValue& val);
@@ -59,7 +60,6 @@ private:
 	float scaleFactor;
 	HWND hwnd;
 	SkAutoMalloc surfaceMemory;
-	std::vector<JSValue> elements;
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;
 	SkPath captionPath;
