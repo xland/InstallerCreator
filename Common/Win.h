@@ -31,6 +31,7 @@ private:
 	static JSValue minimize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue close(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue removeElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	//SizePos
 	static void regSizePos(JSContext* ctx, JSValue& proto);

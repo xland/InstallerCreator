@@ -117,6 +117,7 @@ void Win::Reg(JSContext* ctx)
     JS_SetPropertyStr(ctx, protoInstance, "minimize", JS_NewCFunction(ctx, &Win::minimize, "minimize", 0));
     JS_SetPropertyStr(ctx, protoInstance, "close", JS_NewCFunction(ctx, &Win::close, "close", 0));
     JS_SetPropertyStr(ctx, protoInstance, "addElement", JS_NewCFunction(ctx, &Win::addElement, "addElement", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "removeElement", JS_NewCFunction(ctx, &Win::removeElement, "removeElement", 1));
     regSizePos(ctx,protoInstance);
     regTimer(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Win::constructor, winClass.class_name, 5, JS_CFUNC_constructor, 0);
@@ -240,6 +241,11 @@ JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
     else {
         win->elements.push_back(argv[0]);
     }    
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::removeElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
