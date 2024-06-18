@@ -1,6 +1,8 @@
 #include "Rect.h"
 #include "JS.h"
 #include "Win.h"
+#include "include/core/SkPoint3.h"
+#include "include/utils/SkShadowUtils.h"
 
 namespace {
 	static JSClassID id;
@@ -16,6 +18,7 @@ namespace {
 
 Rect::Rect()
 {
+	paint.setAntiAlias(true);
 }
 void Rect::RegRectBase(JSContext* ctx, JSValue& protoInstance)
 {
@@ -49,7 +52,19 @@ void Rect::Reg(JSContext* ctx)
 
 void Rect::Paint(Win* win)
 {
-	paint.setAntiAlias(true);
+	if (shadowSize > 0) {
+		SkPath path;
+		if (rrect.isEmpty()) {
+			path.addRect(rect);
+		}
+		else {
+			path.addRRect(rrect);
+		}
+		SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// 定义阴影与 z 平面的关系    
+		SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
+		SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2 * shadowSize,
+			shadowAmbientColor, shadowSpotColor, 0);
+	}
 	if (rrect.isEmpty()) {
 		win->canvas->drawRect(rect, paint);
 	}

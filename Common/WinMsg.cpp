@@ -44,6 +44,7 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         }
         case WM_CLOSE: {
             obj->closed();
+            //PostQuitMessage(0);
             return true;
             break;
         }

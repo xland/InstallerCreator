@@ -4,7 +4,8 @@
 #include "Win.h"
 #include "JS.h"
 #include "Shadow.h"
-
+#include "include/core/SkPoint3.h"
+#include "include/utils/SkShadowUtils.h"
 
 namespace {
 	static JSClassID id;
@@ -17,10 +18,11 @@ namespace {
 		}
 	};
 }
-Path::~Path()
-{
-}
 Path::Path()
+{
+	paint.setAntiAlias(true);
+}
+Path::~Path()
 {
 }
 void Path::RegPathBase(JSContext* ctx, JSValue& protoInstance)
@@ -51,7 +53,6 @@ void Path::Reg(JSContext* ctx)
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Path::constructor, pathClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
-
 	JSValue global = JS_GetGlobalObject(ctx);
 	JS_SetPropertyStr(ctx, global, pathClass.class_name, ctroInstance);
 	JS_FreeValue(ctx, global);
@@ -60,6 +61,12 @@ void Path::Reg(JSContext* ctx)
 
 void Path::Paint(Win* win)
 {
+	if (shadowSize > 0) {
+		SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// 定义阴影与 z 平面的关系    
+		SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
+		SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2 * shadowSize,
+			shadowAmbientColor, shadowSpotColor, 0);
+	}
 	win->canvas->drawPath(path, paint);
 }
 

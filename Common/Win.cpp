@@ -47,7 +47,7 @@ JSValue Win::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSVa
     std::wstring title;
     const char* str = JS_ToCString(ctx, argv[0]);
     if (str) {
-        title = Util::ConvertToWideChar(str);
+        title = Util::ConvertToWStr(str);
         JS_FreeCString(ctx, str);
     }
     if (argc == 5) {
@@ -174,6 +174,7 @@ void Win::paint()
 
 void Win::closed()
 {
+    printf("  %s\n", "closed");
     auto ctx = JS::GetCtx();
     for (size_t i = 0; i < elements.size(); i++)
     {

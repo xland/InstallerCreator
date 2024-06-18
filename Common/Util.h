@@ -11,6 +11,7 @@ public:
 #ifdef DEBUG
 	static void InitDebuger();
 #endif
-	static std::wstring ConvertToWideChar(const char* str);
+	static std::wstring ConvertToWStr(const char* str);
+	static std::string ConvertToStr(const std::wstring& wstr);
 };
 

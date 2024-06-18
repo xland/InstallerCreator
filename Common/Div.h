@@ -16,22 +16,31 @@ public:
 	void Dispose() override;
 private:
 	Div();
+	void paintIcon(Win* win);
+	void piantText(Win* win);
+	void paintDecoration(Win* win, float l, float r, float b);
+	std::tuple<float,float,float,float> getTextPos(SkRect& lineRect);
+
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
 	static JSValue newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue getText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue getIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
 	static JSValue setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setTextColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-
+	static JSValue setDecoration(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
-	std::tuple<double, double> getTextPos(const SkRect& lineRect);
+	
 
 	JSValue mouseEnterCB;
 	JSValue mouseLeaveCB;
@@ -41,13 +50,14 @@ private:
 	bool isMouseDown{ false };
 
 	std::wstring  text;
-	std::string iconStr;
+	uint32_t iconCode{0};
 	SkFont* font;
-	float fontSize;
-	float indentVertical{0.f};
-	float indentHorizontal{ 0.f };
+	double fontSize{13.f};
+	double indentVertical{0.f};
+	double indentHorizontal{ 0.f };
+	uint32_t decorationColor{ 0 };
+	double decorationSize{ 0.f };
 	unsigned int color;
 	unsigned int verticalAlign;  //×ÝÏò
 	unsigned int horizontalAlign; //ºáÏò
-	bool isIcon{false};
 };

@@ -69,7 +69,7 @@ JSValue Img::setSrc(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst
 	if (!strData) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
 	}
-	//auto src = Util::ConvertToWideChar(strData);
+	//auto src = Util::ConvertToWStr(strData);
 	JS_FreeCString(ctx, strData);
 	auto data = SkData::MakeFromFileName(strData);
 	img->img = SkImages::DeferredFromEncodedData(data);

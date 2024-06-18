@@ -22,6 +22,9 @@ protected:
 	static void RegBase(JSContext* ctx,JSValue& protoInstance);
 	static std::tuple<double, double, double, double, JSValue> get4Arg(JSContext* ctx, JSValueConst* argv);
 	SkPaint paint;
+	float shadowSize{0};
+	uint32_t shadowAmbientColor{ 0x33000000 };
+	uint32_t shadowSpotColor{ 0x00000000 };
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
 	static JSValue setStroke(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -32,5 +35,9 @@ private:
 	static JSValue setStrokeCap(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setStrokeJoin(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setBlendMode(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setShadowSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setShadowAmbientColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setShadowSpotColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
 };
 

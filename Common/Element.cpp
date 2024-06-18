@@ -26,8 +26,31 @@ void Element::RegBase(JSContext* ctx,JSValue& protoInstance)
 	JS_SetPropertyStr(ctx, protoInstance, "setBlendMode", JS_NewCFunction(ctx, &Element::setBlendMode, "setBlendMode", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setLinearShader", JS_NewCFunction(ctx, &Element::setLinearShader, "setLinearShader", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "setRadialShader", JS_NewCFunction(ctx, &Element::setRadialShader, "setRadialShader", 0));
+	JS_SetPropertyStr(ctx, protoInstance, "setShadowSize", JS_NewCFunction(ctx, &Element::setShadowSize, "setShadowSize", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setShadowAmbientColor", JS_NewCFunction(ctx, &Element::setShadowAmbientColor, "setShadowAmbientColor", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setShadowSpotColor", JS_NewCFunction(ctx, &Element::setShadowSpotColor, "setShadowSpotColor", 1));
 }
 
+JSValue Element::setShadowAmbientColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	unsigned int ambientColor;
+	if (JS_ToUint32(ctx, &ambientColor, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg1 error");
+	}
+	auto ele = GetPtr(thisVal);
+	ele->shadowAmbientColor = ambientColor;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Element::setShadowSpotColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	unsigned int spotColor;
+	if (JS_ToUint32(ctx, &spotColor, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg1 error");
+	}
+	auto ele = GetPtr(thisVal);
+	ele->shadowSpotColor = spotColor;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
 
 JSValue Element::setStroke(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
@@ -46,6 +69,17 @@ JSValue Element::setStrokeWidth(JSContext* ctx, JSValueConst thisVal, int argc, 
 	}
 
 	ele->paint.setStrokeWidth(strokeWidth);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Element::setShadowSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto ele = GetPtr(thisVal);
+	double shadowSize;
+	if (JS_ToFloat64(ctx, &shadowSize, argv[0])) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	ele->shadowSize = shadowSize;
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
