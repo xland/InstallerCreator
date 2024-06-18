@@ -115,6 +115,7 @@ void Div::piantText(Win* win)
 void Div::paintDecoration(Win* win, float l, float r,float b)
 {
 	SkPaint paint;
+	paint.setAntiAlias(false);
 	paint.setColor(decorationColor);
 	paint.setStroke(true);
 	paint.setStrokeWidth(decorationSize);

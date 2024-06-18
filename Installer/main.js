@@ -1,7 +1,8 @@
 ﻿app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
-let win = new Win("我的窗口", 800, 600); //默认为透明窗口
+let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let bgRect;
+let win = new Win(windowTitle, 800, 600); //默认为透明窗口
 let initBgRect = () => {
     bgRect = Rect.newXYWH(50, 50, 700, 450); //550
     bgRect.setColor(0xffe6f4ff);
@@ -17,7 +18,7 @@ let getTitleDiv = () => {
   titleDiv.setTextColor(0xff888888);
   titleDiv.setFontSize(12);
   titleDiv.setFontFamily("Microsoft YaHei");
-  titleDiv.setText("软件名称 - 安装程序");
+    titleDiv.setText(windowTitle);
   return titleDiv;
 };
 let getCloseDiv = () => {
@@ -145,16 +146,16 @@ let getLicenceDiv = () => {
   let divCheckbox = Div.newXYWH(70, 460, 16, 18);
   divCheckbox.setFontFamily("iconfont.ttf");
   divCheckbox.setColor(0x00000000);
-  divCheckbox.setTextColor(0xff888888);
+    divCheckbox.setTextColor(0xff666666);
   divCheckbox.setIcon(0xe608);
   let divText = Div.newXYWH(86, 460, 96, 18);
   divText.setColor(0x00000000);
-  divText.setTextColor(0xff888888);
+    divText.setTextColor(0xff666666);
   divText.setFontFamily("Microsoft YaHei");
   divText.setText("您已阅读并同意");
   let divLink = Div.newXYWH(178, 460, 56, 18);
   divLink.setColor(0x00000000);
-  divLink.setTextColor(0xff888888);
+    divLink.setTextColor(0xff666666);
   divLink.setFontFamily("Microsoft YaHei");
   divLink.setText("用户协议");
   divLink.setDecoration(1, 0xff0969da);
@@ -164,7 +165,9 @@ let getLicenceDiv = () => {
   divLink.onMouseLeave(() => {
     app.setCursor("default");
   });
-  divLink.onMouseDown(() => {});
+    divLink.onMouseDown(() => {
+        app.openUrlByDefaultBrowser("https://www.baidu.com")
+    });
   let switchCheck = () => {
     if (divCheckbox.getIcon() === 0xe608) {
       divCheckbox.setIcon(0xe609);
@@ -180,13 +183,13 @@ let getLicenceDiv = () => {
 let getCustomizeBtn = () => {
     let divText = Div.newXYWH(650, 460, 96, 18);
     divText.setColor(0x00000000);
-    divText.setTextColor(0xff888888);
+    divText.setTextColor(0xff666666);
     divText.setFontFamily("Microsoft YaHei");
     divText.setText("自定义安装");
     let divIcon = Div.newXYWH(716, 462, 16, 18);
     divIcon.setFontFamily("iconfont.ttf");
     divIcon.setColor(0x00000000);
-    divIcon.setTextColor(0xff888888);
+    divIcon.setTextColor(0xff666666);
     divIcon.setIcon(0xe68b);
     let mouseDown = () => {
         if (divIcon.getIcon() === 0xe68b) {
@@ -200,9 +203,6 @@ let getCustomizeBtn = () => {
     }
     divText.onMouseDown(mouseDown);
     divIcon.onMouseDown(mouseDown)
-
-
-
     return [divText, divIcon];
 }
 

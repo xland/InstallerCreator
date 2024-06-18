@@ -2,6 +2,8 @@
 
 # InstallerCreator (WIP)
 
+- DPI Support
+
 An installer creator which can create beautiful installation interfaces.
 
 It's differents from [NSIS]() or [Inno Setup]() are:
