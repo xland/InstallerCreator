@@ -114,7 +114,7 @@ JSValue Rect::setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JS
 		return err;
 	}
 	auto rect = (Rect*)Element::GetPtr(thisVal);
-	SkVector radii[4] = {
+	SkVector radii[4] {
 		{r1, r1},  // вСио╫г
 		{r2, r2},  // срио╫г
 		{r3, r3},  // сроб╫г
@@ -131,7 +131,19 @@ JSValue Rect::setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 		return err;
 	}
 	auto rect = (Rect*)Element::GetPtr(thisVal);
-	rect->rect.setLTRB(l, t, r, b);
+	if (rect->rrect.isEmpty()) {
+		rect->rect.setLTRB(l, t, r, b);
+	}
+	else {
+		auto radii1 = rect->rrect.radii(SkRRect::Corner::kUpperLeft_Corner);
+		auto radii2 = rect->rrect.radii(SkRRect::Corner::kUpperRight_Corner);
+		auto radii3 = rect->rrect.radii(SkRRect::Corner::kLowerRight_Corner);
+		auto radii4 = rect->rrect.radii(SkRRect::Corner::kLowerLeft_Corner);
+		SkVector radii[4]{ radii1 ,radii2,radii3,radii4 };
+		SkRect tempR;
+		tempR.setLTRB(l, t, r, b);
+		rect->rrect.setRectRadii(tempR,radii);
+	}
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -142,7 +154,20 @@ JSValue Rect::setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 		return err;
 	}
 	auto rect = (Rect*)Element::GetPtr(thisVal);
-	rect->rect.setXYWH(x, y, w, h);
+	auto radii = rect->rrect.radii(SkRRect::Corner::kUpperLeft_Corner);
+	if (rect->rrect.isEmpty()) {
+		rect->rect.setXYWH(x, y, w, h);
+	}
+	else {
+		auto radii1 = rect->rrect.radii(SkRRect::Corner::kUpperLeft_Corner);
+		auto radii2 = rect->rrect.radii(SkRRect::Corner::kUpperRight_Corner);
+		auto radii3 = rect->rrect.radii(SkRRect::Corner::kLowerRight_Corner);
+		auto radii4 = rect->rrect.radii(SkRRect::Corner::kLowerLeft_Corner);
+		SkVector radii[4]{ radii1 ,radii2,radii3,radii4 };
+		SkRect tempR;
+		tempR.setXYWH(x, y, w, h);
+		rect->rrect.setRectRadii(tempR, radii);
+	}
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

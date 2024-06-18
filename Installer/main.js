@@ -1,12 +1,12 @@
 ﻿app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
 let win = new Win("我的窗口", 800, 600); //默认为透明窗口
 let bannerArr = [];
-let getBgRect = () => {
-  let rect = Rect.newXYWH(50, 50, 700, 500); //550
-  rect.setColor(0xffe6f4ff);
-  rect.setShadowSize(30);
-  rect.setBorderRadius(3, 3, 3, 3);
-  return rect;
+let bgRect;
+let initBgRect = () => {
+    bgRect = Rect.newXYWH(50, 50, 700, 450); //550
+    bgRect.setColor(0xffe6f4ff);
+    bgRect.setShadowSize(30);
+    bgRect.setBorderRadius(3, 3, 3, 3);
 };
 let getTitleDiv = () => {
   let titleDiv = Div.newLTRB(50, 50, 750, 80);
@@ -82,7 +82,7 @@ let getStartBtn = () => {
   startBtn.setAlign(1, 1);
   startBtn.setColor(0xff4096ff);
   startBtn.setTextColor(0xffffffff);
-  startBtn.setFontSize(16);
+  startBtn.setFontSize(15);
   startBtn.setFontFamily("Microsoft YaHei");
   startBtn.setText("开始安装");
   startBtn.onMouseEnter(() => {
@@ -95,7 +95,14 @@ let getStartBtn = () => {
     startBtn.setColor(0xff4096ff);
     win.refresh();
   });
-  startBtn.onMouseDown(() => {});
+  startBtn.onMouseDown(() => {
+      startBtn.setColor(0xFF0958d9);
+      win.refresh();
+  })
+  startBtn.onMouseUp(() => {
+      startBtn.setColor(0xFF1677ff);
+      win.refresh();
+  })
   return startBtn;
 };
 let setWinDragPath = () => {
@@ -135,17 +142,17 @@ let setBannerAnimation = () => {
   }, intervalSpan);
 };
 let getLicenceDiv = () => {
-  let divCheckbox = Div.newXYWH(70, 480, 16, 18);
+  let divCheckbox = Div.newXYWH(70, 460, 16, 18);
   divCheckbox.setFontFamily("iconfont.ttf");
   divCheckbox.setColor(0x00000000);
   divCheckbox.setTextColor(0xff888888);
   divCheckbox.setIcon(0xe608);
-  let divText = Div.newXYWH(86, 480, 96, 18);
+  let divText = Div.newXYWH(86, 460, 96, 18);
   divText.setColor(0x00000000);
   divText.setTextColor(0xff888888);
   divText.setFontFamily("Microsoft YaHei");
   divText.setText("您已阅读并同意");
-  let divLink = Div.newXYWH(178, 480, 56, 18);
+  let divLink = Div.newXYWH(178, 460, 56, 18);
   divLink.setColor(0x00000000);
   divLink.setTextColor(0xff888888);
   divLink.setFontFamily("Microsoft YaHei");
@@ -170,10 +177,41 @@ let getLicenceDiv = () => {
   divText.onMouseDown(switchCheck);
   return [divCheckbox, divText, divLink];
 };
+let getCustomizeBtn = () => {
+    let divText = Div.newXYWH(650, 460, 96, 18);
+    divText.setColor(0x00000000);
+    divText.setTextColor(0xff888888);
+    divText.setFontFamily("Microsoft YaHei");
+    divText.setText("自定义安装");
+    let divIcon = Div.newXYWH(716, 462, 16, 18);
+    divIcon.setFontFamily("iconfont.ttf");
+    divIcon.setColor(0x00000000);
+    divIcon.setTextColor(0xff888888);
+    divIcon.setIcon(0xe68b);
+    let mouseDown = () => {
+        if (divIcon.getIcon() === 0xe68b) {
+            divIcon.setIcon(0xe691);
+            bgRect.setXYWH(50, 50, 700, 500);
+        } else {
+            divIcon.setIcon(0xe68b);
+            bgRect.setXYWH(50, 50, 700, 450);
+        }
+        win.refresh();
+    }
+    divText.onMouseDown(mouseDown);
+    divIcon.onMouseDown(mouseDown)
+
+
+
+    return [divText, divIcon];
+}
+
 let start = () => {
-  initBannerArr();
+    initBannerArr();
+    initBgRect();
   setWinDragPath();
-  win.addElement([getBgRect(), getTitleDiv(), getCloseDiv(), getMinimizeDiv(), ...bannerArr, getStartBtn(), ...getLicenceDiv()]);
+    win.addElement([bgRect, getTitleDiv(), getCloseDiv(), getMinimizeDiv(),
+        ...bannerArr, getStartBtn(), ...getLicenceDiv(), ...getCustomizeBtn()]);
   win.show();
   setBannerAnimation();
   globalThis.win = win;
