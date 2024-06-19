@@ -238,7 +238,7 @@ JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
         }
     }
     else {
-        win->elements.push_back(argv[0]);
+        win->elements.push_back(JS_DupValue(ctx,argv[0]));
     }    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

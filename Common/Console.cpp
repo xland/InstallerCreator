@@ -17,6 +17,11 @@ Console::~Console()
 {
 }
 
+void Console::Log(const char* str)
+{
+    printf("[Console]:      %s \n ",str);
+}
+
 void Console::Reg(JSContext* ctx)
 {
     JSValue globalObj = JS_GetGlobalObject(ctx);

@@ -1,4 +1,4 @@
-﻿app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
+﻿app.initFont(["Microsoft YaHei","iconfont.ttf"]);
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let bgRect;
@@ -10,52 +10,51 @@ let initBgRect = () => {
     bgRect.setBorderRadius(3, 3, 3, 3);
 };
 let getTitleDiv = () => {
-  let titleDiv = Div.newLTRB(50, 50, 750, 80);
-  titleDiv.setBorderRadius(3, 3, 0, 0);
-  titleDiv.setAlign(1, 0);
-  titleDiv.setIndent(0, 8);
-  titleDiv.setColor(0xffe6f4ff);
-  titleDiv.setTextColor(0xff888888);
-  titleDiv.setFontSize(12);
-  titleDiv.setFontFamily("Microsoft YaHei");
+    let titleDiv = Div.newLTRB(50, 50, 750, 80);
+    titleDiv.setBorderRadius(3, 3, 0, 0);
+    titleDiv.setAlign(1, 0);
+    titleDiv.setIndent(0, 8);
+    titleDiv.setColor(0xffe6f4ff);
+    titleDiv.setTextColor(0xff888888);
+    titleDiv.setFontSize(12);
+    titleDiv.setFontFamily("Microsoft YaHei");
     titleDiv.setText(windowTitle);
-  return titleDiv;
+    return titleDiv;
 };
 let getCloseDiv = () => {
-  let closeDiv = Div.newLTRB(715, 50, 750, 80);
-  closeDiv.setBorderRadius(0, 3, 0, 0);
-  closeDiv.setColor(0x00000000);
-  closeDiv.setFontFamily("iconfont.ttf");
-  closeDiv.setAlign(1, 1);
-  closeDiv.setIcon(0xe6e6);
-  closeDiv.setFontSize(14);
-  closeDiv.setTextColor(0x88000000);
-  closeDiv.onMouseEnter(() => {
+    let closeDiv = Div.newLTRB(715, 50, 750, 80);
+    closeDiv.setBorderRadius(0, 3, 0, 0);
+    closeDiv.setColor(0x00000000);
+    closeDiv.setFontFamily("iconfont.ttf");
+    closeDiv.setAlign(1, 1);
+    closeDiv.setIcon(0xe6e6);
+    closeDiv.setFontSize(14);
+    closeDiv.setTextColor(0x88000000);
+    closeDiv.onMouseEnter(() => {
     closeDiv.setColor(0xffe81123);
     closeDiv.setTextColor(0xffffffff);
     win.refresh();
-  });
-  closeDiv.onMouseLeave(() => {
+    });
+    closeDiv.onMouseLeave(() => {
     closeDiv.setColor(0x00000000);
     closeDiv.setTextColor(0x88000000);
     win.refresh();
-  });
-  closeDiv.onMouseDown(() => {
+    });
+    closeDiv.onMouseDown(() => {
     win.close();
     console.log("down");
-  });
-  return closeDiv;
+    });
+    return closeDiv;
 };
 let getMinimizeDiv = () => {
-  let minimizeDiv = Div.newLTRB(680, 50, 715, 80);
-  minimizeDiv.setColor(0x00000000);
-  minimizeDiv.setFontFamily("iconfont.ttf");
-  minimizeDiv.setAlign(1, 1);
-  minimizeDiv.setIcon(0xe6e7);
-  minimizeDiv.setFontSize(14);
+    let minimizeDiv = Div.newLTRB(680, 50, 715, 80);
+    minimizeDiv.setColor(0x00000000);
+    minimizeDiv.setFontFamily("iconfont.ttf");
+    minimizeDiv.setAlign(1, 1);
+    minimizeDiv.setIcon(0xe6e7);
+    minimizeDiv.setFontSize(14);
     minimizeDiv.setTextColor(0x88000000);
-    minimizeDiv.setId("minimizeDiv")
-  minimizeDiv.onMouseEnter(() => {
+    minimizeDiv.onMouseEnter(() => {
     minimizeDiv.setColor(0x11000000);
     win.refresh();
   });
@@ -99,7 +98,6 @@ let getStartBtn = () => {
   });
   startBtn.onMouseDown(() => {
       startBtn.setColor(0xFF0958d9);
-      win.removeElement("minimizeDiv");
       win.refresh();
   })
   startBtn.onMouseUp(() => {
@@ -145,59 +143,62 @@ let setBannerAnimation = () => {
   }, intervalSpan);
 };
 let getLicenceDiv = () => {
-  let divCheckbox = Div.newXYWH(70, 460, 16, 18);
-  divCheckbox.setFontFamily("iconfont.ttf");
-  divCheckbox.setColor(0x00000000);
+    let divCheckbox = Div.newXYWH(70, 460, 16, 18);
+    divCheckbox.setFontFamily("iconfont.ttf");
+    divCheckbox.setColor(0x00000000);
     divCheckbox.setTextColor(0xff666666);
-  divCheckbox.setIcon(0xe608);
-  let divText = Div.newXYWH(86, 460, 96, 18);
-  divText.setColor(0x00000000);
+    divCheckbox.setIcon(0xe608);
+    let divText = Div.newXYWH(86, 460, 96, 18);
+    divText.setColor(0x00000000);
     divText.setTextColor(0xff666666);
-  divText.setFontFamily("Microsoft YaHei");
-  divText.setText("您已阅读并同意");
-  let divLink = Div.newXYWH(178, 460, 56, 18);
-  divLink.setColor(0x00000000);
+    //divText.setFontSize(26);
+    divText.setFontFamily("Microsoft YaHei");
+    divText.setText("您已阅读并同意");
+    let divLink = Div.newXYWH(178, 460, 56, 18);
+    divLink.setColor(0x00000000);
     divLink.setTextColor(0xff666666);
-  divLink.setFontFamily("Microsoft YaHei");
-  divLink.setText("用户协议");
-  divLink.setDecoration(1, 0xff0969da);
-  divLink.onMouseEnter(() => {
-    app.setCursor("pointer");
-  });
-  divLink.onMouseLeave(() => {
-    app.setCursor("default");
-  });
+    divLink.setFontFamily("Microsoft YaHei");
+    divLink.setText("用户协议");
+    divLink.setDecoration(1, 0xff0969da);
+    divLink.onMouseEnter(() => {
+        app.setCursor("pointer");
+    });
+    divLink.onMouseLeave(() => {
+        app.setCursor("default");
+    });
     divLink.onMouseDown(() => {
         app.openUrlByDefaultBrowser("https://www.baidu.com")
     });
-  let switchCheck = () => {
-    if (divCheckbox.getIcon() === 0xe608) {
-      divCheckbox.setIcon(0xe609);
-    } else {
-      divCheckbox.setIcon(0xe608);
-    }
-    win.refresh();
-  };
-  divCheckbox.onMouseDown(switchCheck);
-  divText.onMouseDown(switchCheck);
-  return [divCheckbox, divText, divLink];
+    let switchCheck = () => {
+        if (divCheckbox.getIcon() === 0xe608) {
+            divCheckbox.setIcon(0xe609);
+        } else {
+            divCheckbox.setIcon(0xe608);
+        }
+        win.refresh();
+    };
+    divCheckbox.onMouseDown(switchCheck);
+    divText.onMouseDown(switchCheck);
+    return [divCheckbox, divText, divLink];
 };
 let getCustomizeBtn = () => {
-    let divText = Div.newXYWH(650, 460, 96, 18);
+    let divText = Div.newLTRB(650, 460, 716, 478);
     divText.setColor(0x00000000);
     divText.setTextColor(0xff666666);
     divText.setFontFamily("Microsoft YaHei");
     divText.setText("自定义安装");
-    let divIcon = Div.newXYWH(716, 462, 16, 18);
+    let divIcon = Div.newXYWH(716, 462, 15, 15);
     divIcon.setFontFamily("iconfont.ttf");
     divIcon.setColor(0x00000000);
     divIcon.setTextColor(0xff666666);
     divIcon.setIcon(0xe68b);
     let mouseDown = () => {
         if (divIcon.getIcon() === 0xe68b) {
+            appendCustomizeElements();
             divIcon.setIcon(0xe691);
             bgRect.setXYWH(50, 50, 700, 500);
         } else {
+            removeCustomizeElements();
             divIcon.setIcon(0xe68b);
             bgRect.setXYWH(50, 50, 700, 450);
         }
@@ -207,7 +208,51 @@ let getCustomizeBtn = () => {
     divIcon.onMouseDown(mouseDown)
     return [divText, divIcon];
 }
+let appendCustomizeElements = () => {
+    let input = Input.newXYWH(70, 496, 230, 26);
+    input.setId("input")
+    input.setFontFamily("Microsoft YaHei");
+    input.setColor(0xFFFFFFFF);
+    input.setTextColor(0xff666666);
+    input.setText("请选择安装路径");
+    input.setAlign(1, 0);
+    input.setIndent(0, 6);
+    
 
+    let btn = Div.newXYWH(300, 496, 80, 26);
+    btn.setId("selectPath")
+    btn.setBorderRadius(0, 3, 3, 0);
+    btn.setAlign(1, 1);
+    btn.setColor(0xff4096ff);
+    btn.setTextColor(0xffffffff);
+    btn.setFontSize(12);
+    btn.setFontFamily("Microsoft YaHei");
+    btn.setText("选择路径");
+    btn.onMouseEnter(() => {
+        app.setCursor("pointer");
+        btn.setColor(0xff1677ff);
+        win.refresh();
+    });
+    btn.onMouseLeave(() => {
+        app.setCursor("default");
+        btn.setColor(0xff4096ff);
+        win.refresh();
+    });
+    btn.onMouseDown(() => {
+        btn.setColor(0xFF0958d9);
+        win.refresh();
+    })
+    btn.onMouseUp(() => {
+        btn.setColor(0xFF1677ff);
+        win.refresh();
+    })
+
+    win.addElement([input,btn]);
+}
+let removeCustomizeElements = () => {
+    win.removeElement("input");
+    win.removeElement("selectPath");
+}
 let start = () => {
     initBannerArr();
     initBgRect();

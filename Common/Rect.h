@@ -21,8 +21,6 @@ private:
 	static JSValue setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-
-	
+	static JSValue setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);	
 };
 

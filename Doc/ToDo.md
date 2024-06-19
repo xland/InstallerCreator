@@ -1,3 +1,43 @@
-- Win要有能力删除元素
-- Win要能Dispose，App Dispose之前要把Win Dispose掉
-- 
+- Rect
+  - border size
+  - four border 
+  - rrect border
+- App 
+  - open path select dialog
+  - create desk top icon
+  - download file
+  - unzip zip/7z file
+  - get known path api
+  - 
+- input 
+  - ime follow
+  - input accept
+  - texer flash
+  - double click select all
+  - ctrl+a select all
+  - delete del
+  - delete backspace,
+  - ctrl+v paste
+  - right click paste
+  - text over width
+  - drag mouse to show more text
+- Demo
+  - move banner img position animation
+  - progress bar
+  - success banner img
+  - success btn
+  - exit demo
+- Doc
+  - javascript API
+- TypeScript Support
+  - .d.ts typescript define file
+- Installer Creator
+  - package res file to installer res
+  - package res file to uninstaller res
+  - package uninstaller to installer res
+  - 
+- Common
+  - read res file form res
+  - down load res file from internet
+  - unzip target file to folder
+  - un

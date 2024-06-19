@@ -4,7 +4,7 @@
 #include "Rect.h"
 
 
-class Div:public Rect
+class Div: public Rect
 {
 public:
 	static void Reg(JSContext* ctx);
@@ -14,8 +14,10 @@ public:
 	void MouseDown() override;
 	void MouseUp() override;
 	void Dispose() override;
-private:
+protected:
 	Div();
+	static void RegDivBase(JSContext* ctx, JSValue& protoInstance);
+private:
 	void paintIcon(Win* win);
 	void piantText(Win* win);
 	void paintDecoration(Win* win, float l, float r, float b);
@@ -28,7 +30,6 @@ private:
 	static JSValue getText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue getIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-
 	static JSValue setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setTextColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -52,7 +53,7 @@ private:
 	std::wstring  text;
 	uint32_t iconCode{0};
 	SkFont* font;
-	double fontSize{13.f};
+	double fontSize{13};
 	double indentVertical{0.f};
 	double indentHorizontal{ 0.f };
 	uint32_t decorationColor{ 0 };

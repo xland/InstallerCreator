@@ -39,22 +39,7 @@ void Div::Reg(JSContext* ctx)
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
 	RegRectBase(ctx, protoInstance);
-	JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Div::setText, "setText", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Div::setIcon, "setIcon", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "getText", JS_NewCFunction(ctx, &Div::getText, "getText", 0));
-	JS_SetPropertyStr(ctx, protoInstance, "getIcon", JS_NewCFunction(ctx, &Div::getIcon, "getIcon", 0));
-
-	JS_SetPropertyStr(ctx, protoInstance, "setDecoration", JS_NewCFunction(ctx, &Div::setDecoration, "setDecoration", 2));
-	JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &Div::setAlign, "setAlign", 2));
-	JS_SetPropertyStr(ctx, protoInstance, "setIndent", JS_NewCFunction(ctx, &Div::setIndent, "setIndent", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "setTextColor", JS_NewCFunction(ctx, &Div::setTextColor, "setTextColor", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &Div::setFontSize, "setFontSize", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Div::setFontFamily, "setFontFamily", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Div::onMouseEnter, "onMouseEnter", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Div::onMouseLeave, "onMouseLeave", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "onMouseDown", JS_NewCFunction(ctx, &Div::onMouseDown, "onMouseDown", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "onMouseUp", JS_NewCFunction(ctx, &Div::onMouseUp, "onMouseUp", 1));
-
+	RegDivBase(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, divClass.class_name, 5, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Div::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Div::newXYWH, "newXYWH", 4));
@@ -100,7 +85,7 @@ void Div::piantText(Win* win)
 {
 	font->setSize(fontSize);
 	SkPaint textPaint;
-	textPaint.setAntiAlias(true);
+	//textPaint.setAntiAlias(true);
 	textPaint.setColor(color);
 	auto length = wcslen(text.data()) * 2;
 	SkRect lineRect;
@@ -178,6 +163,23 @@ void Div::Dispose()
 	JS_FreeValue(ctx, mouseUpCB);
 	//JS_RunGC(JS::GetRt());
 }
+void Div::RegDivBase(JSContext* ctx, JSValue& protoInstance)
+{
+	JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Div::setText, "setText", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Div::setIcon, "setIcon", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "getText", JS_NewCFunction(ctx, &Div::getText, "getText", 0));
+	JS_SetPropertyStr(ctx, protoInstance, "getIcon", JS_NewCFunction(ctx, &Div::getIcon, "getIcon", 0));
+	JS_SetPropertyStr(ctx, protoInstance, "setDecoration", JS_NewCFunction(ctx, &Div::setDecoration, "setDecoration", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &Div::setAlign, "setAlign", 2));
+	JS_SetPropertyStr(ctx, protoInstance, "setIndent", JS_NewCFunction(ctx, &Div::setIndent, "setIndent", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setTextColor", JS_NewCFunction(ctx, &Div::setTextColor, "setTextColor", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &Div::setFontSize, "setFontSize", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Div::setFontFamily, "setFontFamily", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Div::onMouseEnter, "onMouseEnter", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Div::onMouseLeave, "onMouseLeave", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseDown", JS_NewCFunction(ctx, &Div::onMouseDown, "onMouseDown", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "onMouseUp", JS_NewCFunction(ctx, &Div::onMouseUp, "onMouseUp", 1));
+}
 std::tuple<float, float, float, float> Div::getTextPos(SkRect& lineRect)
 {
 	float left{ rect.fLeft - lineRect.fLeft };
@@ -233,7 +235,7 @@ JSValue Div::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 }
 JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);	
+	auto div = (Div*)GetPtr(thisVal);
 	const char* strData = JS_ToCString(ctx, argv[0]);
 	if (!strData) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -244,13 +246,13 @@ JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 }
 JSValue Div::getText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	auto str = Util::ConvertToStr(div->text);
 	return JS_NewString(ctx, str.data());
 }
 JSValue Div::setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	uint32_t iconCode;
 	if (JS_ToUint32(ctx, &iconCode, argv[0])) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -260,12 +262,12 @@ JSValue Div::setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 }
 JSValue Div::getIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	return JS_NewUint32(ctx,div->iconCode);
 }
 JSValue Div::setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	double indentVertical;
 	if (JS_ToFloat64(ctx, &indentVertical, argv[0])) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -288,14 +290,14 @@ JSValue Div::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     if (JS_ToUint32(ctx, &hAlign, argv[1])) {
         return JS_ThrowTypeError(ctx, "arg1 error");
     }
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	div->verticalAlign = vAlign;
 	div->horizontalAlign = hAlign;
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue Div::setTextColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	unsigned int color;
 	if (JS_ToUint32(ctx, &color, argv[0])) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -305,7 +307,7 @@ JSValue Div::setTextColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValu
 }
 JSValue Div::setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	double fontSize;
 	if (JS_ToFloat64(ctx, &fontSize, argv[0])) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -315,7 +317,7 @@ JSValue Div::setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValue
 }
 JSValue Div::setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	const char* fontName = JS_ToCString(ctx, argv[0]);
 	if (!fontName) {
 		return JS_ThrowTypeError(ctx, "arg0 error");
@@ -335,32 +337,32 @@ JSValue Div::setDecoration(JSContext* ctx, JSValueConst thisVal, int argc, JSVal
 	if (JS_ToUint32(ctx, &decorationColor, argv[1])) {
 		return JS_ThrowTypeError(ctx, "arg1 error");
 	}
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	div->decorationSize = decorationSize;
 	div->decorationColor = decorationColor;
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue Div::onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	div->mouseEnterCB = JS_DupValue(ctx, argv[0]);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue Div::onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	div->mouseLeaveCB = JS_DupValue(ctx, argv[0]);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue Div::onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	div->mouseDownCB = JS_DupValue(ctx, argv[0]);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue Div::onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto div = (Div*)JS_GetOpaque(thisVal, id);
+	auto div = (Div*)GetPtr(thisVal);
 	div->mouseUpCB = JS_DupValue(ctx, argv[0]);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

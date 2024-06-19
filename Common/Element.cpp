@@ -1,6 +1,6 @@
 #include "Element.h"
 #include "include/effects/SkGradientShader.h"
-
+#include "Console.h"
 
 Element::Element()
 {
@@ -11,6 +11,9 @@ Element::~Element()
 Element* Element::GetPtr(JSValue& val) {
 	JSClassID classId{ 0 };
 	auto element = (Element*)JS_GetAnyOpaque(val, &classId);
+	if (!element) {
+		Console::Log("can not get element ptr");
+	}
 	return element;
 }
 void Element::RegBase(JSContext* ctx,JSValue& protoInstance)
