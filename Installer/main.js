@@ -1,4 +1,6 @@
-﻿app.initFont(["Microsoft YaHei","iconfont.ttf"]);
+﻿app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
+let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
+console.log(str);
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let bgRect;

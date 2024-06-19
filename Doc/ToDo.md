@@ -1,3 +1,6 @@
+- Element
+  - setLinearShader unfinished
+  - setRadialShader unfinished
 - Rect
   - border size
   - four border 
@@ -8,7 +11,7 @@
   - download file
   - unzip zip/7z file
   - get known path api
-  - 
+  - app.init(()=>{})
 - input 
   - ime follow
   - input accept

@@ -4,6 +4,7 @@ extern "C" {
 }
 #include <string>
 #include <Windows.h>
+#include <objbase.h>
 
 class Util
 {
@@ -13,5 +14,6 @@ public:
 #endif
 	static std::wstring ConvertToWStr(const char* str);
 	static std::string ConvertToStr(const std::wstring& wstr);
+	static GUID ConvertToGuid(const char* str);
 };
 

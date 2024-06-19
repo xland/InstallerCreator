@@ -1,5 +1,6 @@
 #include "Util.h"
-
+#include "Windows.h"
+#include <format>
 #ifdef DEBUG
 #include <iostream>
 #include <fcntl.h>
@@ -45,4 +46,11 @@ std::string Util::ConvertToStr(const std::wstring& wstr)
     std::string str(count, 0);
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
     return str;
+}
+GUID Util::ConvertToGuid(const char* str) {
+    auto wGuidStr = ConvertToWStr(str);
+    wGuidStr = std::format(L"{{{}}}", wGuidStr);
+    GUID guid;
+    HRESULT hr = CLSIDFromString(wGuidStr.data(), &guid);
+    return guid;
 }

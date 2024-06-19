@@ -1,4 +1,5 @@
 ﻿#include <Windows.h>
+#include <shlobj_core.h>
 #include <fstream>
 #include <sstream>
 #include <filesystem>
@@ -9,6 +10,7 @@
 #include <include/core/SkFontStyle.h>
 #include <include/ports/SkTypeface_win.h>
 #include <include/core/SkData.h>
+#include "Util.h"
 #include "App.h"
 
 
@@ -32,6 +34,7 @@ void App::Reg(JSContext* ctx)
     JS_SetPropertyStr(ctx, app, "initFont", JS_NewCFunction(ctx, &App::initFont, "initFont", 1));
     JS_SetPropertyStr(ctx, app, "quit", JS_NewCFunction(ctx, &App::quit, "quit", 0));
     JS_SetPropertyStr(ctx, app, "setCursor", JS_NewCFunction(ctx, &App::setCursor, "setCursor", 1));
+    JS_SetPropertyStr(ctx, app, "getKnownFolder", JS_NewCFunction(ctx, &App::getKnownFolder, "getKnownFolder", 1));
     JS_SetPropertyStr(ctx, app, "openUrlByDefaultBrowser", JS_NewCFunction(ctx, &App::openUrlByDefaultBrowser, "openUrlByDefaultBrowser", 1));
     JS_SetPropertyStr(ctx, globalObj, "app", app);
     JS_FreeValue(ctx, globalObj);
@@ -73,6 +76,22 @@ JSValue App::setCursor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
     }    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
+JSValue App::getKnownFolder(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    //https://learn.microsoft.com/zh-tw/windows/win32/shell/knownfolderid
+    const char* guid = JS_ToCString(ctx, argv[0]);
+    if (!guid) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    auto id = Util::ConvertToGuid(guid);
+    PWSTR pszPath;
+    HRESULT hr = SHGetKnownFolderPath(id, 0, NULL, &pszPath);
+    std::wstring pathStr(pszPath);
+    CoTaskMemFree(pszPath);
+    JS_FreeCString(ctx, guid);
+    auto str = Util::ConvertToStr(pathStr);
+    return JS_NewString(ctx, str.data());
+}
 JSValue App::openUrlByDefaultBrowser(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     const char* url = JS_ToCString(ctx, argv[0]);
@@ -80,6 +99,7 @@ JSValue App::openUrlByDefaultBrowser(JSContext* ctx, JSValueConst thisVal, int a
         return JS_ThrowTypeError(ctx, "arg0 error");
     }
     HINSTANCE result = ShellExecuteA(NULL, "open", url, NULL, NULL, SW_SHOWNORMAL);
+    JS_FreeCString(ctx, url);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue App::initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv) {
