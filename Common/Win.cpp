@@ -229,7 +229,6 @@ JSValue Win::close(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst*
 JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto win = (Win*)JS_GetOpaque(thisVal, id);
-
     if (JS_IsArray(ctx,argv[0])) {
         uint32_t length = 0;
         JS_ToUint32(ctx, &length, JS_GetPropertyStr(ctx, argv[0], "length"));
@@ -246,6 +245,21 @@ JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
 
 JSValue Win::removeElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    const char* strData = JS_ToCString(ctx, argv[0]);
+    if (!strData) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    std::string idStr(strData);
+    std::erase_if(win->elements, [&idStr,&ctx](auto& item) { 
+        auto element = Element::GetPtr(item);
+        if (!element->idStr.empty() && element->idStr == idStr) {
+            element->Dispose();
+            JS_FreeValue(ctx, item);
+            return true;
+        }
+        return false;
+    });
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

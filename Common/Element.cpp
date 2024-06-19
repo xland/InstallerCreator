@@ -8,16 +8,16 @@ Element::Element()
 Element::~Element()
 {
 }
-
-
 Element* Element::GetPtr(JSValue& val) {
 	JSClassID classId{ 0 };
 	auto element = (Element*)JS_GetAnyOpaque(val, &classId);
 	return element;
 }
-
 void Element::RegBase(JSContext* ctx,JSValue& protoInstance)
 {
+	JS_SetPropertyStr(ctx, protoInstance, "setId", JS_NewCFunction(ctx, &Element::setId, "setId", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "setVisible", JS_NewCFunction(ctx, &Element::setVisible, "setVisible", 1));
+	JS_SetPropertyStr(ctx, protoInstance, "getVisible", JS_NewCFunction(ctx, &Element::getVisible, "getVisible", 0));
 	JS_SetPropertyStr(ctx, protoInstance, "setStroke", JS_NewCFunction(ctx, &Element::setStroke, "setStroke", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setStrokeWidth", JS_NewCFunction(ctx, &Element::setStrokeWidth, "setStrokeWidth", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setColor", JS_NewCFunction(ctx, &Element::setColor, "setColor", 1));
@@ -30,7 +30,29 @@ void Element::RegBase(JSContext* ctx,JSValue& protoInstance)
 	JS_SetPropertyStr(ctx, protoInstance, "setShadowAmbientColor", JS_NewCFunction(ctx, &Element::setShadowAmbientColor, "setShadowAmbientColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setShadowSpotColor", JS_NewCFunction(ctx, &Element::setShadowSpotColor, "setShadowSpotColor", 1));
 }
-
+JSValue Element::setId(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto ele = GetPtr(thisVal);
+	const char* strData = JS_ToCString(ctx, argv[0]);
+	if (!strData) {
+		return JS_ThrowTypeError(ctx, "arg0 error");
+	}
+	ele->idStr = std::string(strData);
+	JS_FreeCString(ctx, strData);
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Element::setVisible(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto ele = GetPtr(thisVal);
+	bool flag = JS_ToBool(ctx, argv[0]);
+	ele->visible = flag;
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Element::getVisible(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	auto ele = GetPtr(thisVal);
+	return JS_NewBool(ctx,ele->visible);
+}
 JSValue Element::setShadowAmbientColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	unsigned int ambientColor;

@@ -53,7 +53,8 @@ let getMinimizeDiv = () => {
   minimizeDiv.setAlign(1, 1);
   minimizeDiv.setIcon(0xe6e7);
   minimizeDiv.setFontSize(14);
-  minimizeDiv.setTextColor(0x88000000);
+    minimizeDiv.setTextColor(0x88000000);
+    minimizeDiv.setId("minimizeDiv")
   minimizeDiv.onMouseEnter(() => {
     minimizeDiv.setColor(0x11000000);
     win.refresh();
@@ -98,6 +99,7 @@ let getStartBtn = () => {
   });
   startBtn.onMouseDown(() => {
       startBtn.setColor(0xFF0958d9);
+      win.removeElement("minimizeDiv");
       win.refresh();
   })
   startBtn.onMouseUp(() => {
@@ -209,11 +211,11 @@ let getCustomizeBtn = () => {
 let start = () => {
     initBannerArr();
     initBgRect();
-  setWinDragPath();
+    setWinDragPath();
     win.addElement([bgRect, getTitleDiv(), getCloseDiv(), getMinimizeDiv(),
         ...bannerArr, getStartBtn(), ...getLicenceDiv(), ...getCustomizeBtn()]);
-  win.show();
-  setBannerAnimation();
-  globalThis.win = win;
+    win.show();
+    setBannerAnimation();
+    globalThis.win = win;
 };
 start();

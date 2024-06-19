@@ -17,6 +17,8 @@ public:
 	virtual void MouseUp() {};
 	virtual void Dispose() {};
 	static Element* GetPtr(JSValue& val);
+	std::string idStr;
+	bool visible{ true };
 protected:
 	Element();
 	static void RegBase(JSContext* ctx,JSValue& protoInstance);
@@ -27,6 +29,9 @@ protected:
 	uint32_t shadowSpotColor{ 0x00000000 };
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);
+	static JSValue setId(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setVisible(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue getVisible(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setStroke(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setStrokeWidth(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

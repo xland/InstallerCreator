@@ -31,7 +31,6 @@ JSValue Div::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVal
 	JS_SetOpaque(obj, self);
 	return obj;
 }
-
 void Div::Reg(JSContext* ctx)
 {
 	auto rt = JS_GetRuntime(ctx);
@@ -208,7 +207,6 @@ std::tuple<float, float, float, float> Div::getTextPos(SkRect& lineRect)
 		left + lineRect.fLeft*2 + lineRect.width(),
 		top + lineRect.fTop + lineRect.height()+1};
 }
-
 JSValue Div::newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto [l, t, r, b, err] = get4Arg(ctx, argv);
@@ -366,5 +364,3 @@ JSValue Div::onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 	div->mouseUpCB = JS_DupValue(ctx, argv[0]);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-
-
