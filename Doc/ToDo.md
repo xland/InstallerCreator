@@ -41,3 +41,6 @@
   - read res file form res
   - down load res file from internet
   - un
+
+- Env
+  - visual studio config file

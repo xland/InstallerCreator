@@ -1,7 +1,7 @@
 ﻿//app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
 //let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
 
-
+app.setDefaultIconFontByFile("iconfont.ttf");
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let bgRect;
@@ -270,7 +270,7 @@ let start = () => {
     globalThis.win = win;
 };
 
-app.setDefaultIconFontByFile("iconfont.ttf");
+
 app.ready(() => {
     start();
 })

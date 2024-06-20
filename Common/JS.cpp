@@ -58,6 +58,7 @@ void JS::Dispose()
 
 void JS::loadIndexJs(JSContext* ctx)
 {
+    Console::Log("allen ≤‚ ‘π…≤‚ ‘");
     auto mainFilePath = "main.js";
     if (!std::filesystem::exists(mainFilePath)) {
         MessageBox(NULL, L"Can not finde main.js.", L"Error", MB_OK | MB_ICONERROR);
