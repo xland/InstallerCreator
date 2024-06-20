@@ -58,7 +58,6 @@ void JS::Dispose()
 
 void JS::loadIndexJs(JSContext* ctx)
 {
-    Console::Log("allen ≤‚ ‘π…≤‚ ‘");
     auto mainFilePath = "main.js";
     if (!std::filesystem::exists(mainFilePath)) {
         MessageBox(NULL, L"Can not finde main.js.", L"Error", MB_OK | MB_ICONERROR);
@@ -69,6 +68,7 @@ void JS::loadIndexJs(JSContext* ctx)
     std::string content((std::istreambuf_iterator<char>(file)), std::istreambuf_iterator<char>());
     JSValue val = JS_Eval(ctx, content.c_str(), content.size(), mainFilePath, JS_EVAL_TYPE_MODULE);
     if (JS_IsException(val)) {
+        Console::Err(val);
         return;
     }
     JS_FreeValue(ctx, val);

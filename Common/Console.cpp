@@ -32,6 +32,20 @@ void Console::Err(const char* str)
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 
+void Console::Err(const JSValue& val)
+{
+    auto ctx = JS::GetCtx();
+    auto stack = JS_GetPropertyStr(ctx, val, "stack");
+    const char* str = JS_ToCString(ctx, stack);
+    if (str) {
+        Err(str);
+        JS_FreeCString(ctx, str);
+    }
+    else {
+        Err("NO ERR INFO");
+    }
+}
+
 
 void Console::Reg(JSContext* ctx)
 {
