@@ -54,7 +54,7 @@ private:
 
 	std::wstring  text;
 	uint32_t iconCode{0};
-	SkFont* font;
+	std::shared_ptr<SkFont> font;
 	double fontSize{13};
 	double indentVertical{0.f};
 	double indentHorizontal{ 0.f };

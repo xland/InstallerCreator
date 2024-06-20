@@ -1,4 +1,4 @@
-﻿app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
+﻿//app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
 //let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
 
 
@@ -269,4 +269,9 @@ let start = () => {
     setBannerAnimation();
     globalThis.win = win;
 };
-start();
+
+app.setDefaultIconFontByFile("iconfont.ttf");
+app.ready(() => {
+    start();
+})
+

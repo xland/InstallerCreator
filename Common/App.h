@@ -8,11 +8,14 @@ public:
 	App();
 	~App();
 	static void Reg(JSContext* ctx);
-	static SkFont* GetFont(std::string& fontName);
-	static SkFont* GetFont();
+	static std::shared_ptr<SkFont> GetSystemFont(const char* fontName);
+	static std::shared_ptr<SkFont> GetDefaultTextFont();
+	static std::shared_ptr<SkFont> GetDefaultIconFont();
 	static void Dispose();
 private:
-	static JSValue initFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setDefaultTextFontByName(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue setDefaultIconFontByFile(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue ready(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue quit(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setCursor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue getKnownFolder(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

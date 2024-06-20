@@ -62,6 +62,8 @@ void Div::Paint(Win* win)
 }
 void Div::paintIcon(Win* win)
 {
+	auto font = App::GetDefaultIconFont();
+
 	font->setSize(fontSize);
 	SkPaint textPaint;
 	textPaint.setAntiAlias(true);
@@ -323,7 +325,7 @@ JSValue Div::setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSVal
 		return JS_ThrowTypeError(ctx, "arg0 error");
 	}
 	auto name = std::string{ fontName };
-	div->font = App::GetFont(name);
+	div->font = App::GetDefaultTextFont();
 	JS_FreeCString(ctx, fontName);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
