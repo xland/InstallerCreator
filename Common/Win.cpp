@@ -1,7 +1,9 @@
 #include "Win.h"
+#include <shlobj_core.h>
 #include <dwmapi.h>
 #include <map>
 #include <string>
+#include <sstream>
 #include <format>
 #include "JS.h"
 #include "Util.h"
@@ -113,6 +115,7 @@ void Win::Reg(JSContext* ctx)
 	JS_NewClass(rt, id, &winClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	JS_SetPropertyStr(ctx, protoInstance, "refresh", JS_NewCFunction(ctx, &Win::refresh, "refresh", 0));
+    JS_SetPropertyStr(ctx, protoInstance, "openPathSelectDialog", JS_NewCFunction(ctx, &Win::openPathSelectDialog, "openPathSelectDialog", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "show", JS_NewCFunction(ctx, &Win::show, "show", 0));
     JS_SetPropertyStr(ctx, protoInstance, "minimize", JS_NewCFunction(ctx, &Win::minimize, "minimize", 0));
     JS_SetPropertyStr(ctx, protoInstance, "close", JS_NewCFunction(ctx, &Win::close, "close", 0));
@@ -269,4 +272,47 @@ JSValue Win::refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
     auto win = (Win*)JS_GetOpaque(thisVal, id);
     win->paint();
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Win::openPathSelectDialog(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    //https://learn.microsoft.com/zh-tw/windows/win32/shell/knownfolderid
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    const char* guid = JS_ToCString(ctx, argv[0]);
+    if (!guid) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    JS_FreeCString(ctx, guid);
+    IFileDialog* dialog = NULL;
+    auto hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_ALL, IID_PPV_ARGS(&dialog));
+    dialog->SetTitle(L"Save File");
+    dialog->SetOptions(FOS_PICKFOLDERS);
+    hr = dialog->Show(win->hwnd);
+    if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) { //用户取消
+        dialog->Release();
+        return JS::MakeVal(0, JS_TAG_UNDEFINED);
+    }
+    IShellItem* pItem;
+    hr = dialog->GetResult(&pItem);
+    if (FAILED(hr))
+    {
+        dialog->Release();
+        MessageBox(NULL, L"Failed to get file path from save dialog.", L"Error", MB_OK | MB_ICONERROR);
+        return JS::MakeVal(0, JS_TAG_UNDEFINED);
+    }
+    PWSTR filePath;
+    hr = pItem->GetDisplayName(SIGDN_FILESYSPATH, &filePath);
+    if (FAILED(hr))
+    {
+        CoTaskMemFree(filePath);
+        dialog->Release();
+        MessageBox(NULL, L"Failed to get file name from save dialog.", L"Error", MB_OK | MB_ICONERROR);
+        return JS::MakeVal(0, JS_TAG_UNDEFINED);
+    }
+    std::wstringstream ss;
+    ss << filePath;
+    CoTaskMemFree(filePath);
+    dialog->Release();
+    auto str = Util::ConvertToStr(ss.str());
+    return JS_NewString(ctx, str.data());
 }

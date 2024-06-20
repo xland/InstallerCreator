@@ -33,6 +33,7 @@ private:
 	static JSValue addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue removeElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue refresh(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+	static JSValue openPathSelectDialog(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	//SizePos
 	static void regSizePos(JSContext* ctx, JSValue& proto);
 	static JSValue setPos(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

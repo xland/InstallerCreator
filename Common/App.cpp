@@ -1,7 +1,6 @@
 ﻿#include <Windows.h>
 #include <shlobj_core.h>
 #include <fstream>
-#include <sstream>
 #include <filesystem>
 #include <fstream>
 #include <map>
@@ -84,11 +83,11 @@ JSValue App::getKnownFolder(JSContext* ctx, JSValueConst thisVal, int argc, JSVa
         return JS_ThrowTypeError(ctx, "arg0 error");
     }
     auto id = Util::ConvertToGuid(guid);
+    JS_FreeCString(ctx, guid);
     PWSTR pszPath;
     HRESULT hr = SHGetKnownFolderPath(id, 0, NULL, &pszPath);
     std::wstring pathStr(pszPath);
     CoTaskMemFree(pszPath);
-    JS_FreeCString(ctx, guid);
     auto str = Util::ConvertToStr(pathStr);
     return JS_NewString(ctx, str.data());
 }

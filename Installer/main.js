@@ -1,6 +1,7 @@
 ﻿app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
-let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
-console.log(str);
+//let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
+
+
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let bgRect;
@@ -98,7 +99,10 @@ let getStartBtn = () => {
     startBtn.setColor(0xff4096ff);
     win.refresh();
   });
-  startBtn.onMouseDown(() => {
+    startBtn.onMouseDown(() => {
+        let str = win.openPathSelectDialog();
+        console.log(str);
+
       startBtn.setColor(0xFF0958d9);
       win.refresh();
   })
