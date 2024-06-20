@@ -32,7 +32,8 @@ void App::Reg(JSContext* ctx)
     JSValue globalObj = JS_GetGlobalObject(ctx);
     app = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, app, "ready", JS_NewCFunction(ctx, &App::ready, "ready", 1));
-    JS_SetPropertyStr(ctx, app, "setDefaultTextFontByName", JS_NewCFunction(ctx, &App::setDefaultTextFontByName, "initFont", 1));
+    JS_SetPropertyStr(ctx, app, "setDefaultTextFontByName", JS_NewCFunction(ctx, &App::setDefaultTextFontByName, "setDefaultTextFontByName", 1));
+    JS_SetPropertyStr(ctx, app, "setDefaultIconFontByFile", JS_NewCFunction(ctx, &App::setDefaultIconFontByFile, "setDefaultIconFontByFile", 1));
     JS_SetPropertyStr(ctx, app, "quit", JS_NewCFunction(ctx, &App::quit, "quit", 0));
     JS_SetPropertyStr(ctx, app, "setCursor", JS_NewCFunction(ctx, &App::setCursor, "setCursor", 1));
     JS_SetPropertyStr(ctx, app, "getKnownFolder", JS_NewCFunction(ctx, &App::getKnownFolder, "getKnownFolder", 1));
