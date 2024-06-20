@@ -16,6 +16,8 @@ public:
 	void Dispose() override;
 protected:
 	Div();
+	//void BeforeMouseEnter();
+	//void BeforeMouseLeave();
 	static void RegDivBase(JSContext* ctx, JSValue& protoInstance);
 private:
 	void paintIcon(Win* win);
@@ -58,7 +60,7 @@ private:
 	double indentHorizontal{ 0.f };
 	uint32_t decorationColor{ 0 };
 	double decorationSize{ 0.f };
-	unsigned int color;
-	unsigned int verticalAlign;  //纵向
-	unsigned int horizontalAlign; //横向
+	uint32_t color;
+	uint32_t verticalAlign;  //纵向
+	uint32_t horizontalAlign; //横向
 };

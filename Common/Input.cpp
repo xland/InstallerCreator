@@ -76,3 +76,23 @@ void Input::Paint(Win* win)
 	Rect::Paint(win);
 	Div::Paint(win);
 }
+
+void Input::MouseMove(const float& x, const float& y)
+{
+	Rect::MouseMove(x,y);
+}
+
+void Input::MouseDown()
+{
+	Rect::MouseDown();
+}
+
+void Input::MouseUp()
+{
+	Rect::MouseUp();
+}
+
+void Input::Dispose()
+{
+	Rect::Dispose();
+}

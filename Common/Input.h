@@ -6,6 +6,10 @@ public:
 	~Input();
 	static void Reg(JSContext* ctx);
 	void Paint(Win* win) override;
+	void MouseMove(const float& x, const float& y) override;
+	void MouseDown() override;
+	void MouseUp() override;
+	void Dispose() override;
 protected:
 	Input();
 private:

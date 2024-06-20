@@ -6,11 +6,9 @@
   - four border 
   - rrect border
 - App 
-  - open path select dialog
   - create desk top icon
   - download file
-  - unzip zip/7z file
-  - get known path api
+  - unzip target file to folder
   - app.init(()=>{})
 - input 
   - ime follow
@@ -42,5 +40,4 @@
 - Common
   - read res file form res
   - down load res file from internet
-  - unzip target file to folder
   - un
