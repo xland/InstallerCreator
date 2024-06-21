@@ -1,4 +1,4 @@
-﻿#include "Path.h"
+#include "Path.h"
 #include "Rect.h"
 #include "include/core/SkRect.h"
 #include "Win.h"
@@ -50,7 +50,7 @@ void Path::Reg(JSContext* ctx)
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
 	RegPathBase(ctx, protoInstance);
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Path::constructor, pathClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Path::constructor, pathClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 	JSValue global = JS_GetGlobalObject(ctx);

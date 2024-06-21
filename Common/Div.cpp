@@ -40,7 +40,7 @@ void Div::Reg(JSContext* ctx)
 	RegBase(ctx, protoInstance);
 	RegRectBase(ctx, protoInstance);
 	RegDivBase(ctx, protoInstance);
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, divClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Div::constructor, divClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Div::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Div::newXYWH, "newXYWH", 4));
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);

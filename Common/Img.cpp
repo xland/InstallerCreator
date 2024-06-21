@@ -43,7 +43,7 @@ void Img::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setSrc", JS_NewCFunction(ctx, &Img::setSrc, "setSrc", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setAlpha", JS_NewCFunction(ctx, &Img::setAlpha, "setAlpha", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setFillType", JS_NewCFunction(ctx, &Img::setFillType, "setFillType", 1));
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Img::constructor, divClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Img::constructor, divClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Img::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Img::newXYWH, "newXYWH", 4));
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);

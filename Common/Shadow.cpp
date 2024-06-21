@@ -1,4 +1,4 @@
-﻿#include "Shadow.h"
+#include "Shadow.h"
 #include "Win.h"
 #include "Path.h"
 #include "include/core/SkPoint3.h"
@@ -87,7 +87,7 @@ void Shadow::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setAmbientColor", JS_NewCFunction(ctx, &Shadow::setAmbientColor, "setAmbientColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setSpotColor", JS_NewCFunction(ctx, &Shadow::setSpotColor, "setSpotColor", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setShadowSize", JS_NewCFunction(ctx, &Shadow::setShadowSize, "setShadowSize", 1));
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Shadow::constructor, shadowClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Shadow::constructor, shadowClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 	JSValue global = JS_GetGlobalObject(ctx);

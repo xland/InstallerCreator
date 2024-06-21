@@ -288,7 +288,7 @@ JSValue Win::openPathSelectDialog(JSContext* ctx, JSValueConst thisVal, int argc
     dialog->SetTitle(L"Save File");
     dialog->SetOptions(FOS_PICKFOLDERS);
     hr = dialog->Show(win->hwnd);
-    if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) { //用户取消
+    if (hr == HRESULT_FROM_WIN32(ERROR_CANCELLED)) { //鐢ㄦ埛鍙栨秷
         dialog->Release();
         return JS::MakeVal(0, JS_TAG_UNDEFINED);
     }

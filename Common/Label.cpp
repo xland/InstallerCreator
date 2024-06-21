@@ -1,14 +1,16 @@
-﻿#include "Label.h"
+#include "Label.h"
 #include "Util.h"
 #include "Win.h"
+#include "Text.h"
+#include "Rect.h"
 
 namespace {
 	static JSClassID id;
 	static JSClassDef labelClass = {
 		.class_name{"Label"},
 		.finalizer{[](JSRuntime* rt, JSValue val) {
-				auto text = (Label*)JS_GetOpaque(val, id);
-				delete text;
+				auto label = (Label*)JS_GetOpaque(val, id);
+				delete label;
 			}
 		}
 	};
@@ -30,9 +32,7 @@ void Label::Reg(JSContext* ctx)
 	JS_NewClass(rt, id, &labelClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
-	//JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &Label::setFontSize, "setFontSize", 1));
-
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Label::constructor, labelClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Label::constructor, labelClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 	JSValue global = JS_GetGlobalObject(ctx);
@@ -47,13 +47,11 @@ void Label::Paint(Win* win)
 JSValue Label::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
-
-	//auto text = JS_NewObjectClass(ctx, id);
-	//auto t = new Text();
-	//JS_SetOpaque(obj, t);
-
-	//JS_SetPropertyStr(ctx, obj, "text", );
-	//auto self = new Label();
-	//JS_SetOpaque(obj, self);
+    auto text = Text::constructor(ctx, newTarget, argc, argv);
+    auto rect = Rect::constructor(ctx, newTarget, argc, argv);
+	JS_SetPropertyStr(ctx, obj, "text", text);
+    JS_SetPropertyStr(ctx, obj, "rect", rect);
+	auto self = new Label();
+	JS_SetOpaque(obj, self);
 	return obj;
 }

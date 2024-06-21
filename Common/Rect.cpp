@@ -1,4 +1,4 @@
-﻿#include "Rect.h"
+#include "Rect.h"
 #include "JS.h"
 #include "Win.h"
 #include "include/core/SkPoint3.h"
@@ -39,7 +39,7 @@ void Rect::Reg(JSContext* ctx)
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
 	RegRectBase(ctx, protoInstance);
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Rect::constructor, paintClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Rect::constructor, paintClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Rect::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Rect::newXYWH, "newXYWH", 4));
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);

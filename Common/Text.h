@@ -6,12 +6,10 @@ public:
 	~Text();
 	static void Reg(JSContext* ctx);
 	void Paint(Win* win) override;
-
+    static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
 private:
-	Text();
-	void resetTextRect();
-
-	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
+    Text();
+	void resetTextRect();	
 	static JSValue setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);

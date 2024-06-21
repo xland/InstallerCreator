@@ -38,7 +38,7 @@ void Text::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Text::setFontFamily, "setFontFamily", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setPosition", JS_NewCFunction(ctx, &Text::setPosition, "setPosition", 2));
 
-	JSValue ctroInstance = JS_NewCFunction2(ctx, &Text::constructor, textClass.class_name, 5, JS_CFUNC_constructor, 0);
+	JSValue ctroInstance = JS_NewCFunction2(ctx, &Text::constructor, textClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 	JSValue global = JS_GetGlobalObject(ctx);
