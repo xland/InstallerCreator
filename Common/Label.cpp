@@ -1,5 +1,6 @@
 #include "Label.h"
 #include "Util.h"
+#include "Win.h"
 
 namespace {
 	static JSClassID id;
@@ -39,11 +40,20 @@ void Label::Reg(JSContext* ctx)
 	JS_FreeValue(ctx, global);
 }
 
+void Label::Paint(Win* win)
+{
+}
+
 JSValue Label::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
-	auto self = new Label();
 
-	JS_SetOpaque(obj, self);
+	//auto text = JS_NewObjectClass(ctx, id);
+	//auto t = new Text();
+	//JS_SetOpaque(obj, t);
+
+	//JS_SetPropertyStr(ctx, obj, "text", );
+	//auto self = new Label();
+	//JS_SetOpaque(obj, self);
 	return obj;
 }

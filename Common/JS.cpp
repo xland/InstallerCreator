@@ -9,6 +9,7 @@
 #include "Win.h"
 #include "Path.h"
 #include "Rect.h"
+#include "Text.h"
 #include "Div.h"
 #include "Input.h"
 #include "Img.h"
@@ -33,6 +34,7 @@ void JS::Init()
     Shadow::Reg(ctx);
     Path::Reg(ctx);
     Rect::Reg(ctx);
+    Text::Reg(ctx);
     Div::Reg(ctx);
     Input::Reg(ctx);
     Win::Reg(ctx);

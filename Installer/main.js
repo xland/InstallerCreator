@@ -264,8 +264,12 @@ app.ready(() => {
     initBannerArr();
     initBgRect();
     setWinDragPath();
+    let text = new Text();
+    text.setText("测试以下新文本标签");
+    text.setColor(0xFF000000);
+    text.setPosition(100, 100);
     win.addElement([bgRect, getTitleDiv(), getCloseDiv(), getMinimizeDiv(),
-        ...bannerArr, getStartBtn(), ...getLicenceDiv(), ...getCustomizeBtn()]);
+        ...bannerArr, getStartBtn(), ...getLicenceDiv(), ...getCustomizeBtn(),text]);
     win.show();
     setBannerAnimation();
     globalThis.win = win;

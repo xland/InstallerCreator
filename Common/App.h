@@ -9,6 +9,7 @@ public:
 	~App();
 	static void Reg(JSContext* ctx);
 	static std::shared_ptr<SkFont> GetSystemFont(const char* fontName);
+	static std::shared_ptr<SkFont> GetFontByFile(const char* fontName);
 	static std::shared_ptr<SkFont> GetDefaultTextFont();
 	static std::shared_ptr<SkFont> GetDefaultIconFont();
 	static void Dispose();

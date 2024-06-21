@@ -21,14 +21,14 @@ Console::~Console()
 
 void Console::Log(const char* str)
 {
-    std::cout << "[Log]: " << str << std::endl;
+    std::cout << "[Log]:" << str << std::endl;
 }
 
 void Console::Err(const char* str)
 {
     HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_INTENSITY);
-    std::wcout << L"[Err]: " << str << std::endl;
+    std::wcout << L"[Err]:" << str << std::endl;
     SetConsoleTextAttribute(hConsole, FOREGROUND_RED | FOREGROUND_GREEN | FOREGROUND_BLUE);
 }
 

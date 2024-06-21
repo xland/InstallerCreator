@@ -11,6 +11,7 @@
 #include <include/core/SkData.h>
 #include "Util.h"
 #include "App.h"
+#include "Console.h"
 
 
 namespace {
@@ -51,6 +52,27 @@ std::shared_ptr<SkFont> App::GetSystemFont(const char* fontName)
     auto fontMgr = SkFontMgr_New_GDI();
     SkFontStyle fontStyle = SkFontStyle::Normal();
     auto font = std::make_shared<SkFont>(fontMgr->matchFamilyStyle(fontName, fontStyle));
+    font->setSize(13);
+    font->setEdging(SkFont::Edging::kSubpixelAntiAlias);
+    font->setSubpixel(true);
+    return font;
+}
+
+std::shared_ptr<SkFont> App::GetFontByFile(const char* fontName)
+{
+    std::ifstream file(fontName, std::ios::binary | std::ios::ate);
+    if (!file.is_open()) {
+        Console::Err("can not open font file!");
+        return nullptr;
+    }
+    size_t fileSize = file.tellg();
+    std::vector<uint8_t> buffer(fileSize);
+    file.seekg(0, std::ios::beg);
+    file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
+    file.close();
+    auto fontData = SkData::MakeWithoutCopy(buffer.data(), fileSize);
+    auto fontMgr = SkFontMgr_New_GDI();
+    auto font = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
     font->setSize(13);
     font->setEdging(SkFont::Edging::kSubpixelAntiAlias);
     font->setSubpixel(true);
@@ -144,20 +166,7 @@ JSValue App::setDefaultIconFontByFile(JSContext* ctx, JSValueConst thisVal, int 
     if (!fontName) {
         return JS_ThrowTypeError(ctx, "arg arr item error");
     }
-    std::string name{ fontName };
-    JS_FreeCString(ctx, fontName);
-
-    std::ifstream file(name, std::ios::binary | std::ios::ate);
-    if (!file.is_open()) {
-        return JS_ThrowTypeError(ctx, "arg arr item error");
-    }
-    size_t fileSize = file.tellg();
-    std::vector<uint8_t> buffer(fileSize);
-    file.seekg(0, std::ios::beg);
-    file.read(reinterpret_cast<char*>(buffer.data()), fileSize);
-    file.close();
-    auto fontData = SkData::MakeWithoutCopy(buffer.data(), fileSize);
-    auto fontMgr = SkFontMgr_New_GDI();
-    defaultIconFont = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
+    defaultIconFont = GetFontByFile(fontName);
+    JS_FreeCString(ctx, fontName);    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
