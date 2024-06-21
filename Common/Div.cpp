@@ -87,7 +87,7 @@ void Div::piantText(Win* win)
 {
 	font->setSize(fontSize);
 	SkPaint textPaint;
-	//textPaint.setAntiAlias(true);
+	textPaint.setAntiAlias(true);
 	textPaint.setColor(color);
 	auto length = wcslen(text.data()) * 2;
 	SkRect lineRect;

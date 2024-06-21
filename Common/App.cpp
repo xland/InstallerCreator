@@ -49,8 +49,11 @@ void App::Dispose() {
 std::shared_ptr<SkFont> App::GetSystemFont(const char* fontName)
 {
     auto fontMgr = SkFontMgr_New_GDI();
-    auto font = std::make_shared<SkFont>(fontMgr->matchFamilyStyle(fontName, {}));
+    SkFontStyle fontStyle = SkFontStyle::Normal();
+    auto font = std::make_shared<SkFont>(fontMgr->matchFamilyStyle(fontName, fontStyle));
     font->setSize(13);
+    font->setEdging(SkFont::Edging::kSubpixelAntiAlias);
+    font->setSubpixel(true);
     return font;
 }
 
@@ -66,13 +69,14 @@ std::shared_ptr<SkFont> App::GetDefaultIconFont()
 
 JSValue App::ready(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-    if (JS_IsFunction(ctx, argv[0])) {
-        if (!defaultTextFont) {
-            defaultTextFont = GetSystemFont("Microsoft YaHei");
-        }
-        JSValue ret = JS_Call(ctx, argv[0], JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
-        JS_FreeValue(ctx, ret);
+    if (!JS_IsFunction(ctx, argv[0])) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
     }
+    if (!defaultTextFont) {
+        defaultTextFont = GetSystemFont("Microsoft YaHei"); //SimSun
+    }
+    JSValue ret = JS_Call(ctx, argv[0], JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+    JS_FreeValue(ctx, ret);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue App::quit(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

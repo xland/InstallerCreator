@@ -1,11 +1,11 @@
 ﻿//app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
 //let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
 
-app.setDefaultIconFontByFile("iconfont.ttf");
+app.setDefaultIconFontByFile("iconfont.ttf"); //app ready之前完成此工作
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let bgRect;
-let win = new Win(windowTitle, 800, 600); //默认为透明窗口
+let win;
 let initBgRect = () => {
     bgRect = Rect.newXYWH(50, 50, 700, 450); //550
     bgRect.setColor(0xffe6f4ff);
@@ -259,7 +259,8 @@ let removeCustomizeElements = () => {
     win.removeElement("input");
     win.removeElement("selectPath");
 }
-let start = () => {
+app.ready(() => {
+    win = new Win(windowTitle, 800, 600); //默认为透明窗口
     initBannerArr();
     initBgRect();
     setWinDragPath();
@@ -268,10 +269,5 @@ let start = () => {
     win.show();
     setBannerAnimation();
     globalThis.win = win;
-};
-
-
-app.ready(() => {
-    start();
 })
 
