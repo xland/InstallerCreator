@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "include/core/SkRect.h"
 #include "include/core/SkRRect.h"

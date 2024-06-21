@@ -1,4 +1,4 @@
-#include "Rect.h"
+ï»¿#include "Rect.h"
 #include "JS.h"
 #include "Win.h"
 #include "include/core/SkPoint3.h"
@@ -60,8 +60,8 @@ void Rect::Paint(Win* win)
 		else {
 			path.addRRect(rrect);
 		}
-		SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// ¶¨ÒåÒõÓ°Óë z Æ½ÃæµÄ¹ØÏµ    
-		SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// ¶¨Òå¹âÔ´µÄÎ»ÖÃºÍ°ë¾¶
+		SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// å®šä¹‰é˜´å½±ä¸Ž z å¹³é¢çš„å…³ç³»    
+		SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// å®šä¹‰å…‰æºçš„ä½ç½®å’ŒåŠå¾„
 		SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2 * shadowSize,
 			shadowAmbientColor, shadowSpotColor, 0);
 	}
@@ -115,10 +115,10 @@ JSValue Rect::setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JS
 	}
 	auto rect = (Rect*)Element::GetPtr(thisVal);
 	SkVector radii[4] {
-		{r1, r1},  // ×óÉÏ½Ç
-		{r2, r2},  // ÓÒÉÏ½Ç
-		{r3, r3},  // ÓÒÏÂ½Ç
-		{r4, r4}   // ×óÏÂ½Ç
+		{r1, r1},  // å·¦ä¸Šè§’
+		{r2, r2},  // å³ä¸Šè§’
+		{r3, r3},  // å³ä¸‹è§’
+		{r4, r4}   // å·¦ä¸‹è§’
 	};
 	rect->rrect.setRectRadii(rect->rect, radii);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);

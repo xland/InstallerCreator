@@ -15,6 +15,7 @@
 #include "Img.h"
 #include "Shadow.h"
 
+
 namespace {
     JSContext* ctx;
     JSRuntime* rt;

@@ -1,4 +1,4 @@
-#include "Label.h"
+﻿#include "Label.h"
 #include "Util.h"
 #include "Win.h"
 

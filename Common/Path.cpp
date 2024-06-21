@@ -1,4 +1,4 @@
-#include "Path.h"
+ï»¿#include "Path.h"
 #include "Rect.h"
 #include "include/core/SkRect.h"
 #include "Win.h"
@@ -62,8 +62,8 @@ void Path::Reg(JSContext* ctx)
 void Path::Paint(Win* win)
 {
 	if (shadowSize > 0) {
-		SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// ¶¨ÒåÒõÓ°Óë z Æ½ÃæµÄ¹ØÏµ    
-		SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// ¶¨Òå¹âÔ´µÄÎ»ÖÃºÍ°ë¾¶
+		SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// å®šä¹‰é˜´å½±ä¸Ž z å¹³é¢çš„å…³ç³»    
+		SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// å®šä¹‰å…‰æºçš„ä½ç½®å’ŒåŠå¾„
 		SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2 * shadowSize,
 			shadowAmbientColor, shadowSpotColor, 0);
 	}

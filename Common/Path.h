@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "include/core/SkPath.h"
 #include "Element.h"
 class Path:public Element

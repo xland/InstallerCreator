@@ -1,4 +1,4 @@
-#include "Shadow.h"
+ï»¿#include "Shadow.h"
 #include "Win.h"
 #include "Path.h"
 #include "include/core/SkPoint3.h"
@@ -26,8 +26,8 @@ Shadow::~Shadow()
 
 void Shadow::Paint(Win* win)
 {
-	SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// ¶¨ÒåÒõÓ°Óë z Æ½ÃæµÄ¹ØÏµ    
-	SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// ¶¨Òå¹âÔ´µÄÎ»ÖÃºÍ°ë¾¶
+	SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// å®šä¹‰é˜´å½±ä¸ z å¹³é¢çš„å…³ç³»    
+	SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// å®šä¹‰å…‰æºçš„ä½ç½®å’ŒåŠå¾„
 	SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2*shadowSize, ambientColor, spotColor, 0);
 }
 
@@ -42,7 +42,7 @@ JSValue Shadow::setPath(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
 {
 	auto shadow = (Shadow*)JS_GetOpaque(thisVal, id);
 	auto path = (Path*)Element::GetPtr(argv[0]);
-	shadow->path = path->path; //ÕâÀïÊÇ¸ö¸´ÖÆ²Ù×÷
+	shadow->path = path->path; //è¿™é‡Œæ˜¯ä¸ªå¤åˆ¶æ“ä½œ
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue Shadow::setAmbientColor(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

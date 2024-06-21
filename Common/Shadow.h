@@ -1,4 +1,4 @@
-#include "Path.h"
+ï»¿#include "Path.h"
 
 class Shadow:public Path
 {
@@ -19,5 +19,5 @@ private:
 	static JSValue setShadowSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 };
 
-//shadowµÄpath¿ÉÄÜÊÇ´°¿ÚµÄÂÖÀª,ËùÒÔµÃ¿¼ÂÇ¸´ÓÃpathµÄÎÊÌâ¡£
-//¼ÙÉèpathÊÇÒ»¸öÁÙÊ±±äÁ¿µÄ»°£¬ÄÇÃ´path¾ÍÓĞ¿ÉÄÜ±»ÊÍ·Å£¬
+//shadowçš„pathå¯èƒ½æ˜¯çª—å£çš„è½®å»“,æ‰€ä»¥å¾—è€ƒè™‘å¤ç”¨pathçš„é—®é¢˜ã€‚
+//å‡è®¾pathæ˜¯ä¸€ä¸ªä¸´æ—¶å˜é‡çš„è¯ï¼Œé‚£ä¹ˆpathå°±æœ‰å¯èƒ½è¢«é‡Šæ”¾ï¼Œ
