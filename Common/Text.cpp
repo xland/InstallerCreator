@@ -75,6 +75,11 @@ JSValue Text::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVa
 	return obj;
 }
 
+JSValue Text::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
 JSValue Text::setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto text = (Text*)Element::GetPtr(thisVal);
