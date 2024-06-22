@@ -11,4 +11,23 @@ public:
 	void Paint(Win* win) override;
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
+
+    static JSValue onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
+    JSValue mouseEnterCB;
+    JSValue mouseLeaveCB;
+    JSValue mouseDownCB;
+    JSValue mouseUpCB;
+
+    uint32_t verticalAlign;  //纵向
+    uint32_t horizontalAlign; //横向
+    double indentVertical{ 0.f };
+    double indentHorizontal{ 0.f };
+    JSValue text;
+    JSValue rect;
 };

@@ -15,10 +15,14 @@ private:
 	static JSValue setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setFontFile(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue setDecoration(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
 
 	std::wstring text;
 	SkRect textRect;
 	double fontSize{ 13 };
 	double x{ 0.0 }, y{ 0.0 };
+    uint32_t decorationColor{ 0 };
+    double decorationSize{ 0.f };
 	std::shared_ptr<SkFont> font;
 };

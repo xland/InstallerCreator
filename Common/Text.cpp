@@ -37,6 +37,7 @@ void Text::Reg(JSContext* ctx)
 	JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Text::setText, "setText", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Text::setFontFamily, "setFontFamily", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setPosition", JS_NewCFunction(ctx, &Text::setPosition, "setPosition", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "setDecoration", JS_NewCFunction(ctx, &Text::setDecoration, "setDecoration", 2));
 
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Text::constructor, textClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
@@ -141,11 +142,37 @@ JSValue Text::setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JSValu
 	obj->y = y;
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
+JSValue Text::setDecoration(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    double decorationSize;
+    if (JS_ToFloat64(ctx, &decorationSize, argv[0])) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    unsigned int decorationColor;
+    if (JS_ToUint32(ctx, &decorationColor, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    auto text = (Text*)GetPtr(thisVal);
+    text->decorationSize = decorationSize;
+    text->decorationColor = decorationColor;
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
 void Text::Paint(Win* win)
 {
-	auto left = x - textRect.fLeft;
-	auto top = y - textRect.fTop;
+    auto left = x - textRect.fLeft;
+    auto top = y - textRect.fTop;
+    if (decorationSize > 0) {
+        SkPaint paint;
+        paint.setAntiAlias(true);
+        paint.setColor(decorationColor);
+        paint.setStroke(true);
+        paint.setStrokeWidth(decorationSize);
+        auto bottom = top + textRect.height();
+        auto right = left + textRect.width();
+        win->canvas->drawLine(left, bottom, right, bottom, paint);
+    }
 	auto length = wcslen(text.data()) * 2;
 	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, left, top, *font, paint);
+
 }
 
