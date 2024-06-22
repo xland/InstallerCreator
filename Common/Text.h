@@ -1,27 +1,28 @@
-#include "Element.h"
+#pragma once
 
-class Text:public Element
+#include "TextBase.h"
+
+class Text:public TextBase
 {
 public:
 	~Text();
 	static void Reg(JSContext* ctx);
-	void Paint(Win* win) override;
+    void Paint(Win* win) override;
     static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
-private:
+
+    double x{ 0.0 }, y{ 0.0 };
+    SkRect textRect;
+protected:
     Text();
+private:
 	void resetTextRect();	
 	static JSValue setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue setFontFile(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue setDecoration(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
 
 	std::wstring text;
-	SkRect textRect;
 	double fontSize{ 13 };
-	double x{ 0.0 }, y{ 0.0 };
     uint32_t decorationColor{ 0 };
     double decorationSize{ 0.f };
 	std::shared_ptr<SkFont> font;

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Element.h"
 #include "Rect.h"
 #include "Text.h"
@@ -9,6 +11,7 @@ public:
 	~Div();
 	static void Reg(JSContext* ctx);
 	void Paint(Win* win) override;
+
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
 
@@ -16,9 +19,16 @@ private:
     static JSValue onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
     static JSValue setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
+    static JSValue setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    //static JSValue setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    //static JSValue setRRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+
+    std::tuple<float, float> getTextPos(SkRect& rect,SkRect& lineRect);
     JSValue mouseEnterCB;
     JSValue mouseLeaveCB;
     JSValue mouseDownCB;
@@ -28,6 +38,6 @@ private:
     uint32_t horizontalAlign; //横向
     double indentVertical{ 0.f };
     double indentHorizontal{ 0.f };
-    JSValue text;
-    JSValue rect;
+    JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
+    JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
 };

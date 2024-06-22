@@ -4,6 +4,7 @@ file(GLOB_RECURSE COMMON
     "Console.cpp" "Console.h"
     "Sys.cpp" "Sys.h"
     "Element.cpp" "Element.h"
+    "TextBase.cpp" "TextBase.h"
     "Text.cpp" "Text.h"
     "FontIcon.cpp" "FontIcon.h"
     "Rect.cpp" "Rect.h"

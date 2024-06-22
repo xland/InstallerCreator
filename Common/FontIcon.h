@@ -1,3 +1,5 @@
+#pragma once
+
 #include "Element.h"
 
 class FontIcon:public Element

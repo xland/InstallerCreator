@@ -35,8 +35,8 @@ void Input::Reg(JSContext* ctx)
 	JS_NewClass(rt, id, &inputClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
-	RegRectBase(ctx, protoInstance);
-	RegDivBase(ctx, protoInstance);
+	//RegRectBase(ctx, protoInstance);
+	//RegDivBase(ctx, protoInstance);
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Input::constructor, inputClass.class_name, 0, JS_CFUNC_constructor, 0);
 	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Input::newLTRB, "newLTRB", 4));
 	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Input::newXYWH, "newXYWH", 4));
@@ -54,9 +54,9 @@ JSValue Input::newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 		return err;
 	}
 	JSValue obj = JS_NewObjectClass(ctx, id);
-	auto self = new Input();
-	self->rect.setLTRB(l, t, r, b);
-	JS_SetOpaque(obj, self);
+	//auto self = new Input();
+	//self->rect.setLTRB(l, t, r, b);
+	//JS_SetOpaque(obj, self);
 	return obj;
 }
 JSValue Input::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -66,33 +66,33 @@ JSValue Input::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 		return err;
 	}
 	JSValue obj = JS_NewObjectClass(ctx, id);
-	auto self = new Input();
-	self->rect.setXYWH(x, y, w, h);
-	JS_SetOpaque(obj, self);
+	//auto self = new Input();
+	//self->rect.setXYWH(x, y, w, h);
+	//JS_SetOpaque(obj, self);
 	return obj;
 }
 void Input::Paint(Win* win)
 {
-	Rect::Paint(win);
-	Div::Paint(win);
+	//Rect::Paint(win);
+	//Div::Paint(win);
 }
 
 void Input::MouseMove(const float& x, const float& y)
 {
-	Rect::MouseMove(x,y);
+	//Rect::MouseMove(x,y);
 }
 
 void Input::MouseDown()
 {
-	Rect::MouseDown();
+	//Rect::MouseDown();
 }
 
 void Input::MouseUp()
 {
-	Rect::MouseUp();
+	//Rect::MouseUp();
 }
 
 void Input::Dispose()
 {
-	Rect::Dispose();
+	//Rect::Dispose();
 }

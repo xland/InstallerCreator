@@ -1,4 +1,4 @@
-﻿#include <Windows.h>
+#include <Windows.h>
 #include <shlobj_core.h>
 #include <fstream>
 #include <filesystem>
@@ -16,8 +16,9 @@
 
 namespace {
     JSValue app;
-    std::shared_ptr<SkFont> defaultTextFont;
-    std::shared_ptr<SkFont> defaultIconFont;
+    std::map<std::string,std::shared_ptr<SkFont>> fonts;
+    std::string defaultTextFontName;
+    std::string defaultIconFontName;
 }
 
 App::App()
@@ -33,8 +34,8 @@ void App::Reg(JSContext* ctx)
     JSValue globalObj = JS_GetGlobalObject(ctx);
     app = JS_NewObject(ctx);
     JS_SetPropertyStr(ctx, app, "ready", JS_NewCFunction(ctx, &App::ready, "ready", 1));
-    JS_SetPropertyStr(ctx, app, "setDefaultTextFontByName", JS_NewCFunction(ctx, &App::setDefaultTextFontByName, "setDefaultTextFontByName", 1));
-    JS_SetPropertyStr(ctx, app, "setDefaultIconFontByFile", JS_NewCFunction(ctx, &App::setDefaultIconFontByFile, "setDefaultIconFontByFile", 1));
+    JS_SetPropertyStr(ctx, app, "initSystemFont", JS_NewCFunction(ctx, &App::initSystemFont, "initFont", 4));
+    JS_SetPropertyStr(ctx, app, "initFileFont", JS_NewCFunction(ctx, &App::initFileFont, "initFont", 4));
     JS_SetPropertyStr(ctx, app, "quit", JS_NewCFunction(ctx, &App::quit, "quit", 0));
     JS_SetPropertyStr(ctx, app, "setCursor", JS_NewCFunction(ctx, &App::setCursor, "setCursor", 1));
     JS_SetPropertyStr(ctx, app, "getKnownFolder", JS_NewCFunction(ctx, &App::getKnownFolder, "getKnownFolder", 1));
@@ -81,12 +82,12 @@ std::shared_ptr<SkFont> App::GetFontByFile(const char* fontName)
 
 std::shared_ptr<SkFont> App::GetDefaultTextFont()
 {
-    return defaultTextFont;
+    return fonts[defaultTextFontName];
 }
 
 std::shared_ptr<SkFont> App::GetDefaultIconFont()
 {
-    return defaultIconFont;
+    return fonts[defaultIconFontName];
 }
 
 JSValue App::ready(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -94,8 +95,10 @@ JSValue App::ready(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst*
     if (!JS_IsFunction(ctx, argv[0])) {
         return JS_ThrowTypeError(ctx, "arg0 error");
     }
-    if (!defaultTextFont) {
-        defaultTextFont = GetSystemFont("Microsoft YaHei"); //SimSun
+    if (defaultTextFontName.empty()) {
+        defaultTextFontName = std::string{ "Microsoft YaHei" };
+        auto font = GetSystemFont(defaultTextFontName.data());
+        fonts.insert({ defaultTextFontName, font });
     }
     JSValue ret = JS_Call(ctx, argv[0], JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
     JS_FreeValue(ctx, ret);
@@ -149,24 +152,51 @@ JSValue App::openUrlByDefaultBrowser(JSContext* ctx, JSValueConst thisVal, int a
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
-JSValue App::setDefaultTextFontByName(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue App::initSystemFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     const char* name = JS_ToCString(ctx, argv[0]);
     if (!name) {
         return JS_ThrowTypeError(ctx, "arg0 error");
     }
+    auto font = GetSystemFont(name);
+    std::string fontName{ name };
     JS_FreeCString(ctx, name);
-    defaultTextFont = GetSystemFont(name);
+
+    bool isDefaultTextFont = JS_ToBool(ctx, argv[1]);
+    if (isDefaultTextFont) {
+        defaultTextFontName = fontName;
+    }
+    fonts.insert({ fontName, font });
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
-JSValue App::setDefaultIconFontByFile(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue App::initFileFont(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-    const char* fontName = JS_ToCString(ctx, argv[0]);
-    if (!fontName) {
-        return JS_ThrowTypeError(ctx, "arg arr item error");
+    const char* fontFilePath = JS_ToCString(ctx, argv[0]);
+    if (!fontFilePath) {
+        return JS_ThrowTypeError(ctx, "arg0 arr item error");
     }
-    defaultIconFont = GetFontByFile(fontName);
-    JS_FreeCString(ctx, fontName);    
+
+    const char* name = JS_ToCString(ctx, argv[1]);
+    if (!name) {
+        return JS_ThrowTypeError(ctx, "arg1 arr item error");
+    }
+
+    uint32_t val;
+    if (JS_ToUint32(ctx, &val, argv[2])) {
+        return JS_ThrowTypeError(ctx, "arg2 error");
+    }
+    std::string fontName { name };
+    if (val == 1) {
+        defaultIconFontName = fontName;
+    }
+    else if (val == 2) {
+        defaultTextFontName = fontName;
+    }
+    auto font = GetFontByFile(fontFilePath);
+    fonts.insert({fontName,font});
+
+    JS_FreeCString(ctx, fontFilePath);
+    JS_FreeCString(ctx, name);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

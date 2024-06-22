@@ -1,27 +1,31 @@
-﻿//app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
+//app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
 //let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
 
-app.setDefaultIconFontByFile("iconfont.ttf"); //app ready之前完成此工作
+app.initFileFont("iconfont.ttf","iconFont",1); //app ready之前完成此工作
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
-let bgRect;
 let win;
-let initBgRect = () => {
-    bgRect = Rect.newXYWH(50, 50, 700, 450); //550
+let getBgRect = () => {
+    let bgRect = Rect.newXYWH(50, 50, 700, 450); //550
     bgRect.setColor(0xffe6f4ff);
     bgRect.setShadowSize(30);
     bgRect.setBorderRadius(3, 3, 3, 3);
+    return bgRect;
 };
 let getTitleDiv = () => {
-    let titleDiv = Div.newLTRB(50, 50, 750, 80);
-    titleDiv.setBorderRadius(3, 3, 0, 0);
+    let text = new Text();
+    text.setColor(0xff888888);
+    text.setFontSize(12);
+    text.setText(windowTitle);
+    let rect = new Rect();
+    rect.setLTRB(50, 50, 750, 80);
+    rect.setBorderRadius(3, 3, 0, 0);
+    rect.setColor(0xffe6f4ff);
+    let titleDiv = new Div();
+    titleDiv.setText(text);
+    titleDiv.setRect(rect);
     titleDiv.setAlign(1, 0);
     titleDiv.setIndent(0, 8);
-    titleDiv.setColor(0xffe6f4ff);
-    titleDiv.setTextColor(0xff888888);
-    titleDiv.setFontSize(12);
-    titleDiv.setFontFamily("Microsoft YaHei");
-    titleDiv.setText(windowTitle);
     return titleDiv;
 };
 let getCloseDiv = () => {
@@ -261,13 +265,11 @@ let removeCustomizeElements = () => {
 }
 app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口
-    initBannerArr();
-    initBgRect();
-    setWinDragPath();
-    win.addElement([bgRect, getTitleDiv(), getCloseDiv(), getMinimizeDiv(),
-        ...bannerArr, getStartBtn(), ...getLicenceDiv(), ...getCustomizeBtn()]);
+    //initBannerArr();
+    //setWinDragPath();
+    win.addElement([getBgRect(), getTitleDiv()]);
     win.show();
-    setBannerAnimation();
+    //setBannerAnimation();
     globalThis.win = win;
 })
 

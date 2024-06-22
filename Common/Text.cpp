@@ -32,10 +32,9 @@ void Text::Reg(JSContext* ctx)
 	JS_NewClassID(rt, &id);
 	JS_NewClass(rt, id, &textClass);
 	JSValue protoInstance = JS_NewObject(ctx);
-	RegBase(ctx, protoInstance);
-	JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &Text::setFontSize, "setFontSize", 1));
+	Element::RegBase(ctx, protoInstance);
+    TextBase::RegTextBase(ctx, protoInstance);
 	JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Text::setText, "setText", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &Text::setFontFamily, "setFontFamily", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "setPosition", JS_NewCFunction(ctx, &Text::setPosition, "setPosition", 2));
     JS_SetPropertyStr(ctx, protoInstance, "setDecoration", JS_NewCFunction(ctx, &Text::setDecoration, "setDecoration", 2));
 
@@ -81,52 +80,6 @@ JSValue Text::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	}
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-
-JSValue Text::setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	auto obj = (Text*)Element::GetPtr(thisVal);
-	double fontSize;
-	if (JS_ToFloat64(ctx, &fontSize, argv[0])) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	if (fontSize != obj->fontSize) {
-		obj->fontSize = fontSize;
-		obj->resetTextRect();
-	}	
-	return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-JSValue Text::setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	const char* strData = JS_ToCString(ctx, argv[0]);
-	if (!strData) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	auto font = App::GetSystemFont(strData);
-	auto obj = (Text*)Element::GetPtr(thisVal);
-	if (font.get() != obj->font.get()) {
-		obj->font = font;
-		obj->resetTextRect();
-	}
-	JS_FreeCString(ctx, strData);
-	return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-JSValue Text::setFontFile(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	const char* strData = JS_ToCString(ctx, argv[0]);
-	if (!strData) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	auto font = App::GetFontByFile(strData);
-	auto obj = (Text*)Element::GetPtr(thisVal);
-	if (font.get() != obj->font.get()) {
-		obj->font = font;
-		obj->resetTextRect();
-	}
-	JS_FreeCString(ctx, strData);
-	return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
 JSValue Text::setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	double x;
@@ -159,20 +112,18 @@ JSValue Text::setDecoration(JSContext* ctx, JSValueConst thisVal, int argc, JSVa
 }
 void Text::Paint(Win* win)
 {
-    auto left = x - textRect.fLeft;
-    auto top = y - textRect.fTop;
     if (decorationSize > 0) {
         SkPaint paint;
         paint.setAntiAlias(true);
         paint.setColor(decorationColor);
         paint.setStroke(true);
         paint.setStrokeWidth(decorationSize);
-        auto bottom = top + textRect.height();
-        auto right = left + textRect.width();
-        win->canvas->drawLine(left, bottom, right, bottom, paint);
+        auto bottom = textRect.height();
+        auto right = textRect.width();
+        win->canvas->drawLine(0, bottom, right, bottom, paint);
     }
 	auto length = wcslen(text.data()) * 2;
-	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, left, top, *font, paint);
+	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, x, y, *font, paint);
 
 }
 

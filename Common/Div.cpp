@@ -33,7 +33,12 @@ void Div::Reg(JSContext* ctx)
 
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
-    
+
+    JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Div::setText, "setText", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "setRect", JS_NewCFunction(ctx, &Div::setRect, "setRect", 1));
+    //JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Div::setIcon, "setIcon", 1));
+    //JS_SetPropertyStr(ctx, protoInstance, "setRRect", JS_NewCFunction(ctx, &Div::setRRect, "setRRect", 1));
+
     JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &Div::setAlign, "setAlign", 2));
     JS_SetPropertyStr(ctx, protoInstance, "setIndent", JS_NewCFunction(ctx, &Div::setIndent, "setIndent", 1));
     JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Div::onMouseEnter, "onMouseEnter", 1));
@@ -53,8 +58,11 @@ void Div::Reg(JSContext* ctx)
 void Div::Paint(Win* win)
 {
     auto ctx = JS::GetCtx();
-    auto txtObj = (Text*)Element::GetPtr(text);
     auto rectObj = (Rect*)Element::GetPtr(rect);
+    auto txtObj = (Text*)Element::GetPtr(text);
+    auto [left, top] = getTextPos(rectObj->rect, txtObj->textRect);
+    txtObj->x = left;
+    txtObj->y = top;
     rectObj->Paint(win);
     txtObj->Paint(win);
 }
@@ -63,12 +71,21 @@ JSValue Div::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVal
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);
     auto self = new Div();
-    self->text = Text::constructor(ctx, newTarget, argc, argv);
-    self->rect = Rect::constructor(ctx, newTarget, argc, argv);
-	JS_SetPropertyStr(ctx, obj, "text", self->text);
-    JS_SetPropertyStr(ctx, obj, "rect", self->rect);
 	JS_SetOpaque(obj, self);
 	return obj;
+}
+
+JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto div = (Div*)GetPtr(thisVal);
+    div->text = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Div::setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto div = (Div*)GetPtr(thisVal);
+    div->rect = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
 JSValue Div::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -85,6 +102,33 @@ JSValue Div::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     div->verticalAlign = vAlign;
     div->horizontalAlign = hAlign;
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+std::tuple<float, float> Div::getTextPos(SkRect& rect, SkRect& lineRect)
+{
+    float left{ rect.fLeft - lineRect.fLeft };
+    float top{ rect.fTop - lineRect.fTop };
+    float w{ lineRect.width() };
+    float h{ lineRect.height() };
+    if (verticalAlign == 0) {
+        top += indentVertical;
+    }
+    else if (verticalAlign == 1) {
+        top += (rect.height() - h) / 2;
+    }
+    else if (verticalAlign == 2) {
+        top = rect.fBottom - lineRect.fBottom - indentVertical;
+    }
+    if (horizontalAlign == 0) {
+        left += indentHorizontal;
+    }
+    else if (horizontalAlign == 1) {
+        left += (rect.width() - w) / 2;
+    }
+    else if (horizontalAlign == 2) {
+        left = rect.fRight - w - indentHorizontal;
+    }
+    return {left,top};
 }
 
 JSValue Div::setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

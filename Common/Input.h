@@ -1,6 +1,8 @@
+#pragma once
+
 #include "Div.h"
 
-class Input: public Div
+class Input: public Element
 {
 public:
 	~Input();
