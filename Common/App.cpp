@@ -53,7 +53,6 @@ std::shared_ptr<SkFont> App::GetSystemFont(const char* fontName)
     auto fontMgr = SkFontMgr_New_GDI();
     SkFontStyle fontStyle = SkFontStyle::Normal();
     auto font = std::make_shared<SkFont>(fontMgr->matchFamilyStyle(fontName, fontStyle));
-    font->setSize(13);
     font->setEdging(SkFont::Edging::kSubpixelAntiAlias);
     font->setSubpixel(true);
     return font;
@@ -74,7 +73,6 @@ std::shared_ptr<SkFont> App::GetFontByFile(const char* fontName)
     auto fontData = SkData::MakeWithoutCopy(buffer.data(), fileSize);
     auto fontMgr = SkFontMgr_New_GDI();
     auto font = std::make_shared<SkFont>(fontMgr->makeFromData(fontData));
-    font->setSize(13);
     font->setEdging(SkFont::Edging::kSubpixelAntiAlias);
     font->setSubpixel(true);
     return font;
@@ -88,6 +86,11 @@ std::shared_ptr<SkFont> App::GetDefaultTextFont()
 std::shared_ptr<SkFont> App::GetDefaultIconFont()
 {
     return fonts[defaultIconFontName];
+}
+
+std::shared_ptr<SkFont> App::GetInitFont(const std::string& name)
+{
+    return fonts[name];
 }
 
 JSValue App::ready(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

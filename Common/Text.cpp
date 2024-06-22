@@ -35,7 +35,6 @@ void Text::Reg(JSContext* ctx)
 	Element::RegBase(ctx, protoInstance);
     TextBase::RegTextBase(ctx, protoInstance);
 	JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Text::setText, "setText", 1));
-	JS_SetPropertyStr(ctx, protoInstance, "setPosition", JS_NewCFunction(ctx, &Text::setPosition, "setPosition", 2));
     JS_SetPropertyStr(ctx, protoInstance, "setDecoration", JS_NewCFunction(ctx, &Text::setDecoration, "setDecoration", 2));
 
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Text::constructor, textClass.class_name, 0, JS_CFUNC_constructor, 0);
@@ -54,14 +53,14 @@ JSValue Text::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVa
 	return obj;
 }
 
-void Text::resetTextRect()
+void Text::resetLineRect()
 {
 	if (!font.get()) {
 		font = App::GetDefaultTextFont();
-	}
-	font->setSize(fontSize);
+    }
+    font->setSize(fontSize);
 	auto length = wcslen(text.data()) * 2;
-	font->measureText(text.data(), length, SkTextEncoding::kUTF16, &textRect);
+	font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
 }
 
 JSValue Text::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -74,27 +73,12 @@ JSValue Text::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	JS_FreeCString(ctx, strData);
 	auto obj = (Text*)Element::GetPtr(thisVal);
 	if (obj->text != str) {
-		//todo
 		obj->text = str;
-		obj->resetTextRect();
+		obj->resetLineRect();
 	}
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-JSValue Text::setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	double x;
-	if (JS_ToFloat64(ctx, &x, argv[0])) {
-		return JS_ThrowTypeError(ctx, "arg0 error");
-	}
-	double y;
-	if (JS_ToFloat64(ctx, &y, argv[1])) {
-		return JS_ThrowTypeError(ctx, "arg1 error");
-	}
-	auto obj = (Text*)Element::GetPtr(thisVal);
-	obj->x = x;
-	obj->y = y;
-	return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
+
 JSValue Text::setDecoration(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     double decorationSize;
@@ -118,12 +102,12 @@ void Text::Paint(Win* win)
         paint.setColor(decorationColor);
         paint.setStroke(true);
         paint.setStrokeWidth(decorationSize);
-        auto bottom = textRect.height();
-        auto right = textRect.width();
+        auto bottom = lineRect.height();
+        auto right = lineRect.width();
         win->canvas->drawLine(0, bottom, right, bottom, paint);
-    }
+    }    
 	auto length = wcslen(text.data()) * 2;
-	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, x, y, *font, paint);
+	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, x, y, *font.get(), paint);
 
 }
 

@@ -60,7 +60,7 @@ void Div::Paint(Win* win)
     auto ctx = JS::GetCtx();
     auto rectObj = (Rect*)Element::GetPtr(rect);
     auto txtObj = (Text*)Element::GetPtr(text);
-    auto [left, top] = getTextPos(rectObj->rect, txtObj->textRect);
+    auto [left, top] = getTextPos(rectObj->rect, txtObj->lineRect);
     txtObj->x = left;
     txtObj->y = top;
     rectObj->Paint(win);
