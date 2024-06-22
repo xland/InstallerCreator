@@ -17,10 +17,12 @@ let getTitleDiv = () => {
     text.setColor(0xff888888);
     text.setFontSize(12);
     text.setText(windowTitle);
+
     let rect = new Rect();
     rect.setLTRB(50, 50, 750, 80);
     rect.setBorderRadius(3, 3, 0, 0);
     rect.setColor(0xffe6f4ff);
+
     let titleDiv = new Div();
     titleDiv.setText(text);
     titleDiv.setRect(rect);
@@ -29,27 +31,34 @@ let getTitleDiv = () => {
     return titleDiv;
 };
 let getCloseDiv = () => {
-    let closeDiv = Div.newLTRB(715, 50, 750, 80);
-    closeDiv.setBorderRadius(0, 3, 0, 0);
-    closeDiv.setColor(0x00000000);
-    closeDiv.setFontFamily("iconfont.ttf");
+    let rect = new Rect();
+    rect.setLTRB(715, 50, 750, 80);
+    rect.setBorderRadius(0, 3, 0, 0);
+    rect.setColor(0x00000000);
+
+    let icon = new Icon();
+    icon.setIcon(0xe6e6);
+    icon.setColor(0x88000000);
+    icon.setFontSize(14);
+
+    let closeDiv = new Div();
+    closeDiv.setIcon(icon);
+    closeDiv.setRect(rect);
     closeDiv.setAlign(1, 1);
-    closeDiv.setIcon(0xe6e6);
-    closeDiv.setFontSize(14);
-    closeDiv.setTextColor(0x88000000);
+
     closeDiv.onMouseEnter(() => {
-    closeDiv.setColor(0xffe81123);
-    closeDiv.setTextColor(0xffffffff);
-    win.refresh();
+        closeDiv.setColor(0xffe81123);
+        closeDiv.setTextColor(0xffffffff);
+        win.refresh();
     });
     closeDiv.onMouseLeave(() => {
-    closeDiv.setColor(0x00000000);
-    closeDiv.setTextColor(0x88000000);
-    win.refresh();
+        closeDiv.setColor(0x00000000);
+        closeDiv.setTextColor(0x88000000);
+        win.refresh();
     });
     closeDiv.onMouseDown(() => {
-    win.close();
-    console.log("down");
+        win.close();
+        console.log("down");
     });
     return closeDiv;
 };
@@ -267,7 +276,7 @@ app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口
     //initBannerArr();
     //setWinDragPath();
-    win.addElement([getBgRect(), getTitleDiv()]);
+    win.addElement([getBgRect(), getTitleDiv(),getCloseDiv()]);
     win.show();
     //setBannerAnimation();
     globalThis.win = win;

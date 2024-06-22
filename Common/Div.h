@@ -25,7 +25,7 @@ private:
 
     static JSValue setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-    //static JSValue setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     //static JSValue setRRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
     std::tuple<float, float> getTextPos(SkRect& rect,SkRect& lineRect);
@@ -40,4 +40,5 @@ private:
     double indentHorizontal{ 0.f };
     JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
+    JSValue icon{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
 };

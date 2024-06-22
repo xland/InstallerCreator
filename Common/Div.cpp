@@ -36,7 +36,7 @@ void Div::Reg(JSContext* ctx)
 
     JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Div::setText, "setText", 1));
     JS_SetPropertyStr(ctx, protoInstance, "setRect", JS_NewCFunction(ctx, &Div::setRect, "setRect", 1));
-    //JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Div::setIcon, "setIcon", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Div::setIcon, "setIcon", 1));
     //JS_SetPropertyStr(ctx, protoInstance, "setRRect", JS_NewCFunction(ctx, &Div::setRRect, "setRRect", 1));
 
     JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &Div::setAlign, "setAlign", 2));
@@ -59,12 +59,22 @@ void Div::Paint(Win* win)
 {
     auto ctx = JS::GetCtx();
     auto rectObj = (Rect*)Element::GetPtr(rect);
-    auto txtObj = (Text*)Element::GetPtr(text);
-    auto [left, top] = getTextPos(rectObj->rect, txtObj->lineRect);
-    txtObj->x = left;
-    txtObj->y = top;
+
+    TextBase* textBase;
+    if (!JS_IsUndefined(icon)) {
+        textBase = (TextBase*)Element::GetPtr(icon);
+    }
+    else if (!JS_IsUndefined(text)) {
+        textBase = (TextBase*)Element::GetPtr(text);
+    }
+    if (!textBase) {
+        return;
+    }
+    auto [left, top] = getTextPos(rectObj->rect, textBase->lineRect);
+    textBase->x = left;
+    textBase->y = top;
     rectObj->Paint(win);
-    txtObj->Paint(win);
+    textBase->Paint(win);
 }
 
 JSValue Div::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
@@ -85,6 +95,13 @@ JSValue Div::setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 {
     auto div = (Div*)GetPtr(thisVal);
     div->rect = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Div::setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto div = (Div*)GetPtr(thisVal);
+    div->icon = JS_DupValue(ctx, argv[0]);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 

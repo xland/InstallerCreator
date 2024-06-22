@@ -34,7 +34,7 @@ void Icon::Reg(JSContext* ctx)
     JSValue protoInstance = JS_NewObject(ctx);
     Element::RegBase(ctx, protoInstance);
     TextBase::RegTextBase(ctx, protoInstance);
-    JS_SetPropertyStr(ctx, protoInstance, "setCode", JS_NewCFunction(ctx, &Icon::setCode, "setCode", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Icon::setIcon, "setIcon", 1));
     JSValue ctroInstance = JS_NewCFunction2(ctx, &Icon::constructor, iconClass.class_name, 0, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, ctroInstance, protoInstance);
     JS_SetClassProto(ctx, id, protoInstance);
@@ -50,10 +50,13 @@ void Icon::Paint(Win* win)
 
 JSValue Icon::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
 {
-    return JSValue();
+    JSValue obj = JS_NewObjectClass(ctx, id);
+    auto self = new Icon();
+    JS_SetOpaque(obj, self);
+    return obj;
 }
 
-JSValue Icon::setCode(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue Icon::setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto icon = (Icon*)GetPtr(thisVal);
     uint32_t iconCode;
