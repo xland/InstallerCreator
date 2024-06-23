@@ -180,10 +180,11 @@ let setBannerAnimation = () => {
 };
 let getLicenceDiv = () => {
     let switchCheck = () => {
-        if (divCheckbox.getIcon() === 0xe608) {
-            divCheckbox.setIcon(0xe609);
+        let icon = win.getElement("licenceDivIcon")
+        if (icon.getIcon() === 0xe608) {
+            icon.setIcon(0xe609);
         } else {
-            divCheckbox.setIcon(0xe608);
+            icon.setIcon(0xe608);
         }
         win.refresh();
     };
@@ -193,6 +194,7 @@ let getLicenceDiv = () => {
         rect.setColor(0x00000000);
 
         let icon = new Icon();
+        icon.setId("licenceDivIcon")
         icon.setIcon(0xe608);
         icon.setColor(0xff666666);
 
@@ -249,11 +251,11 @@ let getCustomizeBtn = () => {
         let bgRect = win.getElement("bgRect")
         let icon = win.getElement("customizeBtnIcon")
         if (icon.getIcon() === 0xe68b) {
-            //appendCustomizeElements();
+            appendCustomizeElements();
             icon.setIcon(0xe691);
             bgRect.setXYWH(50, 50, 700, 500);
         } else {
-            //removeCustomizeElements();
+            removeCustomizeElements();
             icon.setIcon(0xe68b);
             bgRect.setXYWH(50, 50, 700, 450);
         }
