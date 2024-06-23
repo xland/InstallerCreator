@@ -80,6 +80,10 @@ void Div::Paint(Win* win)
 void Div::Dispose()
 {
     auto ctx = JS::GetCtx();
+    JS_FreeValue(ctx, mouseEnterCB);
+    JS_FreeValue(ctx, mouseLeaveCB);
+    JS_FreeValue(ctx, mouseDownCB);
+    JS_FreeValue(ctx, mouseUpCB);
     JS_FreeValue(ctx, text);
     JS_FreeValue(ctx, rect);
     JS_FreeValue(ctx, icon);
@@ -97,12 +101,14 @@ JSValue Div::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 {
     auto div = (Div*)GetPtr(thisVal);
     div->text = JS_DupValue(ctx, argv[0]);
+    JS_SetPropertyStr(ctx, thisVal, "text", div->text);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 JSValue Div::setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto div = (Div*)GetPtr(thisVal);
     div->rect = JS_DupValue(ctx, argv[0]);
+    JS_SetPropertyStr(ctx, thisVal, "rect", div->rect);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -110,6 +116,7 @@ JSValue Div::setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
 {
     auto div = (Div*)GetPtr(thisVal);
     div->icon = JS_DupValue(ctx, argv[0]);
+    JS_SetPropertyStr(ctx, thisVal, "icon", div->icon);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
@@ -195,4 +202,56 @@ JSValue Div::onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
     auto div = (Div*)GetPtr(thisVal);
     div->mouseUpCB = JS_DupValue(ctx, argv[0]);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+void Div::MouseMove(const float& x, const float& y)
+{
+    this;
+    auto rectObj = (Rect*)GetPtr(rect);
+    auto flag = rectObj->rect.contains(x, y);
+    if (flag == isMouseEnter) {
+        return;
+    }
+    isMouseEnter = flag;
+    auto ctx = JS::GetCtx();
+    if (flag) {
+        if (!JS_IsFunction(ctx, mouseEnterCB)) {
+            return;
+        }
+        JSValue ret = JS_Call(ctx, mouseEnterCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+        JS_FreeValue(ctx, ret);
+    }
+    else {
+        if (!JS_IsFunction(ctx, mouseLeaveCB)) {
+            return;
+        }
+        JSValue ret = JS_Call(ctx, mouseLeaveCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+        JS_FreeValue(ctx, ret);
+    }
+}
+void Div::MouseDown()
+{
+    if (!isMouseEnter) {
+        return;
+    }
+    auto ctx = JS::GetCtx();
+    if (!JS_IsFunction(ctx, mouseDownCB)) {
+        return;
+    }
+    isMouseDown = true;
+    JSValue ret = JS_Call(ctx, mouseDownCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+    JS_FreeValue(ctx, ret);
+}
+void Div::MouseUp()
+{
+    if (!isMouseDown) {
+        return;
+    }
+    auto ctx = JS::GetCtx();
+    if (!JS_IsFunction(ctx, mouseUpCB)) {
+        return;
+    }
+    isMouseDown = false;
+    JSValue ret = JS_Call(ctx, mouseUpCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+    JS_FreeValue(ctx, ret);
 }

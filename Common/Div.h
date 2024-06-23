@@ -12,6 +12,9 @@ public:
 	static void Reg(JSContext* ctx);
 	void Paint(Win* win) override;
     void Dispose() override;
+    void MouseMove(const float& x, const float& y) override;
+    void MouseDown() override;
+    void MouseUp() override;
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
 
@@ -41,4 +44,6 @@ private:
     JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     JSValue icon{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
+    bool isMouseEnter{ false };
+    bool isMouseDown{ false };
 };

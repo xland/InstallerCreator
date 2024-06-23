@@ -24,6 +24,7 @@ let getTitleDiv = () => {
     rect.setColor(0xffe6f4ff);
 
     let titleDiv = new Div();
+    titleDiv.setId("titleDiv")
     titleDiv.setText(text);
     titleDiv.setRect(rect);
     titleDiv.setAlign(1, 0);
@@ -42,18 +43,19 @@ let getCloseDiv = () => {
     icon.setFontSize(14);
 
     let closeDiv = new Div();
+    closeDiv.setId("closeDiv")
     closeDiv.setIcon(icon);
     closeDiv.setRect(rect);
     closeDiv.setAlign(1, 1);
 
     closeDiv.onMouseEnter(() => {
-        closeDiv.setColor(0xffe81123);
-        closeDiv.setTextColor(0xffffffff);
+        closeDiv.rect.setColor(0xffe81123);
+        closeDiv.icon.setColor(0xffffffff);
         win.refresh();
     });
     closeDiv.onMouseLeave(() => {
-        closeDiv.setColor(0x00000000);
-        closeDiv.setTextColor(0x88000000);
+        closeDiv.rect.setColor(0x00000000);
+        closeDiv.icon.setColor(0x88000000);
         win.refresh();
     });
     closeDiv.onMouseDown(() => {
@@ -276,7 +278,7 @@ app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口
     //initBannerArr();
     //setWinDragPath();
-    win.addElement([getBgRect(), getTitleDiv()]);
+    win.addElement([getBgRect(), getTitleDiv(),getCloseDiv()]);
     win.show();
     //setBannerAnimation();
     globalThis.win = win;
