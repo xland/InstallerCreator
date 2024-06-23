@@ -77,6 +77,14 @@ void Div::Paint(Win* win)
     textBase->Paint(win);
 }
 
+void Div::Dispose()
+{
+    auto ctx = JS::GetCtx();
+    JS_FreeValue(ctx, text);
+    JS_FreeValue(ctx, rect);
+    JS_FreeValue(ctx, icon);
+}
+
 JSValue Div::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
 {
 	JSValue obj = JS_NewObjectClass(ctx, id);

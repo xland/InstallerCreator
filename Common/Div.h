@@ -11,7 +11,7 @@ public:
 	~Div();
 	static void Reg(JSContext* ctx);
 	void Paint(Win* win) override;
-
+    void Dispose() override;
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
 

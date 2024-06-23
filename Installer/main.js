@@ -276,7 +276,7 @@ app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口
     //initBannerArr();
     //setWinDragPath();
-    win.addElement([getBgRect(), getTitleDiv(),getCloseDiv()]);
+    win.addElement([getBgRect(), getTitleDiv()]);
     win.show();
     //setBannerAnimation();
     globalThis.win = win;
