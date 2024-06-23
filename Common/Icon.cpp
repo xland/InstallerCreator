@@ -35,6 +35,7 @@ void Icon::Reg(JSContext* ctx)
     Element::RegBase(ctx, protoInstance);
     TextBase::RegTextBase(ctx, protoInstance);
     JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Icon::setIcon, "setIcon", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "getIcon", JS_NewCFunction(ctx, &Icon::getIcon, "getIcon", 0));
     JSValue ctroInstance = JS_NewCFunction2(ctx, &Icon::constructor, iconClass.class_name, 0, JS_CFUNC_constructor, 0);
     JS_SetConstructor(ctx, ctroInstance, protoInstance);
     JS_SetClassProto(ctx, id, protoInstance);
@@ -63,15 +64,21 @@ JSValue Icon::setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
     if (JS_ToUint32(ctx, &iconCode, argv[0])) {
         return JS_ThrowTypeError(ctx, "arg0 error");
     }
-    icon->iconCode = iconCode;
-
-    std::u8string utf8Str;
-    utf8Str += static_cast<char8_t>((iconCode >> 12) | 0xE0);
-    utf8Str += static_cast<char8_t>(((iconCode >> 6) & 0x3F) | 0x80);
-    utf8Str += static_cast<char8_t>((iconCode & 0x3F) | 0x80);
-    icon->iconStr = std::string(utf8Str.begin(), utf8Str.end());
-
+    if (icon->iconCode != iconCode) {        
+        icon->iconCode = iconCode;
+        std::u8string utf8Str;
+        utf8Str += static_cast<char8_t>((iconCode >> 12) | 0xE0);
+        utf8Str += static_cast<char8_t>(((iconCode >> 6) & 0x3F) | 0x80);
+        utf8Str += static_cast<char8_t>((iconCode & 0x3F) | 0x80);
+        icon->iconStr = std::string(utf8Str.begin(), utf8Str.end());
+        icon->resetLineRect();
+    }
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Icon::getIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto icon = (Icon*)GetPtr(thisVal);
+    return JS_NewUint32(ctx, icon->iconCode);
 }
 void Icon::resetLineRect()
 {

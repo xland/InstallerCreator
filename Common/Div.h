@@ -15,6 +15,10 @@ public:
     void MouseMove(const float& x, const float& y) override;
     void MouseDown() override;
     void MouseUp() override;
+
+    JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
+    JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
+    JSValue icon{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
 
@@ -41,9 +45,6 @@ private:
     uint32_t horizontalAlign; //横向
     double indentVertical{ 0.f };
     double indentHorizontal{ 0.f };
-    JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
-    JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
-    JSValue icon{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     bool isMouseEnter{ false };
     bool isMouseDown{ false };
 };

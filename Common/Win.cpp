@@ -1,4 +1,5 @@
 #include "Win.h"
+#include <ranges>
 #include <shlobj_core.h>
 #include <dwmapi.h>
 #include <map>
@@ -9,6 +10,7 @@
 #include "Util.h"
 #include "Path.h"
 #include "Element.h"
+#include "Div.h"
 
 namespace {
     static JSClassID id;
@@ -120,6 +122,7 @@ void Win::Reg(JSContext* ctx)
     JS_SetPropertyStr(ctx, protoInstance, "minimize", JS_NewCFunction(ctx, &Win::minimize, "minimize", 0));
     JS_SetPropertyStr(ctx, protoInstance, "close", JS_NewCFunction(ctx, &Win::close, "close", 0));
     JS_SetPropertyStr(ctx, protoInstance, "addElement", JS_NewCFunction(ctx, &Win::addElement, "addElement", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "getElement", JS_NewCFunction(ctx, &Win::getElement, "getElement", 1));
     JS_SetPropertyStr(ctx, protoInstance, "removeElement", JS_NewCFunction(ctx, &Win::removeElement, "removeElement", 1));
     regSizePos(ctx,protoInstance);
     regTimer(ctx, protoInstance);
@@ -245,6 +248,52 @@ JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
     }    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
+JSValue Win::getElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto win = (Win*)JS_GetOpaque(thisVal, id);
+    const char* strData = JS_ToCString(ctx, argv[0]);
+    if (!strData) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    std::string idStr(strData);
+    JS_FreeCString(ctx, strData);
+
+    for (size_t i = 0; i < win->elements.size(); i++)
+    {
+        auto ele = Element::GetPtr(win->elements[i]);
+        if (ele->idStr == idStr) {
+            return JS_DupValue(ctx,win->elements[i]);
+            break;
+        }
+        else {
+            auto div = dynamic_cast<Div*>(ele);
+            if (div) {
+                if (!JS_IsUndefined(div->text)) {
+                    auto text = Element::GetPtr(div->text);
+                    if (text->idStr == idStr) {
+                        return JS_DupValue(ctx,div->text);
+                        break;
+                    }
+                }
+                else if (!JS_IsUndefined(div->icon)) {
+                    auto icon = Element::GetPtr(div->icon);
+                    if (icon->idStr == idStr) {
+                        return JS_DupValue(ctx, div->icon);
+                        break;
+                    }
+                }
+                else {
+                    auto rect = Element::GetPtr(div->rect);
+                    if (rect->idStr == idStr) {
+                        return JS_DupValue(ctx, div->rect);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
 
 JSValue Win::removeElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
@@ -254,6 +303,7 @@ JSValue Win::removeElement(JSContext* ctx, JSValueConst thisVal, int argc, JSVal
         return JS_ThrowTypeError(ctx, "arg0 error");
     }
     std::string idStr(strData);
+    JS_FreeCString(ctx, strData);
     std::erase_if(win->elements, [&idStr,&ctx](auto& item) { 
         auto element = Element::GetPtr(item);
         if (!element->idStr.empty() && element->idStr == idStr) {

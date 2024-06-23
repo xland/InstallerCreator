@@ -102,9 +102,9 @@ void Text::Paint(Win* win)
         paint.setColor(decorationColor);
         paint.setStroke(true);
         paint.setStrokeWidth(decorationSize);
-        auto bottom = lineRect.height();
-        auto right = lineRect.width();
-        win->canvas->drawLine(0, bottom, right, bottom, paint);
+        auto bottom = lineRect.fBottom+y+1;
+        auto right = lineRect.fRight+x-1;
+        win->canvas->drawLine(x, bottom, right, bottom, paint);
     }    
 	auto length = wcslen(text.data()) * 2;
 	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, x, y, *font.get(), paint);

@@ -16,7 +16,7 @@ public:
 	virtual void MouseDown() {};
 	virtual void MouseUp() {};
 	virtual void Dispose() {};
-	static Element* GetPtr(JSValue& val);
+	static Element* GetPtr(const JSValue& val);
 	std::string idStr;
 	bool visible{ true };
 protected:

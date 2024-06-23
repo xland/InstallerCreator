@@ -5,12 +5,19 @@ app.initFileFont("iconfont.ttf","iconFont",1); //app ready之前完成此工作
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let win;
+let setWinDragPath = () => {
+    let path = new Path();
+    path.addRect(Rect.newLTRB(50, 50, 680, 80));
+    path.addRect(Rect.newLTRB(50, 80, 700, 350));
+    win.setCaptionPath(path);
+};
 let getBgRect = () => {
-    let bgRect = Rect.newXYWH(50, 50, 700, 450); //550
-    bgRect.setColor(0xffe6f4ff);
-    bgRect.setShadowSize(30);
-    bgRect.setBorderRadius(3, 3, 3, 3);
-    return bgRect;
+    let rect = Rect.newXYWH(50, 50, 700, 450); //550
+    rect.setId("bgRect")
+    rect.setColor(0xffe6f4ff);
+    rect.setShadowSize(30);
+    rect.setBorderRadius(3, 3, 3, 3);
+    return rect;
 };
 let getTitleDiv = () => {
     let text = new Text();
@@ -65,25 +72,33 @@ let getCloseDiv = () => {
     return closeDiv;
 };
 let getMinimizeDiv = () => {
-    let minimizeDiv = Div.newLTRB(680, 50, 715, 80);
-    minimizeDiv.setColor(0x00000000);
-    minimizeDiv.setFontFamily("iconfont.ttf");
+    let rect = new Rect();
+    rect.setLTRB(680, 50, 715, 80);
+    rect.setColor(0x00000000);
+
+    let icon = new Icon();
+    icon.setIcon(0xe6e7);
+    icon.setColor(0x88000000);
+    icon.setFontSize(14);
+
+    let minimizeDiv = new Div();
+    minimizeDiv.setId("minimizeDiv")
+    minimizeDiv.setIcon(icon);
+    minimizeDiv.setRect(rect);
     minimizeDiv.setAlign(1, 1);
-    minimizeDiv.setIcon(0xe6e7);
-    minimizeDiv.setFontSize(14);
-    minimizeDiv.setTextColor(0x88000000);
+
     minimizeDiv.onMouseEnter(() => {
-    minimizeDiv.setColor(0x11000000);
-    win.refresh();
-  });
-  minimizeDiv.onMouseLeave(() => {
-    minimizeDiv.setColor(0x00000000);
-    win.refresh();
-  });
-  minimizeDiv.onMouseDown(() => {
-    win.minimize();
-  });
-  return minimizeDiv;
+        minimizeDiv.rect.setColor(0x11000000);
+        win.refresh();
+    });
+    minimizeDiv.onMouseLeave(() => {
+        minimizeDiv.rect.setColor(0x00000000);
+        win.refresh();
+    });
+    minimizeDiv.onMouseDown(() => {
+        win.minimize();
+    });
+    return minimizeDiv;
 };
 let initBannerArr = () => {
   for (let i = 0; i < 3; i++) {
@@ -96,42 +111,42 @@ let initBannerArr = () => {
   }
 };
 let getStartBtn = () => {
-  let startBtn = Div.newXYWH(340, 410, 120, 40);
-  startBtn.setBorderRadius(6, 6, 6, 6);
-  startBtn.setAlign(1, 1);
-  startBtn.setColor(0xff4096ff);
-  startBtn.setTextColor(0xffffffff);
-  startBtn.setFontSize(15);
-  startBtn.setFontFamily("Microsoft YaHei");
-  startBtn.setText("开始安装");
-  startBtn.onMouseEnter(() => {
-    app.setCursor("pointer");
-    startBtn.setColor(0xff1677ff);
-    win.refresh();
-  });
-  startBtn.onMouseLeave(() => {
-    app.setCursor("default");
-    startBtn.setColor(0xff4096ff);
-    win.refresh();
-  });
+    let rect = new Rect();
+    rect.setXYWH(340, 410, 120, 40)
+    rect.setBorderRadius(6, 6, 6, 6);
+    rect.setColor(0xff4096ff);
+
+    let text = new Text();
+    text.setColor(0xffffffff);
+    text.setFontSize(15);
+    text.setText("开始安装");
+
+    let startBtn = new Div();
+    startBtn.setId("startBtn")
+    startBtn.setText(text);
+    startBtn.setRect(rect);
+    startBtn.setAlign(1, 1);
+    startBtn.onMouseEnter(() => {
+        app.setCursor("pointer");
+        startBtn.rect.setColor(0xff1677ff);
+        win.refresh();
+    });
+    startBtn.onMouseLeave(() => {
+        app.setCursor("default");
+        startBtn.rect.setColor(0xff4096ff);
+        win.refresh();
+    });
     startBtn.onMouseDown(() => {
         let str = win.openPathSelectDialog();
         console.log(str);
-
-      startBtn.setColor(0xFF0958d9);
-      win.refresh();
-  })
-  startBtn.onMouseUp(() => {
-      startBtn.setColor(0xFF1677ff);
-      win.refresh();
-  })
+        startBtn.rect.setColor(0xFF0958d9);
+        win.refresh();
+    })
+    startBtn.onMouseUp(() => {
+        startBtn.rect.setColor(0xFF1677ff);
+        win.refresh();
+    })
   return startBtn;
-};
-let setWinDragPath = () => {
-  let path = new Path();
-  path.addRect(Rect.newLTRB(50, 50, 680, 80));
-  path.addRect(Rect.newLTRB(50, 80, 700, 350));
-  win.setCaptionPath(path);
 };
 let setBannerAnimation = () => {
   let curIndex = 0;
@@ -164,32 +179,6 @@ let setBannerAnimation = () => {
   }, intervalSpan);
 };
 let getLicenceDiv = () => {
-    let divCheckbox = Div.newXYWH(70, 460, 16, 18);
-    divCheckbox.setFontFamily("iconfont.ttf");
-    divCheckbox.setColor(0x00000000);
-    divCheckbox.setTextColor(0xff666666);
-    divCheckbox.setIcon(0xe608);
-    let divText = Div.newXYWH(86, 460, 96, 18);
-    divText.setColor(0x00000000);
-    divText.setTextColor(0xff666666);
-    //divText.setFontSize(26);
-    divText.setFontFamily("Microsoft YaHei");
-    divText.setText("您已阅读并同意");
-    let divLink = Div.newXYWH(178, 460, 56, 18);
-    divLink.setColor(0x00000000);
-    divLink.setTextColor(0xff666666);
-    divLink.setFontFamily("Microsoft YaHei");
-    divLink.setText("用户协议");
-    divLink.setDecoration(1, 0xff0969da);
-    divLink.onMouseEnter(() => {
-        app.setCursor("pointer");
-    });
-    divLink.onMouseLeave(() => {
-        app.setCursor("default");
-    });
-    divLink.onMouseDown(() => {
-        app.openUrlByDefaultBrowser("https://www.baidu.com")
-    });
     let switchCheck = () => {
         if (divCheckbox.getIcon() === 0xe608) {
             divCheckbox.setIcon(0xe609);
@@ -198,36 +187,109 @@ let getLicenceDiv = () => {
         }
         win.refresh();
     };
-    divCheckbox.onMouseDown(switchCheck);
-    divText.onMouseDown(switchCheck);
-    return [divCheckbox, divText, divLink];
+    let getCheckDiv = () => {
+        let rect = new Rect();
+        rect.setXYWH(70, 459, 16, 18);
+        rect.setColor(0x00000000);
+
+        let icon = new Icon();
+        icon.setIcon(0xe608);
+        icon.setColor(0xff666666);
+
+        let div = new Div();
+        div.setIcon(icon);
+        div.setRect(rect);
+        div.setAlign(1, 1);
+        div.onMouseDown(switchCheck);
+        return div;
+    }
+    let getTextDiv = () => {
+        let rect = new Rect();
+        rect.setXYWH(86, 460, 96, 18);
+        rect.setColor(0x00000000);
+
+        let text = new Text();
+        text.setText("您已阅读并同意");
+        text.setColor(0xff666666);
+
+        let div = new Div();
+        div.setText(text);
+        div.setRect(rect);
+        div.onMouseDown(switchCheck);
+        return div;
+    }
+    let getLinkDiv = () => {
+        let rect = new Rect();
+        rect.setXYWH(178, 460, 56, 18);
+        rect.setColor(0x00000000);
+
+        let text = new Text();
+        text.setText("用户协议");
+        text.setColor(0xff666666);
+        text.setDecoration(1, 0xff0969da);
+
+        let div = new Div();
+        div.setText(text);
+        div.setRect(rect);
+        div.onMouseEnter(() => {
+            app.setCursor("pointer");
+        });
+        div.onMouseLeave(() => {
+            app.setCursor("default");
+        });
+        div.onMouseDown(() => {
+            app.openUrlByDefaultBrowser("https://www.baidu.com")
+        });
+        return div;
+    }
+    return [getCheckDiv(), getTextDiv(), getLinkDiv()];
 };
 let getCustomizeBtn = () => {
-    let divText = Div.newLTRB(650, 460, 716, 478);
-    divText.setColor(0x00000000);
-    divText.setTextColor(0xff666666);
-    divText.setFontFamily("Microsoft YaHei");
-    divText.setText("自定义安装");
-    let divIcon = Div.newXYWH(716, 462, 15, 15);
-    divIcon.setFontFamily("iconfont.ttf");
-    divIcon.setColor(0x00000000);
-    divIcon.setTextColor(0xff666666);
-    divIcon.setIcon(0xe68b);
     let mouseDown = () => {
-        if (divIcon.getIcon() === 0xe68b) {
-            appendCustomizeElements();
-            divIcon.setIcon(0xe691);
+        let bgRect = win.getElement("bgRect")
+        let icon = win.getElement("customizeBtnIcon")
+        if (icon.getIcon() === 0xe68b) {
+            //appendCustomizeElements();
+            icon.setIcon(0xe691);
             bgRect.setXYWH(50, 50, 700, 500);
         } else {
-            removeCustomizeElements();
-            divIcon.setIcon(0xe68b);
+            //removeCustomizeElements();
+            icon.setIcon(0xe68b);
             bgRect.setXYWH(50, 50, 700, 450);
         }
         win.refresh();
     }
-    divText.onMouseDown(mouseDown);
-    divIcon.onMouseDown(mouseDown)
-    return [divText, divIcon];
+    let getTextDiv = () => {
+        let rect = new Rect();
+        rect.setLTRB(650, 460, 716, 478);
+        rect.setColor(0x00000000);
+
+        let text = new Text();
+        text.setText("自定义安装");
+        text.setColor(0xff666666);
+
+        let div = new Div();
+        div.setText(text);
+        div.setRect(rect);
+        div.onMouseDown(mouseDown);
+        return div;
+    }
+    let getIconDiv = () => {
+        let rect = new Rect();
+        rect.setXYWH(716, 461, 15, 15);
+        rect.setColor(0x00000000);
+        let icon = new Icon();
+        icon.setId("customizeBtnIcon")
+        icon.setIcon(0xe68b);
+        icon.setColor(0xff666666);
+        let div = new Div();
+        div.setIcon(icon);
+        div.setRect(rect);
+        div.setAlign(1, 1);
+        div.onMouseDown(mouseDown);
+        return div;
+    }
+    return [getTextDiv(), getIconDiv()];
 }
 let appendCustomizeElements = () => {
     let input = Input.newXYWH(70, 496, 230, 26);
@@ -276,11 +338,13 @@ let removeCustomizeElements = () => {
 }
 app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口
-    //initBannerArr();
-    //setWinDragPath();
-    win.addElement([getBgRect(), getTitleDiv(),getCloseDiv()]);
+    initBannerArr();
+    setWinDragPath();
+    win.addElement([getBgRect(), getTitleDiv(), getCloseDiv(), getMinimizeDiv(),
+        ...bannerArr, getStartBtn(), ...getLicenceDiv(), ...getCustomizeBtn()
+    ]);
     win.show();
-    //setBannerAnimation();
+    setBannerAnimation();
     globalThis.win = win;
 })
 

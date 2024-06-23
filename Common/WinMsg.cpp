@@ -82,9 +82,14 @@ void Win::lBtnDown(const LPARAM& lParam)
     }
     else {
         int i = elements.size() - 1;
+        auto a = Element::GetPtr(elements[0]);
         if (i < 0) return;
         for (; i >= 0; i--) {
+            if (i == 0) {
+               auto a = 1;
+            }
             auto element = Element::GetPtr(elements[i]);
+            if (!element) continue;
             element->MouseDown();
         }
     }

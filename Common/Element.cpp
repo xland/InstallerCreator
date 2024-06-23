@@ -8,7 +8,7 @@ Element::Element()
 Element::~Element()
 {
 }
-Element* Element::GetPtr(JSValue& val) {
+Element* Element::GetPtr(const JSValue& val) {
 	JSClassID classId{ 0 };
 	auto element = (Element*)JS_GetAnyOpaque(val, &classId);
 	if (!element) {
