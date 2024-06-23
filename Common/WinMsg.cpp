@@ -10,7 +10,8 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         LPVOID pThis = pCS->lpCreateParams;
         SetWindowLongPtr(hWnd, GWLP_USERDATA, reinterpret_cast<LONG_PTR>(pThis));
     }
-    auto obj = reinterpret_cast<Win*>(GetWindowLongPtr(hWnd, GWLP_USERDATA));
+    auto winPtr = GetWindowLongPtr(hWnd, GWLP_USERDATA);
+    auto obj = reinterpret_cast<Win*>(winPtr);
     if (obj)
     {
         switch (msg)

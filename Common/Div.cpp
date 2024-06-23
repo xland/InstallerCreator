@@ -84,9 +84,9 @@ void Div::Dispose()
     JS_FreeValue(ctx, mouseLeaveCB);
     JS_FreeValue(ctx, mouseDownCB);
     JS_FreeValue(ctx, mouseUpCB);
-    JS_FreeValue(ctx, text);
-    JS_FreeValue(ctx, rect);
-    JS_FreeValue(ctx, icon);
+    //JS_FreeValue(ctx, text); //会自己释放
+    //JS_FreeValue(ctx, rect);
+    //JS_FreeValue(ctx, icon);
 }
 
 JSValue Div::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
