@@ -38,9 +38,6 @@ void Div::Reg(JSContext* ctx)
     JS_SetPropertyStr(ctx, protoInstance, "setRect", JS_NewCFunction(ctx, &Div::setRect, "setRect", 1));
     JS_SetPropertyStr(ctx, protoInstance, "setIcon", JS_NewCFunction(ctx, &Div::setIcon, "setIcon", 1));
     //JS_SetPropertyStr(ctx, protoInstance, "setRRect", JS_NewCFunction(ctx, &Div::setRRect, "setRRect", 1));
-
-    JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &Div::setAlign, "setAlign", 2));
-    JS_SetPropertyStr(ctx, protoInstance, "setIndent", JS_NewCFunction(ctx, &Div::setIndent, "setIndent", 1));
     JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Div::onMouseEnter, "onMouseEnter", 1));
     JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Div::onMouseLeave, "onMouseLeave", 1));
     JS_SetPropertyStr(ctx, protoInstance, "onMouseDown", JS_NewCFunction(ctx, &Div::onMouseDown, "onMouseDown", 1));
@@ -70,7 +67,7 @@ void Div::Paint(Win* win)
     if (!textBase) {
         return;
     }
-    auto [left, top] = getTextPos(rectObj->rect, textBase->lineRect);
+    auto [left, top] = textBase->GetTextPos(rectObj->rect, textBase->lineRect);
     textBase->x = left;
     textBase->y = top;
     rectObj->Paint(win);
@@ -120,65 +117,6 @@ JSValue Div::setIcon(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCons
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
-JSValue Div::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    unsigned int vAlign;
-    if (JS_ToUint32(ctx, &vAlign, argv[0])) {
-        return JS_ThrowTypeError(ctx, "arg0 error");
-    }
-    unsigned int hAlign;
-    if (JS_ToUint32(ctx, &hAlign, argv[1])) {
-        return JS_ThrowTypeError(ctx, "arg1 error");
-    }
-    auto div = (Div*)GetPtr(thisVal);
-    div->verticalAlign = vAlign;
-    div->horizontalAlign = hAlign;
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
-std::tuple<float, float> Div::getTextPos(SkRect& rect, SkRect& lineRect)
-{
-    float left{ rect.fLeft - lineRect.fLeft };
-    float top{ rect.fTop - lineRect.fTop };
-    float w{ lineRect.width() };
-    float h{ lineRect.height() };
-    if (verticalAlign == 0) {
-        top += indentVertical;
-    }
-    else if (verticalAlign == 1) {
-        top += (rect.height() - h) / 2;
-    }
-    else if (verticalAlign == 2) {
-        top = rect.fBottom - lineRect.fBottom - indentVertical;
-    }
-    if (horizontalAlign == 0) {
-        left += indentHorizontal;
-    }
-    else if (horizontalAlign == 1) {
-        left += (rect.width() - w) / 2;
-    }
-    else if (horizontalAlign == 2) {
-        left = rect.fRight - w - indentHorizontal;
-    }
-    return {left,top};
-}
-
-JSValue Div::setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-    auto div = (Div*)GetPtr(thisVal);
-    double indentVertical;
-    if (JS_ToFloat64(ctx, &indentVertical, argv[0])) {
-        return JS_ThrowTypeError(ctx, "arg0 error");
-    }
-    double indentHorizontal;
-    if (JS_ToFloat64(ctx, &indentHorizontal, argv[1])) {
-        return JS_ThrowTypeError(ctx, "arg0 error");
-    }
-    div->indentVertical = indentVertical;
-    div->indentHorizontal = indentHorizontal;
-    return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
 JSValue Div::onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto div = (Div*)GetPtr(thisVal);
@@ -206,7 +144,6 @@ JSValue Div::onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 
 void Div::MouseMove(const float& x, const float& y)
 {
-    this;
     auto rectObj = (Rect*)GetPtr(rect);
     auto flag = rectObj->rect.contains(x, y);
     if (flag == isMouseEnter) {
@@ -254,4 +191,31 @@ void Div::MouseUp()
     isMouseDown = false;
     JSValue ret = JS_Call(ctx, mouseUpCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
     JS_FreeValue(ctx, ret);
+}
+
+JSValue Div::GetChildById(const std::string& id)
+{
+    auto ctx = JS::GetCtx();
+    if (!JS_IsUndefined(text)) {
+        auto t = Element::GetPtr(text);
+        if (t->idStr == id) {
+            return JS_DupValue(ctx, text);
+        }
+    }
+    else if (!JS_IsUndefined(icon)) {
+        auto i = Element::GetPtr(icon);
+        if (i->idStr == id) {
+            return JS_DupValue(ctx, icon);
+        }
+    }
+    else {
+        auto r = Element::GetPtr(rect);
+        if (r->idStr == id) {
+            return JS_DupValue(ctx, rect);
+        }
+        else {
+            return JS::MakeVal(0, JS_TAG_UNDEFINED);
+        }
+    }
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

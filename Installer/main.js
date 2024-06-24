@@ -23,6 +23,8 @@ let getTitleDiv = () => {
     let text = new Text();
     text.setColor(0xff888888);
     text.setFontSize(12);
+    text.setAlign(1, 0);
+    text.setIndent(0, 8);
     text.setText(windowTitle);
 
     let rect = new Rect();
@@ -34,8 +36,6 @@ let getTitleDiv = () => {
     titleDiv.setId("titleDiv")
     titleDiv.setText(text);
     titleDiv.setRect(rect);
-    titleDiv.setAlign(1, 0);
-    titleDiv.setIndent(0, 8);
     return titleDiv;
 };
 let getCloseDiv = () => {
@@ -48,12 +48,12 @@ let getCloseDiv = () => {
     icon.setIcon(0xe6e6);
     icon.setColor(0x88000000);
     icon.setFontSize(14);
+    icon.setAlign(1, 1);
 
     let closeDiv = new Div();
     closeDiv.setId("closeDiv")
     closeDiv.setIcon(icon);
     closeDiv.setRect(rect);
-    closeDiv.setAlign(1, 1);
 
     closeDiv.onMouseEnter(() => {
         closeDiv.rect.setColor(0xffe81123);
@@ -80,12 +80,12 @@ let getMinimizeDiv = () => {
     icon.setIcon(0xe6e7);
     icon.setColor(0x88000000);
     icon.setFontSize(14);
+    icon.setAlign(1, 1);
 
     let minimizeDiv = new Div();
     minimizeDiv.setId("minimizeDiv")
     minimizeDiv.setIcon(icon);
     minimizeDiv.setRect(rect);
-    minimizeDiv.setAlign(1, 1);
 
     minimizeDiv.onMouseEnter(() => {
         minimizeDiv.rect.setColor(0x11000000);
@@ -120,12 +120,12 @@ let getStartBtn = () => {
     text.setColor(0xffffffff);
     text.setFontSize(15);
     text.setText("开始安装");
+    text.setAlign(1, 1);
 
     let startBtn = new Div();
     startBtn.setId("startBtn")
     startBtn.setText(text);
     startBtn.setRect(rect);
-    startBtn.setAlign(1, 1);
     startBtn.onMouseEnter(() => {
         app.setCursor("pointer");
         startBtn.rect.setColor(0xff1677ff);
@@ -197,11 +197,11 @@ let getLicenceDiv = () => {
         icon.setId("licenceDivIcon")
         icon.setIcon(0xe608);
         icon.setColor(0xff666666);
+        icon.setAlign(1, 1);
 
         let div = new Div();
         div.setIcon(icon);
         div.setRect(rect);
-        div.setAlign(1, 1);
         div.onMouseDown(switchCheck);
         return div;
     }
@@ -222,7 +222,7 @@ let getLicenceDiv = () => {
     }
     let getLinkDiv = () => {
         let rect = new Rect();
-        rect.setXYWH(178, 460, 56, 18);
+        rect.setXYWH(178.6, 460, 56, 18);
         rect.setColor(0x00000000);
 
         let text = new Text();
@@ -284,10 +284,10 @@ let getCustomizeBtn = () => {
         icon.setId("customizeBtnIcon")
         icon.setIcon(0xe68b);
         icon.setColor(0xff666666);
+        icon.setAlign(1, 1);
         let div = new Div();
         div.setIcon(icon);
         div.setRect(rect);
-        div.setAlign(1, 1);
         div.onMouseDown(mouseDown);
         return div;
     }

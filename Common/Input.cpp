@@ -35,11 +35,14 @@ void Input::Reg(JSContext* ctx)
 	JS_NewClass(rt, id, &inputClass);
 	JSValue protoInstance = JS_NewObject(ctx);
 	RegBase(ctx, protoInstance);
-	//RegRectBase(ctx, protoInstance);
-	//RegDivBase(ctx, protoInstance);
+    JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Input::setText, "setText", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "setRect", JS_NewCFunction(ctx, &Input::setRect, "setRect", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Input::onMouseEnter, "onMouseEnter", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Input::onMouseLeave, "onMouseLeave", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "onMouseDown", JS_NewCFunction(ctx, &Input::onMouseDown, "onMouseDown", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "onMouseUp", JS_NewCFunction(ctx, &Input::onMouseUp, "onMouseUp", 1));
+
 	JSValue ctroInstance = JS_NewCFunction2(ctx, &Input::constructor, inputClass.class_name, 0, JS_CFUNC_constructor, 0);
-	JS_SetPropertyStr(ctx, ctroInstance, "newLTRB", JS_NewCFunction(ctx, &Input::newLTRB, "newLTRB", 4));
-	JS_SetPropertyStr(ctx, ctroInstance, "newXYWH", JS_NewCFunction(ctx, &Input::newXYWH, "newXYWH", 4));
 	JS_SetConstructor(ctx, ctroInstance, protoInstance);
 	JS_SetClassProto(ctx, id, protoInstance);
 	JSValue global = JS_GetGlobalObject(ctx);
@@ -47,39 +50,76 @@ void Input::Reg(JSContext* ctx)
 	JS_FreeValue(ctx, global);
 }
 
-JSValue Input::newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue Input::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto [l, t, r, b, err] = get4Arg(ctx, argv);
-	if (JS_IsException(err)) {
-		return err;
-	}
-	JSValue obj = JS_NewObjectClass(ctx, id);
-	//auto self = new Input();
-	//self->rect.setLTRB(l, t, r, b);
-	//JS_SetOpaque(obj, self);
-	return obj;
+    auto obj = (Input*)GetPtr(thisVal);
+    obj->text = JS_DupValue(ctx, argv[0]);
+    JS_SetPropertyStr(ctx, thisVal, "text", obj->text);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-JSValue Input::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+JSValue Input::setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
-	auto [x, y, w, h, err] = get4Arg(ctx, argv);
-	if (JS_IsException(err)) {
-		return err;
-	}
-	JSValue obj = JS_NewObjectClass(ctx, id);
-	//auto self = new Input();
-	//self->rect.setXYWH(x, y, w, h);
-	//JS_SetOpaque(obj, self);
-	return obj;
+    auto obj = (Input*)GetPtr(thisVal);
+    obj->rect = JS_DupValue(ctx, argv[0]);
+    JS_SetPropertyStr(ctx, thisVal, "rect", obj->rect);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
+
 void Input::Paint(Win* win)
 {
 	//Rect::Paint(win);
 	//Div::Paint(win);
 }
 
+
+JSValue Input::onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto obj = (Input*)GetPtr(thisVal);
+    obj->mouseEnterCB = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Input::onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto obj = (Input*)GetPtr(thisVal);
+    obj->mouseLeaveCB = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Input::onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto obj = (Input*)GetPtr(thisVal);
+    obj->mouseDownCB = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Input::onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto obj = (Input*)GetPtr(thisVal);
+    obj->mouseUpCB = JS_DupValue(ctx, argv[0]);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
 void Input::MouseMove(const float& x, const float& y)
 {
-	//Rect::MouseMove(x,y);
+    auto rectObj = (Rect*)GetPtr(rect);
+    auto flag = rectObj->rect.contains(x, y);
+    if (flag == isMouseEnter) {
+        return;
+    }
+    isMouseEnter = flag;
+    auto ctx = JS::GetCtx();
+    if (flag) {
+        if (!JS_IsFunction(ctx, mouseEnterCB)) {
+            return;
+        }
+        JSValue ret = JS_Call(ctx, mouseEnterCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+        JS_FreeValue(ctx, ret);
+    }
+    else {
+        if (!JS_IsFunction(ctx, mouseLeaveCB)) {
+            return;
+        }
+        JSValue ret = JS_Call(ctx, mouseLeaveCB, JS::MakeVal(0, JS_TAG_UNDEFINED), 0, nullptr);
+        JS_FreeValue(ctx, ret);
+    }
 }
 
 void Input::MouseDown()
@@ -95,4 +135,9 @@ void Input::MouseUp()
 void Input::Dispose()
 {
 	//Rect::Dispose();
+}
+
+JSValue Input::GetChildById(const std::string& id)
+{
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

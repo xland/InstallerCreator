@@ -14,6 +14,9 @@ void TextBase::RegTextBase(JSContext* ctx, JSValue& protoInstance)
     JS_SetPropertyStr(ctx, protoInstance, "setFontSize", JS_NewCFunction(ctx, &TextBase::setFontSize, "setFontSize", 1));
     JS_SetPropertyStr(ctx, protoInstance, "setFontFamily", JS_NewCFunction(ctx, &TextBase::setFontFamily, "setFontFamily", 2));
     JS_SetPropertyStr(ctx, protoInstance, "setPosition", JS_NewCFunction(ctx, &TextBase::setPosition, "setPosition", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "setAlign", JS_NewCFunction(ctx, &TextBase::setAlign, "setAlign", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "setIndent", JS_NewCFunction(ctx, &TextBase::setIndent, "setIndent", 2));
+    JS_SetPropertyStr(ctx, protoInstance, "setPosition", JS_NewCFunction(ctx, &TextBase::setPosition, "setPosition", 2));
 }
 
 JSValue TextBase::setFontSize(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -60,5 +63,63 @@ JSValue TextBase::setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JS
     auto obj = (TextBase*)Element::GetPtr(thisVal);
     obj->x = x;
     obj->y = y;
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+std::tuple<float, float> TextBase::GetTextPos(SkRect& rect, SkRect& lineRect)
+{
+    float left{ rect.fLeft - lineRect.fLeft };
+    float top{ rect.fTop - lineRect.fTop };
+    float w{ lineRect.width() };
+    float h{ lineRect.height() };
+    if (verticalAlign == 0) {
+        top += indentVertical;
+    }
+    else if (verticalAlign == 1) {
+        top += (rect.height() - h) / 2;
+    }
+    else if (verticalAlign == 2) {
+        top = rect.fBottom - lineRect.fBottom - indentVertical;
+    }
+    if (horizontalAlign == 0) {
+        left += indentHorizontal;
+    }
+    else if (horizontalAlign == 1) {
+        left += (rect.width() - w) / 2;
+    }
+    else if (horizontalAlign == 2) {
+        left = rect.fRight - w - indentHorizontal;
+    }
+    return { left,top };
+}
+
+JSValue TextBase::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    unsigned int vAlign;
+    if (JS_ToUint32(ctx, &vAlign, argv[0])) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    unsigned int hAlign;
+    if (JS_ToUint32(ctx, &hAlign, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg1 error");
+    }
+    auto obj = (TextBase*)GetPtr(thisVal);
+    obj->verticalAlign = vAlign;
+    obj->horizontalAlign = hAlign;
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue TextBase::setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto obj = (TextBase*)GetPtr(thisVal);
+    double indentVertical;
+    if (JS_ToFloat64(ctx, &indentVertical, argv[0])) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    double indentHorizontal;
+    if (JS_ToFloat64(ctx, &indentHorizontal, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg0 error");
+    }
+    obj->indentVertical = indentVertical;
+    obj->indentHorizontal = indentHorizontal;
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

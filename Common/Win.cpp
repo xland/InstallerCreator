@@ -11,6 +11,7 @@
 #include "Path.h"
 #include "Element.h"
 #include "Div.h"
+#include "Input.h"
 
 namespace {
     static JSClassID id;
@@ -263,31 +264,20 @@ JSValue Win::getElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
         auto ele = Element::GetPtr(win->elements[i]);
         if (ele->idStr == idStr) {
             return JS_DupValue(ctx,win->elements[i]);
-            break;
         }
         else {
             auto div = dynamic_cast<Div*>(ele);
             if (div) {
-                if (!JS_IsUndefined(div->text)) {
-                    auto text = Element::GetPtr(div->text);
-                    if (text->idStr == idStr) {
-                        return JS_DupValue(ctx,div->text);
-                        break;
-                    }
+                auto result = div->GetChildById(idStr);
+                if (!JS_IsUndefined(result)) {
+                    return result;
                 }
-                else if (!JS_IsUndefined(div->icon)) {
-                    auto icon = Element::GetPtr(div->icon);
-                    if (icon->idStr == idStr) {
-                        return JS_DupValue(ctx, div->icon);
-                        break;
-                    }
-                }
-                else {
-                    auto rect = Element::GetPtr(div->rect);
-                    if (rect->idStr == idStr) {
-                        return JS_DupValue(ctx, div->rect);
-                        break;
-                    }
+            }
+            auto input = dynamic_cast<Input*>(ele);
+            if (input) {
+                auto result = input->GetChildById(idStr);
+                if (!JS_IsUndefined(result)) {
+                    return result;
                 }
             }
         }

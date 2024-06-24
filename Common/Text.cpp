@@ -98,7 +98,6 @@ void Text::Paint(Win* win)
 {
     if (decorationSize > 0) {
         SkPaint paint;
-        paint.setAntiAlias(true);
         paint.setColor(decorationColor);
         paint.setStroke(true);
         paint.setStrokeWidth(decorationSize);
