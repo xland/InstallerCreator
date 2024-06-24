@@ -142,7 +142,7 @@ void Win::initWindow(std::wstring& title)
 	auto hinstance = GetModuleHandle(NULL);
 	WNDCLASSEX wcx{};
 	wcx.cbSize = sizeof(wcx);
-	wcx.style = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+	wcx.style = CS_HREDRAW | CS_VREDRAW;
 	wcx.lpfnWndProc = &Win::RouteWindowMessage;
 	wcx.cbWndExtra = sizeof(Win*);
 	wcx.hInstance = hinstance;

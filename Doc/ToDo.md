@@ -3,14 +3,15 @@
   - setRadialShader unfinished
 - Rect
   - border size
-  - four border 
+  - four border
   - rrect border
-- App 
+  - rrect contains
+- App
   - create desk top icon
   - download file
   - unzip target file to folder
   - app.init(()=>{})
-- input 
+- input
   - ime follow
   - input accept
   - texer flash
@@ -22,6 +23,7 @@
   - right click paste
   - text over width
   - drag mouse to show more text
+  - clip rrect
 - Demo
   - move banner img position animation
   - progress bar
@@ -36,11 +38,10 @@
   - package res file to installer res
   - package res file to uninstaller res
   - package uninstaller to installer res
-  - 
+  -
 - Common
   - read res file form res
   - down load res file from internet
-  - un
 
 - Env
   - visual studio config file
