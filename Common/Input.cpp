@@ -139,36 +139,36 @@ void Input::MouseMove(const float& x, const float& y)
 
 void Input::MouseDown(const float& x, const float& y, const Win* win)
 {
-    bool flag{ false };
-    if (root->toolBar->hoverIndex == hoverIndexVal) {
-        auto span = std::chrono::system_clock::now() - mouseDownTime;
-        auto msCount = std::chrono::duration_cast<std::chrono::milliseconds>(span).count();
-        if (msCount < 380) {
-            //todo
-            return;
-        }
-        mouseDownTime = std::chrono::system_clock::now();
-        flag = true;
-    }
-    else {
-        flag = false;
-    }
-    if (flag != isFocus) {
-        isFocus = flag;
-        showTextCursor = true;
-        if (isFocus) {
-            SetTimer(root->hwnd, timerID, 600, (TIMERPROC)nullptr);
-            setImm(x, y);
-        }
-        else {
-            KillTimer(root->hwnd, timerID);
-            repaint();
-        }
-    }
-    if (isFocus) {
-        setTextCursorPos(x);
-        repaint();
-    }
+    //bool flag{ false };
+    //if (root->toolBar->hoverIndex == hoverIndexVal) {
+    //    auto span = std::chrono::system_clock::now() - mouseDownTime;
+    //    auto msCount = std::chrono::duration_cast<std::chrono::milliseconds>(span).count();
+    //    if (msCount < 380) {
+    //        //todo
+    //        return;
+    //    }
+    //    mouseDownTime = std::chrono::system_clock::now();
+    //    flag = true;
+    //}
+    //else {
+    //    flag = false;
+    //}
+    //if (flag != isFocus) {
+    //    isFocus = flag;
+    //    showTextCursor = true;
+    //    if (isFocus) {
+    //        SetTimer(root->hwnd, timerID, 600, (TIMERPROC)nullptr);
+    //        setImm(x, y);
+    //    }
+    //    else {
+    //        KillTimer(root->hwnd, timerID);
+    //        repaint();
+    //    }
+    //}
+    //if (isFocus) {
+    //    setTextCursorPos(x);
+    //    repaint();
+    //}
 }
 
 void Input::MouseUp()
