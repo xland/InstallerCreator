@@ -16,6 +16,7 @@ public:
 	virtual void MouseDown(const float& x, const float& y,Win* win) {};
 	virtual void MouseUp() {};
 	virtual void Dispose() {};
+    virtual void Timeout(const unsigned int& id, Win* win) {};
 	static Element* GetPtr(const JSValue& val);
 	std::string idStr;
 	bool visible{ true };

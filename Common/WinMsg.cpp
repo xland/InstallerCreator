@@ -34,6 +34,10 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
             obj->lBtnUp();
             break;
         }
+        case WM_TIMER: {
+            obj->onTimeout(wParam);
+            break;
+        }
         case WM_MOUSEMOVE:
         {
             obj->mouseMove(lParam);
@@ -174,4 +178,13 @@ void Win::dpiChanged(const WPARAM& wParam, const LPARAM& lParam)
     //    captionPath.transform(matrix, &captionPath);
     //}
 
+}
+
+void Win::onTimeout(const unsigned int& id)
+{
+    for (auto& obj : elements)
+    {
+        auto element = Element::GetPtr(obj);
+        element->Timeout(id, this);
+    }
 }

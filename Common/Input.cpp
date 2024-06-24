@@ -83,10 +83,16 @@ void Input::Paint(Win* win)
     textBase->x = left;
     textBase->y = top;
 
+
+
     win->canvas->save();
     win->canvas->clipRect(rectObj->rect);
     textBase->Paint(win);
     win->canvas->restore();
+    if (showTextIbeam) {
+        win->canvas->drawLine(textIbeamPos, textBase->y + textBase->lineRect.fTop,
+            textIbeamPos, textBase->y + textBase->lineRect.fTop + textBase->lineRect.height(), paint);
+    }
 }
 
 
@@ -162,7 +168,7 @@ void Input::MouseDown(const float& x, const float& y, Win* win)
     }
     if (flag != isFocus) {
         isFocus = flag;
-        showTextCursor = true;
+        showTextIbeam = true;
         if (isFocus) {
             SetTimer(win->hwnd, timerID, 600, (TIMERPROC)nullptr);
             setImm(x, y,win);
@@ -174,7 +180,7 @@ void Input::MouseDown(const float& x, const float& y, Win* win)
     }
     if (isFocus) {
         auto textObj = (Text*)Element::GetPtr(text);
-        textCursorPos = textObj->getTextCursorPos(x);
+        textIbeamPos = textObj->getTextCursorPos(x);
         win->paint();
     }
 }
@@ -187,6 +193,13 @@ void Input::MouseUp()
 void Input::Dispose()
 {
 	//Rect::Dispose();
+}
+
+void Input::Timeout(const unsigned int& id, Win* win)
+{
+    if (id != timerID) return;
+    showTextIbeam = !showTextIbeam;
+    win->paint();
 }
 
 void Input::setImm(const int& x, const int& y, Win* win)

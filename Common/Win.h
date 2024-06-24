@@ -60,6 +60,7 @@ private:
 	void mouseMove(const LPARAM& lParam);
 	void mouseLeave();
 	void dpiChanged(const WPARAM& wParam, const LPARAM& lParam);
+    void onTimeout(const unsigned int& id);
 
 	int x, y, w{ 1200 }, h{800};
 	float scaleFactor;	

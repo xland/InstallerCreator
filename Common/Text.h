@@ -10,6 +10,7 @@ public:
     void Paint(Win* win) override;
     static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
     float getTextCursorPos(const int& x);
+
     std::wstring text;
 protected:
     Text();

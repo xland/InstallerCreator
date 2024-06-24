@@ -13,6 +13,7 @@ public:
 	void MouseDown(const float& x, const float& y, Win* win) override;
 	void MouseUp() override;
 	void Dispose() override;
+    void Timeout(const unsigned int& id, Win* win) override;
     JSValue GetChildById(const std::string& id);
 protected:
 	Input();
@@ -39,7 +40,7 @@ private:
     double indentVertical{ 0.f };
     double indentHorizontal{ 0.f };
     std::chrono::system_clock::time_point mouseDownTime;
-    bool showTextCursor{ false };
+    bool showTextIbeam{ false };
     int timerID{ 0 };
-    float textCursorPos{ 0.f };
+    float textIbeamPos{ 0.f };
 };

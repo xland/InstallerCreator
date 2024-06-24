@@ -56,27 +56,23 @@ JSValue Text::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVa
 float Text::getTextCursorPos(const int& x1)
 {
     auto width = x1 - x;
+    if (width < 0) width = 0;
     SkRect subRect;
-    float tempWidth;
+    float tempWidth{0};
     for (size_t i = 1; i < text.length(); i++)
     {
         auto str = text.substr(0, i);
         auto data = str.data();
         auto length = wcslen(data) * 2;
         font->measureText(data, length, SkTextEncoding::kUTF16, &subRect);
-        if (subRect.width() > width) {
-            float half = (subRect.width() - tempWidth) / 2 + tempWidth;
-            if (half > width) {
-                return x + tempWidth;
-            }
-            else
-            {
-                return x + subRect.width();
-            }
+        if (i==1 && width < subRect.width()/2) {
+            return x;
+        } else if (subRect.width() > width) {
+            return x + subRect.width() + subRect.fLeft * 2;
         }
         tempWidth = subRect.width();
     }
-    return x + subRect.width();
+    return x + subRect.width()+ subRect.fLeft*2;
 }
 
 void Text::resetLineRect()
