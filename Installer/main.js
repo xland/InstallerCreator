@@ -27,8 +27,7 @@ let getTitleDiv = () => {
     text.setIndent(0, 8);
     text.setText(windowTitle);
 
-    let rect = new Rect();
-    rect.setLTRB(50, 50, 750, 80);
+    let rect = Rect.newLTRB(50, 50, 750, 80);
     rect.setBorderRadius(3, 3, 0, 0);
     rect.setColor(0xffe6f4ff);
 
@@ -39,8 +38,7 @@ let getTitleDiv = () => {
     return titleDiv;
 };
 let getCloseDiv = () => {
-    let rect = new Rect();
-    rect.setLTRB(715, 50, 750, 80);
+    let rect = Rect.newLTRB(715, 50, 750, 80);
     rect.setBorderRadius(0, 3, 0, 0);
     rect.setColor(0x00000000);
 
@@ -72,8 +70,7 @@ let getCloseDiv = () => {
     return closeDiv;
 };
 let getMinimizeDiv = () => {
-    let rect = new Rect();
-    rect.setLTRB(680, 50, 715, 80);
+    let rect = Rect.newLTRB(680, 50, 715, 80);
     rect.setColor(0x00000000);
 
     let icon = new Icon();
@@ -111,17 +108,14 @@ let initBannerArr = () => {
   }
 };
 let getStartBtn = () => {
-    let rect = new Rect();
-    rect.setXYWH(340, 410, 120, 40)
+    let rect = Rect.newXYWH(340, 410, 120, 40)
     rect.setBorderRadius(6, 6, 6, 6);
     rect.setColor(0xff4096ff);
-
     let text = new Text();
     text.setColor(0xffffffff);
     text.setFontSize(15);
     text.setText("开始安装");
     text.setAlign(1, 1);
-
     let startBtn = new Div();
     startBtn.setId("startBtn")
     startBtn.setText(text);
@@ -189,16 +183,13 @@ let getLicenceDiv = () => {
         win.refresh();
     };
     let getCheckDiv = () => {
-        let rect = new Rect();
-        rect.setXYWH(70, 459, 16, 18);
+        let rect = Rect.newXYWH(70, 459, 16, 18);
         rect.setColor(0x00000000);
-
         let icon = new Icon();
         icon.setId("licenceDivIcon")
         icon.setIcon(0xe608);
         icon.setColor(0xff666666);
         icon.setAlign(1, 1);
-
         let div = new Div();
         div.setIcon(icon);
         div.setRect(rect);
@@ -206,14 +197,11 @@ let getLicenceDiv = () => {
         return div;
     }
     let getTextDiv = () => {
-        let rect = new Rect();
-        rect.setXYWH(86, 460, 96, 18);
+        let rect = Rect.newXYWH(86, 460, 96, 18);
         rect.setColor(0x00000000);
-
         let text = new Text();
         text.setText("您已阅读并同意");
         text.setColor(0xff666666);
-
         let div = new Div();
         div.setText(text);
         div.setRect(rect);
@@ -221,15 +209,12 @@ let getLicenceDiv = () => {
         return div;
     }
     let getLinkDiv = () => {
-        let rect = new Rect();
-        rect.setXYWH(178.6, 460, 56, 18);
+        let rect = Rect.newXYWH(178.6, 460, 56, 18);
         rect.setColor(0x00000000);
-
         let text = new Text();
         text.setText("用户协议");
         text.setColor(0xff666666);
         text.setDecoration(1, 0xff0969da);
-
         let div = new Div();
         div.setText(text);
         div.setRect(rect);
@@ -262,14 +247,11 @@ let getCustomizeBtn = () => {
         win.refresh();
     }
     let getTextDiv = () => {
-        let rect = new Rect();
-        rect.setLTRB(650, 460, 716, 478);
+        let rect = Rect.newLTRB(650, 460, 716, 478);
         rect.setColor(0x00000000);
-
         let text = new Text();
         text.setText("自定义安装");
         text.setColor(0xff666666);
-
         let div = new Div();
         div.setText(text);
         div.setRect(rect);
@@ -277,8 +259,7 @@ let getCustomizeBtn = () => {
         return div;
     }
     let getIconDiv = () => {
-        let rect = new Rect();
-        rect.setXYWH(716, 461, 15, 15);
+        let rect = Rect.newXYWH(716, 461, 15, 15);
         rect.setColor(0x00000000);
         let icon = new Icon();
         icon.setId("customizeBtnIcon")
@@ -294,53 +275,59 @@ let getCustomizeBtn = () => {
     return [getTextDiv(), getIconDiv()];
 }
 let appendCustomizeElements = () => {
-    let rect = Rect.newXYWH(70, 496, 230, 26);
-    rect.setColor(0xFFFFFFFF);
-    let text = new Text();
-    text.setColor(0xff666666);
-    text.setText("请选择安装路径");
-    text.setAlign(1, 0);
-    text.setIndent(0, 6);
-    let input = new Input();
-    input.setId("input")
-    input.setText(text);
-    input.setRect(rect);
-
-    
-
-    //let btn = Div.newXYWH(300, 496, 80, 26);
-    //btn.setId("selectPath")
-    //btn.setBorderRadius(0, 3, 3, 0);
-    //btn.setAlign(1, 1);
-    //btn.setColor(0xff4096ff);
-    //btn.setTextColor(0xffffffff);
-    //btn.setFontSize(12);
-    //btn.setFontFamily("Microsoft YaHei");
-    //btn.setText("选择路径");
-    //btn.onMouseEnter(() => {
-    //    app.setCursor("pointer");
-    //    btn.setColor(0xff1677ff);
-    //    win.refresh();
-    //});
-    //btn.onMouseLeave(() => {
-    //    app.setCursor("default");
-    //    btn.setColor(0xff4096ff);
-    //    win.refresh();
-    //});
-    //btn.onMouseDown(() => {
-    //    btn.setColor(0xFF0958d9);
-    //    win.refresh();
-    //})
-    //btn.onMouseUp(() => {
-    //    btn.setColor(0xFF1677ff);
-    //    win.refresh();
-    //})
-
-    win.addElement([input]);
+    let getInput = () => {
+        let rect = Rect.newXYWH(70, 496, 230, 26);
+        rect.setColor(0xFFFFFFFF);
+        rect.setBorderRadius(3, 0, 0, 3);
+        let text = new Text();
+        text.setColor(0xff666666);
+        text.setText("请选择安装路径");
+        text.setAlign(1, 0);
+        text.setIndent(0, 6);
+        let input = new Input();
+        input.setId("input")
+        input.setText(text);
+        input.setRect(rect);
+        return input;
+    }
+    let getSelectBtn = () => {
+        let rect = Rect.newXYWH(300, 496, 80, 26);
+        rect.setColor(0xff4096ff);
+        rect.setBorderRadius(0, 3, 3, 0);
+        let text = new Text();
+        text.setColor(0xffffffff);
+        text.setFontSize(12);
+        text.setText("选择路径");
+        text.setAlign(1, 1);
+        let btn = new Div();
+        btn.setId("selectBtn")
+        btn.setText(text);
+        btn.setRect(rect);
+        btn.onMouseEnter(() => {
+            app.setCursor("pointer");
+            rect.setColor(0xff1677ff);
+            win.refresh();
+        });
+        btn.onMouseLeave(() => {
+            app.setCursor("default");
+            rect.setColor(0xff4096ff);
+            win.refresh();
+        });
+        btn.onMouseDown(() => {
+            rect.setColor(0xFF0958d9);
+            win.refresh();
+        })
+        btn.onMouseUp(() => {
+            rect.setColor(0xFF1677ff);
+            win.refresh();
+        })
+        return btn;
+    }
+    win.addElement([getInput(),getSelectBtn()]);
 }
 let removeCustomizeElements = () => {
     win.removeElement("input");
-    //win.removeElement("selectPath");
+    win.removeElement("selectBtn");
 }
 app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口
