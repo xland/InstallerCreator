@@ -1,5 +1,6 @@
 #include "Input.h"
 #include "Win.h"
+#include "Util.h"
 
 namespace {
 	static JSClassID id;
@@ -32,6 +33,8 @@ JSValue Input::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSV
 	return obj;
 }
 
+
+
 void Input::Reg(JSContext* ctx)
 {
 	auto rt = JS_GetRuntime(ctx);
@@ -41,6 +44,7 @@ void Input::Reg(JSContext* ctx)
 	RegBase(ctx, protoInstance);
     JS_SetPropertyStr(ctx, protoInstance, "setText", JS_NewCFunction(ctx, &Input::setText, "setText", 1));
     JS_SetPropertyStr(ctx, protoInstance, "setRect", JS_NewCFunction(ctx, &Input::setRect, "setRect", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "setPlaceHolder", JS_NewCFunction(ctx, &Input::setPlaceHolder, "setPlaceHolder", 1));
     JS_SetPropertyStr(ctx, protoInstance, "onMouseEnter", JS_NewCFunction(ctx, &Input::onMouseEnter, "onMouseEnter", 1));
     JS_SetPropertyStr(ctx, protoInstance, "onMouseLeave", JS_NewCFunction(ctx, &Input::onMouseLeave, "onMouseLeave", 1));
     JS_SetPropertyStr(ctx, protoInstance, "onMouseDown", JS_NewCFunction(ctx, &Input::onMouseDown, "onMouseDown", 1));
@@ -68,30 +72,45 @@ JSValue Input::setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
     JS_SetPropertyStr(ctx, thisVal, "rect", obj->rect);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-
+JSValue Input::setPlaceHolder(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto obj = (Input*)GetPtr(thisVal);
+    obj->placeHolder = JS_DupValue(ctx, argv[0]);
+    JS_SetPropertyStr(ctx, thisVal, "placeHolder", obj->placeHolder);
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
 void Input::Paint(Win* win)
 {
     auto ctx = JS::GetCtx();
     auto rectObj = (Rect*)Element::GetPtr(rect);
     rectObj->Paint(win);
-
-    TextBase* textBase = (TextBase*)Element::GetPtr(text);
-    if (!textBase) {
+    Text* textObj = (Text*)Element::GetPtr(text);
+    if (!textObj) {
         return;
     }
-    auto [left, top] = textBase->GetTextPos(rectObj->rect, textBase->lineRect);
-    textBase->x = left;
-    textBase->y = top;
-
-
+    Text* placeHolderObj = (Text*)Element::GetPtr(placeHolder);
+    if (!placeHolderObj) {
+        return;
+    }
 
     win->canvas->save();
-    win->canvas->clipRect(rectObj->rect);
-    textBase->Paint(win);
+    win->canvas->clipRect(rectObj->rect); 
+    if (textObj->text.empty()) {
+        auto [left, top] = placeHolderObj->GetTextPos(rectObj->rect, placeHolderObj->lineRect);
+        placeHolderObj->x = left;
+        placeHolderObj->y = top;
+        placeHolderObj->Paint(win);
+    }
+    else {
+        auto [left, top] = textObj->GetTextPos(rectObj->rect, textObj->lineRect);
+        textObj->x = left;
+        textObj->y = top;
+        textObj->Paint(win);
+    }
     win->canvas->restore();
     if (showTextIbeam) {
-        win->canvas->drawLine(textIbeamPos, textBase->y + textBase->lineRect.fTop,
-            textIbeamPos, textBase->y + textBase->lineRect.fTop + textBase->lineRect.height(), paint);
+        win->canvas->drawLine(textIbeamPos, textObj->y + textObj->lineRect.fTop,
+            textIbeamPos, textObj->y + textObj->lineRect.fTop + textObj->lineRect.height(), paint);
     }
 }
 
@@ -192,7 +211,11 @@ void Input::MouseUp()
 
 void Input::Dispose()
 {
-	//Rect::Dispose();
+    auto ctx = JS::GetCtx();
+    JS_FreeValue(ctx, mouseEnterCB);
+    JS_FreeValue(ctx, mouseLeaveCB);
+    JS_FreeValue(ctx, mouseDownCB);
+    JS_FreeValue(ctx, mouseUpCB);
 }
 
 void Input::Timeout(const unsigned int& id, Win* win)
@@ -227,6 +250,12 @@ JSValue Input::GetChildById(const std::string& id)
         auto t = Element::GetPtr(text);
         if (t->idStr == id) {
             return JS_DupValue(ctx, text);
+        }
+    }
+    else if (!JS_IsUndefined(placeHolder)) {
+        auto t = Element::GetPtr(placeHolder);
+        if (t->idStr == id) {
+            return JS_DupValue(ctx, placeHolder);
         }
     }
     else {

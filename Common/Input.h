@@ -19,6 +19,7 @@ protected:
 	Input();
 private:
 	static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
+    static JSValue setPlaceHolder(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
@@ -27,6 +28,7 @@ private:
     static JSValue onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     void setImm(const int& x, const int& y, Win* win);    
     JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
+    JSValue placeHolder{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     bool isFocus{ false };
     bool isMouseEnter{ false };

@@ -282,14 +282,21 @@ let appendCustomizeElements = () => {
         rect.setBorderRadius(3, 0, 0, 3);
         let text = new Text();
         text.setId("inputText")
-        text.setColor(0xffAAAAAA);
-        text.setText("请选择安装路径");
+        text.setColor(0xff666666);
         text.setFontSize(12)
         text.setAlign(1, 0);
         text.setIndent(0, 6);
+        let placeHolder = new Text();
+        placeHolder.setId("inputPlaceHolder")
+        placeHolder.setColor(0xffAAAAAA);
+        placeHolder.setText("请选择安装路径");
+        placeHolder.setFontSize(12)
+        placeHolder.setAlign(1, 0);
+        placeHolder.setIndent(0, 6);
         let input = new Input();
         input.setId("input")
         input.setText(text);
+        input.setPlaceHolder(placeHolder)
         input.setRect(rect);
         return input;
     }
