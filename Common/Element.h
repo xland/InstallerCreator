@@ -13,7 +13,7 @@ public:
 	~Element();
 	virtual void Paint(Win* win) = 0;
 	virtual void MouseMove(const float& x, const float& y) {};
-	virtual void MouseDown() {};
+	virtual void MouseDown(const float& x, const float& y,const Win* win) {};
 	virtual void MouseUp() {};
 	virtual void Dispose() {};
 	static Element* GetPtr(const JSValue& val);

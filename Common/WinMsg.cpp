@@ -75,7 +75,9 @@ void Win::lBtnDown(const LPARAM& lParam)
     SkMatrix matrix;
     matrix.setScale(scaleFactor, scaleFactor);
     SkPath p = captionPath.makeTransform(matrix);
-    if (p.contains(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam))) {
+    auto x = GET_X_LPARAM(lParam);
+    auto y = GET_Y_LPARAM(lParam);
+    if (p.contains(x, y)) {
         isCaptionMouseDown = true;
         GetCursorPos(&startPos);
         SetCapture(hwnd);
@@ -90,7 +92,7 @@ void Win::lBtnDown(const LPARAM& lParam)
             }
             auto element = Element::GetPtr(elements[i]);
             if (!element) continue;
-            element->MouseDown();
+            element->MouseDown(x,y,this);
         }
     }
 }

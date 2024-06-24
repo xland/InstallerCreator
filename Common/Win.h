@@ -17,6 +17,7 @@ public:
 	~Win();
 	std::unique_ptr<SkCanvas> canvas;
 	std::vector<JSValue> elements;
+    HWND hwnd;
 private:
 	Win();
 	static Win* getPtr(JSValue& val);
@@ -61,8 +62,7 @@ private:
 	void dpiChanged(const WPARAM& wParam, const LPARAM& lParam);
 
 	int x, y, w{ 1200 }, h{800};
-	float scaleFactor;
-	HWND hwnd;
+	float scaleFactor;	
 	SkAutoMalloc surfaceMemory;
 	HDC hCompatibleDC = NULL;
 	HBITMAP bottomHbitmap;

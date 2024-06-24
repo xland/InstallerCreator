@@ -9,7 +9,7 @@ public:
 	static void Reg(JSContext* ctx);
 	void Paint(Win* win) override;
 	void MouseMove(const float& x, const float& y) override;
-	void MouseDown() override;
+	void MouseDown(const float& x, const float& y, const Win* win) override;
 	void MouseUp() override;
 	void Dispose() override;
     JSValue GetChildById(const std::string& id);
@@ -23,8 +23,10 @@ private:
     static JSValue onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    void setImm(const int& x, const int& y, const Win* win);
     JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
+    bool isFocus{ false };
     bool isMouseEnter{ false };
     bool isMouseDown{ false };
     JSValue mouseEnterCB;
