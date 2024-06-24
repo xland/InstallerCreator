@@ -213,9 +213,6 @@ JSValue Div::GetChildById(const std::string& id)
         if (r->idStr == id) {
             return JS_DupValue(ctx, rect);
         }
-        else {
-            return JS::MakeVal(0, JS_TAG_UNDEFINED);
-        }
     }
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }

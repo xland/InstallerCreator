@@ -139,5 +139,18 @@ void Input::Dispose()
 
 JSValue Input::GetChildById(const std::string& id)
 {
+    auto ctx = JS::GetCtx();
+    if (!JS_IsUndefined(text)) {
+        auto t = Element::GetPtr(text);
+        if (t->idStr == id) {
+            return JS_DupValue(ctx, text);
+        }
+    }
+    else {
+        auto r = Element::GetPtr(rect);
+        if (r->idStr == id) {
+            return JS_DupValue(ctx, rect);
+        }
+    }
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
