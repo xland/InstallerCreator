@@ -56,6 +56,7 @@ void Div::Paint(Win* win)
 {
     auto ctx = JS::GetCtx();
     auto rectObj = (Rect*)Element::GetPtr(rect);
+    rectObj->Paint(win);
 
     TextBase* textBase;
     if (!JS_IsUndefined(icon)) {
@@ -70,7 +71,6 @@ void Div::Paint(Win* win)
     auto [left, top] = textBase->GetTextPos(rectObj->rect, textBase->lineRect);
     textBase->x = left;
     textBase->y = top;
-    rectObj->Paint(win);
     textBase->Paint(win);
 }
 

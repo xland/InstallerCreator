@@ -294,49 +294,53 @@ let getCustomizeBtn = () => {
     return [getTextDiv(), getIconDiv()];
 }
 let appendCustomizeElements = () => {
-    let input = Input.newXYWH(70, 496, 230, 26);
+    let rect = Rect.newXYWH(70, 496, 230, 26);
+    rect.setColor(0xFFFFFFFF);
+    let text = new Text();
+    text.setColor(0xff666666);
+    text.setText("请选择安装路径");
+    text.setAlign(1, 0);
+    text.setIndent(0, 6);
+    let input = new Input();
     input.setId("input")
-    input.setFontFamily("Microsoft YaHei");
-    input.setColor(0xFFFFFFFF);
-    input.setTextColor(0xff666666);
-    input.setText("请选择安装路径");
-    input.setAlign(1, 0);
-    input.setIndent(0, 6);
+    input.setText(text);
+    input.setRect(rect);
+
     
 
-    let btn = Div.newXYWH(300, 496, 80, 26);
-    btn.setId("selectPath")
-    btn.setBorderRadius(0, 3, 3, 0);
-    btn.setAlign(1, 1);
-    btn.setColor(0xff4096ff);
-    btn.setTextColor(0xffffffff);
-    btn.setFontSize(12);
-    btn.setFontFamily("Microsoft YaHei");
-    btn.setText("选择路径");
-    btn.onMouseEnter(() => {
-        app.setCursor("pointer");
-        btn.setColor(0xff1677ff);
-        win.refresh();
-    });
-    btn.onMouseLeave(() => {
-        app.setCursor("default");
-        btn.setColor(0xff4096ff);
-        win.refresh();
-    });
-    btn.onMouseDown(() => {
-        btn.setColor(0xFF0958d9);
-        win.refresh();
-    })
-    btn.onMouseUp(() => {
-        btn.setColor(0xFF1677ff);
-        win.refresh();
-    })
+    //let btn = Div.newXYWH(300, 496, 80, 26);
+    //btn.setId("selectPath")
+    //btn.setBorderRadius(0, 3, 3, 0);
+    //btn.setAlign(1, 1);
+    //btn.setColor(0xff4096ff);
+    //btn.setTextColor(0xffffffff);
+    //btn.setFontSize(12);
+    //btn.setFontFamily("Microsoft YaHei");
+    //btn.setText("选择路径");
+    //btn.onMouseEnter(() => {
+    //    app.setCursor("pointer");
+    //    btn.setColor(0xff1677ff);
+    //    win.refresh();
+    //});
+    //btn.onMouseLeave(() => {
+    //    app.setCursor("default");
+    //    btn.setColor(0xff4096ff);
+    //    win.refresh();
+    //});
+    //btn.onMouseDown(() => {
+    //    btn.setColor(0xFF0958d9);
+    //    win.refresh();
+    //})
+    //btn.onMouseUp(() => {
+    //    btn.setColor(0xFF1677ff);
+    //    win.refresh();
+    //})
 
-    win.addElement([input,btn]);
+    win.addElement([input]);
 }
 let removeCustomizeElements = () => {
     win.removeElement("input");
-    win.removeElement("selectPath");
+    //win.removeElement("selectPath");
 }
 app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口

@@ -67,8 +67,18 @@ JSValue Input::setRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 
 void Input::Paint(Win* win)
 {
-	//Rect::Paint(win);
-	//Div::Paint(win);
+    auto ctx = JS::GetCtx();
+    auto rectObj = (Rect*)Element::GetPtr(rect);
+    rectObj->Paint(win);
+
+    TextBase* textBase = (TextBase*)Element::GetPtr(text);
+    if (!textBase) {
+        return;
+    }
+    auto [left, top] = textBase->GetTextPos(rectObj->rect, textBase->lineRect);
+    textBase->x = left;
+    textBase->y = top;
+    textBase->Paint(win);
 }
 
 
