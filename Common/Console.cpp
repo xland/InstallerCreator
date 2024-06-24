@@ -1,6 +1,5 @@
 #include "Console.h"
 #include "Util.h"
-#ifdef DEBUG
 #include <iostream>
 #include <fcntl.h>
 #include <Windows.h>
@@ -8,7 +7,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <sstream>
-#endif
 
 
 Console::Console()

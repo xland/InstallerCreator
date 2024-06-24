@@ -1,5 +1,5 @@
 file(GLOB_RECURSE COMMON
-    "UV.cpp" "UV.h"
+    "Libuv.cpp" "Libuv.h"
     "JS.cpp" "JS.h"
     "App.cpp" "App.h"
     "Console.cpp" "Console.h"
