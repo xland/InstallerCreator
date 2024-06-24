@@ -15,6 +15,7 @@ class Win
 public:
 	static void Reg(JSContext* ctx);
 	~Win();
+    void paint();
 	std::unique_ptr<SkCanvas> canvas;
 	std::vector<JSValue> elements;
     HWND hwnd;
@@ -24,7 +25,6 @@ private:
 	void initWindow(std::wstring& title);
 	void initCanvas();
 	void show();
-	void paint();
 	void closed();
 
 	static JSValue constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv);

@@ -166,7 +166,7 @@ void Div::MouseMove(const float& x, const float& y)
         JS_FreeValue(ctx, ret);
     }
 }
-void Div::MouseDown(const float& x, const float& y, const Win* win)
+void Div::MouseDown(const float& x, const float& y, Win* win)
 {
     if (!isMouseEnter) {
         return;

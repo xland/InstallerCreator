@@ -23,8 +23,11 @@ Input::~Input()
 
 JSValue Input::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv)
 {
+    static int tId{ WM_APP + 99 };
+    tId += 1;
 	JSValue obj = JS_NewObjectClass(ctx, id);
 	auto self = new Input();
+    self->timerID = tId;
 	JS_SetOpaque(obj, self);
 	return obj;
 }
@@ -122,6 +125,7 @@ void Input::MouseMove(const float& x, const float& y)
     isMouseEnter = flag;
     auto ctx = JS::GetCtx();
     if (flag) {
+        SetCursor(LoadCursor(NULL, IDC_IBEAM));
         if (!JS_IsFunction(ctx, mouseEnterCB)) {
             return;
         }
@@ -129,6 +133,10 @@ void Input::MouseMove(const float& x, const float& y)
         JS_FreeValue(ctx, ret);
     }
     else {
+        HCURSOR cursor = (HCURSOR)GetCursor();
+        if (cursor == LoadCursor(NULL, IDC_IBEAM)) {
+            SetCursor(LoadCursor(NULL, IDC_ARROW));
+        }        
         if (!JS_IsFunction(ctx, mouseLeaveCB)) {
             return;
         }
@@ -137,38 +145,39 @@ void Input::MouseMove(const float& x, const float& y)
     }
 }
 
-void Input::MouseDown(const float& x, const float& y, const Win* win)
+void Input::MouseDown(const float& x, const float& y, Win* win)
 {
-    //bool flag{ false };
-    //if (root->toolBar->hoverIndex == hoverIndexVal) {
-    //    auto span = std::chrono::system_clock::now() - mouseDownTime;
-    //    auto msCount = std::chrono::duration_cast<std::chrono::milliseconds>(span).count();
-    //    if (msCount < 380) {
-    //        //todo
-    //        return;
-    //    }
-    //    mouseDownTime = std::chrono::system_clock::now();
-    //    flag = true;
-    //}
-    //else {
-    //    flag = false;
-    //}
-    //if (flag != isFocus) {
-    //    isFocus = flag;
-    //    showTextCursor = true;
-    //    if (isFocus) {
-    //        SetTimer(root->hwnd, timerID, 600, (TIMERPROC)nullptr);
-    //        setImm(x, y);
-    //    }
-    //    else {
-    //        KillTimer(root->hwnd, timerID);
-    //        repaint();
-    //    }
-    //}
-    //if (isFocus) {
-    //    setTextCursorPos(x);
-    //    repaint();
-    //}
+    bool flag{ false };
+    if (isMouseEnter) {
+        auto span = std::chrono::system_clock::now() - mouseDownTime;
+        auto msCount = std::chrono::duration_cast<std::chrono::milliseconds>(span).count();
+        if (msCount < 380) {
+            return;
+        }
+        mouseDownTime = std::chrono::system_clock::now();
+        flag = true;
+    }
+    else {
+        flag = false;
+    }
+    if (flag != isFocus) {
+        isFocus = flag;
+        showTextCursor = true;
+        if (isFocus) {
+            SetTimer(win->hwnd, timerID, 600, (TIMERPROC)nullptr);
+            setImm(x, y,win);
+        }
+        else {
+            KillTimer(win->hwnd, timerID);
+            win->paint();
+        }
+    }
+    if (isFocus) {
+        //setTextCursorPos(x);
+        auto textObj = (Text*)Element::GetPtr(text);
+        textCursorPos = textObj->getTextCursorPos(x);
+        win->paint();
+    }
 }
 
 void Input::MouseUp()
@@ -181,7 +190,7 @@ void Input::Dispose()
 	//Rect::Dispose();
 }
 
-void Input::setImm(const int& x, const int& y, const Win* win)
+void Input::setImm(const int& x, const int& y, Win* win)
 {
     if (HIMC himc = ImmGetContext(win->hwnd))
     {

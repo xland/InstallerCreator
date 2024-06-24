@@ -53,6 +53,32 @@ JSValue Text::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVa
 	return obj;
 }
 
+float Text::getTextCursorPos(const int& x1)
+{
+    auto width = x1 - x;
+    SkRect subRect;
+    float tempWidth;
+    for (size_t i = 1; i < text.length(); i++)
+    {
+        auto str = text.substr(0, i);
+        auto data = str.data();
+        auto length = wcslen(data) * 2;
+        font->measureText(data, length, SkTextEncoding::kUTF16, &subRect);
+        if (subRect.width() > width) {
+            float half = (subRect.width() - tempWidth) / 2 + tempWidth;
+            if (half > width) {
+                return x + tempWidth;
+            }
+            else
+            {
+                return x + subRect.width();
+            }
+        }
+        tempWidth = subRect.width();
+    }
+    return x + subRect.width();
+}
+
 void Text::resetLineRect()
 {
 	if (!font.get()) {
@@ -107,6 +133,5 @@ void Text::Paint(Win* win)
     }    
 	auto length = wcslen(text.data()) * 2;
 	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, x, y, *font.get(), paint);
-
 }
 
