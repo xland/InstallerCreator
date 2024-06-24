@@ -1,4 +1,5 @@
 #include "Input.h"
+#include "Win.h"
 
 namespace {
 	static JSClassID id;
@@ -78,7 +79,11 @@ void Input::Paint(Win* win)
     auto [left, top] = textBase->GetTextPos(rectObj->rect, textBase->lineRect);
     textBase->x = left;
     textBase->y = top;
+
+    win->canvas->save();
+    win->canvas->clipRect(rectObj->rect);
     textBase->Paint(win);
+    win->canvas->restore();
 }
 
 

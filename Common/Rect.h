@@ -11,7 +11,6 @@ public:
 	~Rect();
 	void Paint(Win* win) override;
 	SkRect rect;
-	SkRRect rrect;
 protected:
 	Rect();
 	static void RegRectBase(JSContext* ctx, JSValue& protoInstance);
@@ -21,6 +20,9 @@ private:
 	static JSValue setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-	static JSValue setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);	
+	static JSValue setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    void paintShadow(Win* win,const SkPath& path);
+    bool isRRect{ false };
+    double topLeft, topRight, bottomRight, bottomLeft;
 };
 

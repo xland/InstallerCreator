@@ -1,6 +1,7 @@
 #include "Rect.h"
 #include "JS.h"
 #include "Win.h"
+#include "include/core/SkRRect.h"
 #include "include/core/SkPoint3.h"
 #include "include/utils/SkShadowUtils.h"
 
@@ -52,24 +53,30 @@ void Rect::Reg(JSContext* ctx)
 
 void Rect::Paint(Win* win)
 {
-	if (shadowSize > 0) {
-		SkPath path;
-		if (rrect.isEmpty()) {
-			path.addRect(rect);
-		}
-		else {
-			path.addRRect(rrect);
-		}
-		SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// 定义阴影与 z 平面的关系    
-		SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
-		SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2 * shadowSize,
-			shadowAmbientColor, shadowSpotColor, 0);
-	}
-	if (rrect.isEmpty()) {
-		win->canvas->drawRect(rect, paint);
+	if (isRRect) {
+        SkVector radii[4]{
+            {topLeft, topLeft},  // 左上角
+            {topRight, topRight},  // 右上角
+            {bottomRight, bottomRight},  // 右下角
+            {bottomLeft, bottomLeft}   // 左下角
+        };
+        SkRRect rr;
+        rr.setRectRadii(rect, radii);
+        if (shadowSize > 0) {
+            SkPath path;
+            path.addRRect(rr);
+            paintShadow(win, path);
+
+        }
+		win->canvas->drawRRect(rr, paint);
 	}
 	else {
-		win->canvas->drawRRect(rrect, paint);
+        if (shadowSize > 0) {
+            SkPath path;
+            path.addRect(rect);
+            paintShadow(win, path);
+        }
+		win->canvas->drawRect(rect, paint);
 	}
 }
 
@@ -93,7 +100,6 @@ JSValue Rect::newLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	JS_SetOpaque(obj, self);
 	return obj;
 }
-
 JSValue Rect::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto [x, y, w, h,err] = get4Arg(ctx, argv);
@@ -106,24 +112,6 @@ JSValue Rect::newXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 	JS_SetOpaque(obj, self);
 	return obj;
 }
-
-JSValue Rect::setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
-{
-	auto [r1, r2, r3, r4, err] = get4Arg(ctx, argv);
-	if (JS_IsException(err)) {
-		return err;
-	}
-	auto rect = (Rect*)Element::GetPtr(thisVal);
-	SkVector radii[4] {
-		{r1, r1},  // 左上角
-		{r2, r2},  // 右上角
-		{r3, r3},  // 右下角
-		{r4, r4}   // 左下角
-	};
-	rect->rrect.setRectRadii(rect->rect, radii);
-	return JS::MakeVal(0, JS_TAG_UNDEFINED);
-}
-
 JSValue Rect::setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto [l, t, r, b, err] = get4Arg(ctx, argv);
@@ -131,22 +119,9 @@ JSValue Rect::setLTRB(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 		return err;
 	}
 	auto rect = (Rect*)Element::GetPtr(thisVal);
-	if (rect->rrect.isEmpty()) {
-		rect->rect.setLTRB(l, t, r, b);
-	}
-	else {
-		auto radii1 = rect->rrect.radii(SkRRect::Corner::kUpperLeft_Corner);
-		auto radii2 = rect->rrect.radii(SkRRect::Corner::kUpperRight_Corner);
-		auto radii3 = rect->rrect.radii(SkRRect::Corner::kLowerRight_Corner);
-		auto radii4 = rect->rrect.radii(SkRRect::Corner::kLowerLeft_Corner);
-		SkVector radii[4]{ radii1 ,radii2,radii3,radii4 };
-		SkRect tempR;
-		tempR.setLTRB(l, t, r, b);
-		rect->rrect.setRectRadii(tempR,radii);
-	}
+    rect->rect.setLTRB(l, t, r, b);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-
 JSValue Rect::setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
 	auto [x, y, w, h, err] = get4Arg(ctx, argv);
@@ -154,21 +129,36 @@ JSValue Rect::setXYWH(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCon
 		return err;
 	}
 	auto rect = (Rect*)Element::GetPtr(thisVal);
-	auto radii = rect->rrect.radii(SkRRect::Corner::kUpperLeft_Corner);
-	if (rect->rrect.isEmpty()) {
-		rect->rect.setXYWH(x, y, w, h);
-	}
-	else {
-		auto radii1 = rect->rrect.radii(SkRRect::Corner::kUpperLeft_Corner);
-		auto radii2 = rect->rrect.radii(SkRRect::Corner::kUpperRight_Corner);
-		auto radii3 = rect->rrect.radii(SkRRect::Corner::kLowerRight_Corner);
-		auto radii4 = rect->rrect.radii(SkRRect::Corner::kLowerLeft_Corner);
-		SkVector radii[4]{ radii1 ,radii2,radii3,radii4 };
-		SkRect tempR;
-		tempR.setXYWH(x, y, w, h);
-		rect->rrect.setRectRadii(tempR, radii);
-	}
+    rect->rect.setXYWH(x, y, w, h);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+JSValue Rect::setBorderRadius(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto [r1, r2, r3, r4, err] = get4Arg(ctx, argv);
+    if (JS_IsException(err)) {
+        return err;
+    }
+    auto rect = (Rect*)Element::GetPtr(thisVal);
+    if (r1 == 0 && r2 == 0 && r3 == 0 && r4 == 0) {
+        rect->isRRect = false;
+    }
+    else {
+        rect->isRRect = true;
+    }
+    rect->topLeft = r1;
+    rect->topRight = r2;
+    rect->bottomRight = r3;
+    rect->bottomLeft = r4;
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+
+void Rect::paintShadow(Win* win, const SkPath& path)
+{
+    SkPoint3 zPlaneParams = SkPoint3::Make(0, 0, shadowSize);// 定义阴影与 z 平面的关系    
+    SkPoint3 lightPos = SkPoint3::Make(0, 0, 0);// 定义光源的位置和半径
+    SkShadowUtils::DrawShadow(win->canvas.get(), path, zPlaneParams, lightPos, 2 * shadowSize,
+        shadowAmbientColor, shadowSpotColor, 0);
 }
 
 JSValue Rect::contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -181,6 +171,7 @@ JSValue Rect::contains(JSContext* ctx, JSValueConst thisVal, int argc, JSValueCo
 	if (JS_ToFloat64(ctx, &arg2, argv[1])) {
 		return JS_ThrowTypeError(ctx, "arg1 error");
 	}
+    //todo 圆角区域没有验证
 	auto rect = (Rect*)Element::GetPtr(thisVal);
 	auto flag = rect->rect.contains(arg1, arg2);
 	return JS_NewBool(ctx, flag);

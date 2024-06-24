@@ -131,8 +131,6 @@ let getStartBtn = () => {
         win.refresh();
     });
     startBtn.onMouseDown(() => {
-        let str = win.openPathSelectDialog();
-        console.log(str);
         startBtn.rect.setColor(0xFF0958d9);
         win.refresh();
     })
@@ -280,8 +278,10 @@ let appendCustomizeElements = () => {
         rect.setColor(0xFFFFFFFF);
         rect.setBorderRadius(3, 0, 0, 3);
         let text = new Text();
-        text.setColor(0xff666666);
+        text.setId("inputText")
+        text.setColor(0xffAAAAAA);
         text.setText("请选择安装路径");
+        text.setFontSize(12)
         text.setAlign(1, 0);
         text.setIndent(0, 6);
         let input = new Input();
@@ -314,20 +314,107 @@ let appendCustomizeElements = () => {
             win.refresh();
         });
         btn.onMouseDown(() => {
-            rect.setColor(0xFF0958d9);
-            win.refresh();
-        })
-        btn.onMouseUp(() => {
-            rect.setColor(0xFF1677ff);
+            let str = win.openPathSelectDialog();
+            let inputText = win.getElement("inputText")
+            if (str) {
+                inputText.setText(str);
+                inputText.setColor(0xff666666);
+            } else {
+                inputText.setColor(0xffAAAAAA);
+            }
             win.refresh();
         })
         return btn;
     }
-    win.addElement([getInput(),getSelectBtn()]);
+    let getDesktopBtn = () => {
+        let switchCheck = () => {
+            let icon = win.getElement("desktopIcon")
+            if (icon.getIcon() === 0xe608) {
+                icon.setIcon(0xe609);
+            } else {
+                icon.setIcon(0xe608);
+            }
+            win.refresh();
+        };
+        let getCheckDiv = () => {
+            let rect = Rect.newXYWH(515, 500, 16, 18);
+            rect.setColor(0x00000000);
+            let icon = new Icon();
+            icon.setId("desktopIcon")
+            icon.setIcon(0xe608);
+            icon.setColor(0xff666666);
+            icon.setAlign(1, 1);
+            let div = new Div();
+            div.setIcon(icon);
+            div.setId("desktopCheck")
+            div.setRect(rect);
+            div.onMouseDown(switchCheck);
+            return div;
+        }
+        let getTextDiv = () => {
+            let rect = Rect.newXYWH(530, 500, 96, 18);
+            rect.setColor(0x00000000);
+            let text = new Text();
+            text.setText("创建桌面图标");
+            text.setColor(0xff666666);
+            let div = new Div();
+            div.setText(text);
+            div.setRect(rect);
+            div.setId("desktopText")
+            div.onMouseDown(switchCheck);
+            return div;
+        }
+        return [getCheckDiv(),getTextDiv()]
+    }
+    let getMenuBtn = () => {
+        let switchCheck = () => {
+            let icon = win.getElement("menuIcon")
+            if (icon.getIcon() === 0xe608) {
+                icon.setIcon(0xe609);
+            } else {
+                icon.setIcon(0xe608);
+            }
+            win.refresh();
+        };
+        let getCheckDiv = () => {
+            let rect = Rect.newXYWH(635, 500, 16, 18);
+            rect.setColor(0x00000000);
+            let icon = new Icon();
+            icon.setId("menuIcon")
+            icon.setIcon(0xe608);
+            icon.setColor(0xff666666);
+            icon.setAlign(1, 1);
+            let div = new Div();
+            div.setIcon(icon);
+            div.setId("menuCheck")
+            div.setRect(rect);
+            div.onMouseDown(switchCheck);
+            return div;
+        }
+        let getTextDiv = () => {
+            let rect = Rect.newXYWH(650, 500, 96, 18);
+            rect.setColor(0x00000000);
+            let text = new Text();
+            text.setText("创建开始菜单");
+            text.setColor(0xff666666);
+            let div = new Div();
+            div.setText(text);
+            div.setRect(rect);
+            div.setId("menuText")
+            div.onMouseDown(switchCheck);
+            return div;
+        }
+        return [getCheckDiv(), getTextDiv()]
+    }
+    win.addElement([getInput(),getSelectBtn(),...getDesktopBtn(),...getMenuBtn()]);
 }
 let removeCustomizeElements = () => {
     win.removeElement("input");
     win.removeElement("selectBtn");
+    win.removeElement("desktopCheck");
+    win.removeElement("desktopText");
+    win.removeElement("menuCheck");
+    win.removeElement("menuText");
 }
 app.ready(() => {
     win = new Win(windowTitle, 800, 600); //默认为透明窗口
