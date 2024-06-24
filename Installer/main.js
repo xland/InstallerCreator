@@ -8,7 +8,10 @@ let win;
 let setWinDragPath = () => {
     let path = new Path();
     path.addRect(Rect.newLTRB(50, 50, 680, 80));
-    path.addRect(Rect.newLTRB(50, 80, 700, 350));
+    path.addRect(Rect.newXYWH(50, 80, 700, 350));
+    let opPath = new Path();
+    opPath.addRect(Rect.newXYWH(340, 410, 120, 20))
+    path.op(opPath,0);
     win.setCaptionPath(path);
 };
 let getBgRect = () => {

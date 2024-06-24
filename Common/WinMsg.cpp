@@ -72,12 +72,9 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
 
 void Win::lBtnDown(const LPARAM& lParam)
 {
-    SkMatrix matrix;
-    matrix.setScale(scaleFactor, scaleFactor);
-    SkPath p = captionPath.makeTransform(matrix);
-    auto x = GET_X_LPARAM(lParam);
-    auto y = GET_Y_LPARAM(lParam);
-    if (p.contains(x, y)) {
+    auto x = (float)GET_X_LPARAM(lParam) / scaleFactor;
+    auto y = (float)GET_Y_LPARAM(lParam) / scaleFactor;
+    if (captionPath.contains(x, y)) {
         isCaptionMouseDown = true;
         GetCursorPos(&startPos);
         SetCapture(hwnd);

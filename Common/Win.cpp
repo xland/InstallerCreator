@@ -170,6 +170,9 @@ void Win::paint()
         auto element = Element::GetPtr(elements[i]);
         element->Paint(this);
     }
+    //SkPaint p;
+    //p.setColor(0xFF999999);
+    //canvas->drawPath(captionPath,p);
     HDC hdc = GetDC(hwnd);
     BITMAPINFO info = { sizeof(BITMAPINFOHEADER), w, 0 - h, 1, 32, BI_RGB, w * 4 * h, 0, 0, 0, 0 };
     SetDIBits(hdc, bottomHbitmap, 0, h, surfaceMemory.get(), &info, DIB_RGB_COLORS);

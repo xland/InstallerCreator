@@ -173,7 +173,6 @@ void Input::MouseDown(const float& x, const float& y, Win* win)
         }
     }
     if (isFocus) {
-        //setTextCursorPos(x);
         auto textObj = (Text*)Element::GetPtr(text);
         textCursorPos = textObj->getTextCursorPos(x);
         win->paint();

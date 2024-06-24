@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "include/core/SkPath.h"
 #include "Element.h"
 class Path:public Element
@@ -19,6 +19,7 @@ private:
 	static JSValue reset(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addRect(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 	static JSValue addEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
+    static JSValue op(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 
 };
 

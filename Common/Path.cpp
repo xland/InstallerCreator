@@ -6,6 +6,7 @@
 #include "Shadow.h"
 #include "include/core/SkPoint3.h"
 #include "include/utils/SkShadowUtils.h"
+#include "include/pathops/SkPathOps.h"
 
 namespace {
 	static JSClassID id;
@@ -33,6 +34,7 @@ void Path::RegPathBase(JSContext* ctx, JSValue& protoInstance)
 	JS_SetPropertyStr(ctx, protoInstance, "reset", JS_NewCFunction(ctx, &Path::reset, "reset", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "addRect", JS_NewCFunction(ctx, &Path::addRect, "addRect", 1));
 	JS_SetPropertyStr(ctx, protoInstance, "addEllipse", JS_NewCFunction(ctx, &Path::addEllipse, "addEllipse", 1));
+    JS_SetPropertyStr(ctx, protoInstance, "op", JS_NewCFunction(ctx, &Path::op, "op", 2));
 }
 JSValue Path::constructor(JSContext* ctx, JSValueConst new_target, int argc, JSValueConst* argv)
 {
@@ -138,4 +140,17 @@ JSValue Path::addEllipse(JSContext* ctx, JSValueConst thisVal, int argc, JSValue
 	auto rect = (Rect*)Element::GetPtr(argv[0]);
 	path->path.addOval(rect->rect);
 	return JS::MakeVal(0, JS_TAG_UNDEFINED);
+}
+JSValue Path::op(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
+{
+    auto path = (Path*)Element::GetPtr(thisVal);
+    auto opPath = (Path*)Element::GetPtr(argv[0]);
+    uint32_t opType;
+    if (JS_ToUint32(ctx, &opType, argv[1])) {
+        return JS_ThrowTypeError(ctx, "arg2 error");
+    }
+    SkPath resultPath;
+    Op(path->path, opPath->path, (SkPathOp)opType, &resultPath);
+    path->path = resultPath;
+    return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
