@@ -55,22 +55,25 @@ JSValue Text::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVa
 
 std::tuple<int, SkPoint> Text::getTextCursorPos(const int& x1)
 {
-    auto width = x1 - x;
-    if (width < 0) width = 0;
     SkRect subRect;
-    float tempWidth{0};
+    double tempRight{x};
     for (size_t i = 1; i < text.length(); i++)
     {
         auto str = text.substr(0, i);
         auto data = str.data();
         auto length = wcslen(data) * 2;
+        font->setSize(fontSize);
         font->measureText(data, length, SkTextEncoding::kUTF16, &subRect);
-        if (i==1 && width < subRect.width()/2) {
-            return { 0,SkPoint(x,y+subRect.fTop+subRect.height()) };
-        } else if (subRect.width() > width) {
-            return { i,SkPoint(x + subRect.width() + subRect.fLeft * 2,y + subRect.fTop + subRect.height()) };
+        subRect.offset(x - subRect.fLeft,y-subRect.fTop);
+        if (x1>tempRight && x1 < subRect.fRight) {
+            if (x1 < tempRight + (subRect.fRight - tempRight) / 2) {
+                return { i - 1,SkPoint(tempRight + lineRect.fLeft*2-1,y + lineRect.fBottom) };
+            }
+            else {
+                return { i,SkPoint(subRect.fRight+lineRect.fLeft*2-1,y + lineRect.fBottom) };
+            }            
         }
-        tempWidth = subRect.width();
+        tempRight = subRect.fRight;
     }
     return { text.length(),SkPoint(x + lineRect.width() + lineRect.fLeft * 2,y + lineRect.fTop + lineRect.height())};
 }
