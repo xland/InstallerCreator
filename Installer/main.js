@@ -210,7 +210,7 @@ let getLicenceDiv = () => {
         return div;
     }
     let getLinkDiv = () => {
-        let rect = Rect.newXYWH(178.6, 460, 56, 18);
+        let rect = Rect.newXYWH(180, 460, 56, 18);
         rect.setColor(0x00000000);
         let text = new Text();
         text.setText("用户协议");

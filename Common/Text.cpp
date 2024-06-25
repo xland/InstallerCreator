@@ -93,7 +93,7 @@ void Text::resetLineRect()
     font->setSize(fontSize);
 	auto length = wcslen(text.data()) * 2;
     if (length == 0) {
-        std::wstring temp{ L"中" };
+        std::wstring temp{ L"中" }; //todo 这样会被执行很多次
         font->measureText(temp.data(), 2, SkTextEncoding::kUTF16, &lineRect);
     }
     else {
@@ -142,8 +142,9 @@ void Text::Paint(Win* win)
         auto bottom = lineRect.fBottom+y+1;
         auto right = lineRect.fRight+x-1;
         win->canvas->drawLine(x, bottom, right, bottom, paint);
-    }    
+    }
 	auto length = wcslen(text.data()) * 2;
+    font->setSize(fontSize);
 	win->canvas->drawSimpleText(text.c_str(), length, SkTextEncoding::kUTF16, x, y, *font.get(), paint);
 }
 

@@ -69,6 +69,8 @@ void Div::Paint(Win* win)
         return;
     }
     textBase->SetTextPos(rectObj->rect, textBase->lineRect);
+    //paint.setColor(0x66666666);
+    //win->canvas->drawRect(textBase->lineRect, paint);
     textBase->Paint(win);
 }
 

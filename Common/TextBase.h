@@ -24,7 +24,7 @@ private:
     static JSValue setFontFamily(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue setIndent(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-    static JSValue setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);    
+    static JSValue setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
 };
 
 
