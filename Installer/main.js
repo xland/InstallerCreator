@@ -286,17 +286,9 @@ let appendCustomizeElements = () => {
         text.setFontSize(12)
         text.setAlign(1, 0);
         text.setIndent(0, 6);
-        let placeHolder = new Text();
-        placeHolder.setId("inputPlaceHolder")
-        placeHolder.setColor(0xffAAAAAA);
-        placeHolder.setText("请选择安装路径");
-        placeHolder.setFontSize(12)
-        placeHolder.setAlign(1, 0);
-        placeHolder.setIndent(0, 6);
-        let input = new Input();
+        let input = new Div();
         input.setId("input")
         input.setText(text);
-        input.setPlaceHolder(placeHolder)
         input.setRect(rect);
         return input;
     }
