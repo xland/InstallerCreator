@@ -61,6 +61,10 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
             //obj->mouseWheel(pt.x, pt.y, GET_WHEEL_DELTA_WPARAM(wParam));
             break;
         }
+        case WM_CHAR: {
+            obj->onChar(wParam);
+            break;
+        }
         case WM_DPICHANGED: {
             obj->dpiChanged(wParam, lParam);
             break;
@@ -186,5 +190,14 @@ void Win::onTimeout(const unsigned int& id)
     {
         auto element = Element::GetPtr(obj);
         element->Timeout(id, this);
+    }
+}
+
+void Win::onChar(const unsigned int& val)
+{
+    for (auto& obj : elements)
+    {
+        auto element = Element::GetPtr(obj);
+        element->CharInput(val);
     }
 }

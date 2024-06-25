@@ -277,11 +277,12 @@ let getCustomizeBtn = () => {
 }
 let appendCustomizeElements = () => {
     let getInput = () => {
-        let rect = Rect.newXYWH(70, 496, 230, 26);
+        let rect = Rect.newXYWH(70, 502, 230, 26);
         rect.setColor(0xFFFFFFFF);
         rect.setBorderRadius(3, 0, 0, 3);
         let text = new Text();
         text.setId("inputText")
+        text.setText("");
         text.setColor(0xff666666);
         text.setFontSize(12)
         text.setAlign(1, 0);
@@ -301,11 +302,11 @@ let appendCustomizeElements = () => {
         return input;
     }
     let getSelectBtn = () => {
-        let rect = Rect.newXYWH(300, 496, 80, 26);
-        rect.setColor(0xff4096ff);
+        let rect = Rect.newXYWH(300, 502, 80, 26);
+        rect.setColor(0xffbae7ff);
         rect.setBorderRadius(0, 3, 3, 0);
         let text = new Text();
-        text.setColor(0xffffffff);
+        text.setColor(0xff777777);
         text.setFontSize(12);
         text.setText("选择路径");
         text.setAlign(1, 1);
@@ -315,12 +316,14 @@ let appendCustomizeElements = () => {
         btn.setRect(rect);
         btn.onMouseEnter(() => {
             app.setCursor("pointer");
-            rect.setColor(0xff1677ff);
+            rect.setColor(0xff69B1FF);
+            text.setColor(0xffFFFFFF);
             win.refresh();
         });
         btn.onMouseLeave(() => {
             app.setCursor("default");
-            rect.setColor(0xff4096ff);
+            rect.setColor(0xffbae7ff);
+            text.setColor(0xff777777);
             win.refresh();
         });
         btn.onMouseDown(() => {
@@ -328,9 +331,6 @@ let appendCustomizeElements = () => {
             let inputText = win.getElement("inputText")
             if (str) {
                 inputText.setText(str);
-                inputText.setColor(0xff666666);
-            } else {
-                inputText.setColor(0xffAAAAAA);
             }
             win.refresh();
         })
@@ -347,12 +347,12 @@ let appendCustomizeElements = () => {
             win.refresh();
         };
         let getCheckDiv = () => {
-            let rect = Rect.newXYWH(515, 500, 16, 18);
+            let rect = Rect.newXYWH(530, 506, 16, 18);
             rect.setColor(0x00000000);
             let icon = new Icon();
             icon.setId("desktopIcon")
             icon.setIcon(0xe608);
-            icon.setColor(0xff666666);
+            icon.setColor(0xff888888);
             icon.setAlign(1, 1);
             let div = new Div();
             div.setIcon(icon);
@@ -362,11 +362,11 @@ let appendCustomizeElements = () => {
             return div;
         }
         let getTextDiv = () => {
-            let rect = Rect.newXYWH(530, 500, 96, 18);
+            let rect = Rect.newXYWH(545, 506, 96, 18);
             rect.setColor(0x00000000);
             let text = new Text();
             text.setText("创建桌面图标");
-            text.setColor(0xff666666);
+            text.setColor(0xff888888);
             let div = new Div();
             div.setText(text);
             div.setRect(rect);
@@ -387,12 +387,12 @@ let appendCustomizeElements = () => {
             win.refresh();
         };
         let getCheckDiv = () => {
-            let rect = Rect.newXYWH(635, 500, 16, 18);
+            let rect = Rect.newXYWH(635, 506, 16, 18);
             rect.setColor(0x00000000);
             let icon = new Icon();
             icon.setId("menuIcon")
             icon.setIcon(0xe608);
-            icon.setColor(0xff666666);
+            icon.setColor(0xff888888);
             icon.setAlign(1, 1);
             let div = new Div();
             div.setIcon(icon);
@@ -402,11 +402,11 @@ let appendCustomizeElements = () => {
             return div;
         }
         let getTextDiv = () => {
-            let rect = Rect.newXYWH(650, 500, 96, 18);
+            let rect = Rect.newXYWH(650, 506, 96, 18);
             rect.setColor(0x00000000);
             let text = new Text();
             text.setText("创建开始菜单");
-            text.setColor(0xff666666);
+            text.setColor(0xff888888);
             let div = new Div();
             div.setText(text);
             div.setRect(rect);

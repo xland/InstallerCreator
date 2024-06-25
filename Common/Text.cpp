@@ -53,7 +53,7 @@ JSValue Text::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSVa
 	return obj;
 }
 
-float Text::getTextCursorPos(const int& x1)
+std::tuple<int, float> Text::getTextCursorPos(const int& x1)
 {
     auto width = x1 - x;
     if (width < 0) width = 0;
@@ -66,13 +66,13 @@ float Text::getTextCursorPos(const int& x1)
         auto length = wcslen(data) * 2;
         font->measureText(data, length, SkTextEncoding::kUTF16, &subRect);
         if (i==1 && width < subRect.width()/2) {
-            return x;
+            return { 0,x };
         } else if (subRect.width() > width) {
-            return x + subRect.width() + subRect.fLeft * 2;
+            return { i,x + subRect.width() + subRect.fLeft * 2 };
         }
         tempWidth = subRect.width();
     }
-    return x + subRect.width()+ subRect.fLeft*2;
+    return { text.length(),x + subRect.width() + subRect.fLeft * 2};
 }
 
 void Text::resetLineRect()
@@ -82,7 +82,13 @@ void Text::resetLineRect()
     }
     font->setSize(fontSize);
 	auto length = wcslen(text.data()) * 2;
-	font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
+    if (length == 0) {
+        std::wstring temp{ L"中" };
+        font->measureText(temp.data(), 2, SkTextEncoding::kUTF16, &lineRect);
+    }
+    else {
+        font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);
+    }
 }
 
 JSValue Text::setText(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

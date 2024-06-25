@@ -68,9 +68,7 @@ void Div::Paint(Win* win)
     if (!textBase) {
         return;
     }
-    auto [left, top] = textBase->GetTextPos(rectObj->rect, textBase->lineRect);
-    textBase->x = left;
-    textBase->y = top;
+    textBase->SetTextPos(rectObj->rect, textBase->lineRect);
     textBase->Paint(win);
 }
 

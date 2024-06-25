@@ -38,6 +38,9 @@ std::wstring Util::ConvertToWStr(const char* str)
     int count = MultiByteToWideChar(CP_UTF8, 0, str, -1, 0, 0);
     std::wstring wstr(count, 0);
     MultiByteToWideChar(CP_UTF8, 0, str, -1, &wstr[0], count);
+    if (wstr.length() == 1 && str[0] == L'\0') {
+        wstr = std::wstring{};
+    }
     return wstr;
 }
 std::string Util::ConvertToStr(const std::wstring& wstr)
@@ -46,6 +49,13 @@ std::string Util::ConvertToStr(const std::wstring& wstr)
     std::string str(count, 0);
     WideCharToMultiByte(CP_UTF8, 0, wstr.c_str(), -1, &str[0], count, NULL, NULL);
     return str;
+}
+void Util::CheckEmptyString(std::wstring& str)
+{
+    if(str.length() == 1 && str[0] == L'\0') {
+        str = std::wstring{};
+        bool flag = str.empty();
+    }
 }
 GUID Util::ConvertToGuid(const char* str) {
     auto wGuidStr = ConvertToWStr(str);

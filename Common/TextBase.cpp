@@ -66,7 +66,7 @@ JSValue TextBase::setPosition(JSContext* ctx, JSValueConst thisVal, int argc, JS
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
 
-std::tuple<float, float> TextBase::GetTextPos(SkRect& rect, SkRect& lineRect)
+void TextBase::SetTextPos(SkRect& rect, SkRect& lineRect)
 {
     float left{ rect.fLeft - lineRect.fLeft };
     float top{ rect.fTop - lineRect.fTop };
@@ -90,7 +90,8 @@ std::tuple<float, float> TextBase::GetTextPos(SkRect& rect, SkRect& lineRect)
     else if (horizontalAlign == 2) {
         left = rect.fRight - w - indentHorizontal;
     }
-    return { left,top };
+    x = left;
+    y = top;
 }
 
 JSValue TextBase::setAlign(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)

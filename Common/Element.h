@@ -14,6 +14,7 @@ public:
 	virtual void Paint(Win* win) = 0;
 	virtual void MouseMove(const float& x, const float& y) {};
 	virtual void MouseDown(const float& x, const float& y,Win* win) {};
+    virtual void CharInput(const unsigned int& val) {};
 	virtual void MouseUp() {};
 	virtual void Dispose() {};
     virtual void Timeout(const unsigned int& id, Win* win) {};

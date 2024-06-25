@@ -32,9 +32,6 @@ JSValue Input::constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSV
 	JS_SetOpaque(obj, self);
 	return obj;
 }
-
-
-
 void Input::Reg(JSContext* ctx)
 {
 	auto rt = JS_GetRuntime(ctx);
@@ -92,19 +89,14 @@ void Input::Paint(Win* win)
     if (!placeHolderObj) {
         return;
     }
-
     win->canvas->save();
-    win->canvas->clipRect(rectObj->rect); 
-    if (textObj->text.empty()) {
-        auto [left, top] = placeHolderObj->GetTextPos(rectObj->rect, placeHolderObj->lineRect);
-        placeHolderObj->x = left;
-        placeHolderObj->y = top;
+    win->canvas->clipRect(rectObj->rect);    
+    if (textObj->text.empty() && !isFocus) {
+        placeHolderObj->SetTextPos(rectObj->rect, placeHolderObj->lineRect);
         placeHolderObj->Paint(win);
     }
     else {
-        auto [left, top] = textObj->GetTextPos(rectObj->rect, textObj->lineRect);
-        textObj->x = left;
-        textObj->y = top;
+        textObj->SetTextPos(rectObj->rect, textObj->lineRect);
         textObj->Paint(win);
     }
     win->canvas->restore();
@@ -113,8 +105,6 @@ void Input::Paint(Win* win)
             textIbeamPos, textObj->y + textObj->lineRect.fTop + textObj->lineRect.height(), paint);
     }
 }
-
-
 JSValue Input::onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
 {
     auto obj = (Input*)GetPtr(thisVal);
@@ -139,7 +129,6 @@ JSValue Input::onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValue
     obj->mouseUpCB = JS_DupValue(ctx, argv[0]);
     return JS::MakeVal(0, JS_TAG_UNDEFINED);
 }
-
 void Input::MouseMove(const float& x, const float& y)
 {
     auto rectObj = (Rect*)GetPtr(rect);
@@ -199,7 +188,9 @@ void Input::MouseDown(const float& x, const float& y, Win* win)
     }
     if (isFocus) {
         auto textObj = (Text*)Element::GetPtr(text);
-        textIbeamPos = textObj->getTextCursorPos(x);
+        auto rectObj = (Rect*)Element::GetPtr(rect);
+        textObj->SetTextPos(rectObj->rect, textObj->lineRect); //todo 只需要第一次这样就可以了，没必要每次mousedown都这样
+        std::tie(textIndex, textIbeamPos) = textObj->getTextCursorPos(x);
         win->paint();
     }
 }
@@ -207,6 +198,17 @@ void Input::MouseDown(const float& x, const float& y, Win* win)
 void Input::MouseUp()
 {
 	//Rect::MouseUp();
+}
+
+void Input::CharInput(const unsigned int& val)
+{
+    auto textObj = (Text*)Element::GetPtr(text);
+    std::wstring word{ (wchar_t)val };
+    auto str1 = textObj->text.substr(0, textIndex);
+    auto str2 = textObj->text.substr(textIndex);
+    textObj->text = str1 + word + str2;
+    textIndex += 1;
+    textObj->resetLineRect();
 }
 
 void Input::Dispose()

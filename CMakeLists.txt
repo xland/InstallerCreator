@@ -38,6 +38,8 @@ if(NOT IS_DIRECTORY "${LIBUV_LIB_PATH}")
 endif()
 
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_FLAGS "/utf-8")
+set(CMAKE_C_FLAGS "/utf-8")
 link_directories("${SKIA_LIB_PATH};${QUICKJS_LIB_PATH};${LIBUV_LIB_PATH};")
 include_directories("${SKIA_INCLUDE_PATH};${QUICKJS_INCLUDE_PATH};${LIBUV_INCLUDE_PATH};")
 

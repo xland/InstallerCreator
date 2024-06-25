@@ -7,7 +7,7 @@ class TextBase:public Element
 public:
     TextBase();
     ~TextBase();
-    std::tuple<float, float> GetTextPos(SkRect& rect, SkRect& lineRect);
+    void SetTextPos(SkRect& rect, SkRect& lineRect);
     double x{ 0.0 }, y{ 0.0 };
     SkRect lineRect;
 protected:
