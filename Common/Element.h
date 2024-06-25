@@ -13,7 +13,7 @@ public:
 	~Element();
 	virtual void Paint(Win* win) = 0;
 	virtual void MouseMove(const float& x, const float& y) {};
-	virtual void MouseDown(const float& x, const float& y,Win* win) {};
+	virtual void MouseDown(const float& x, const float& y) {};
     virtual void CharInput(const unsigned int& val) {};
 	virtual void MouseUp() {};
 	virtual void Dispose() {};
@@ -21,6 +21,7 @@ public:
 	static Element* GetPtr(const JSValue& val);
 	std::string idStr;
 	bool visible{ true };
+    Win* win;
 protected:
 	Element();
 	static void RegBase(JSContext* ctx,JSValue& protoInstance);

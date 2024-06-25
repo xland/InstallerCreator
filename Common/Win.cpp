@@ -244,10 +244,14 @@ JSValue Win::addElement(JSContext* ctx, JSValueConst thisVal, int argc, JSValueC
         JS_ToUint32(ctx, &length, JS_GetPropertyStr(ctx, argv[0], "length"));
         for (uint32_t i = 0; i < length; ++i) {
             JSValue element = JS_GetPropertyUint32(ctx, argv[0], i);
+            auto ele = Element::GetPtr(element);
+            ele->win = win;
             win->elements.push_back(element);
         }
     }
     else {
+        auto ele = Element::GetPtr(argv[0]);
+        ele->win = win;
         win->elements.push_back(JS_DupValue(ctx,argv[0]));
     }    
     return JS::MakeVal(0, JS_TAG_UNDEFINED);

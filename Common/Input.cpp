@@ -101,8 +101,8 @@ void Input::Paint(Win* win)
     }
     win->canvas->restore();
     if (showTextIbeam) {
-        win->canvas->drawLine(textIbeamPos, textObj->y + textObj->lineRect.fTop,
-            textIbeamPos, textObj->y + textObj->lineRect.fTop + textObj->lineRect.height(), paint);
+        win->canvas->drawLine(textIbeamPos.fX, textObj->y + textObj->lineRect.fTop,
+            textIbeamPos.fX, textIbeamPos.fY, paint);
     }
 }
 JSValue Input::onMouseEnter(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv)
@@ -158,8 +158,7 @@ void Input::MouseMove(const float& x, const float& y)
         JS_FreeValue(ctx, ret);
     }
 }
-
-void Input::MouseDown(const float& x, const float& y, Win* win)
+void Input::MouseDown(const float& x, const float& y)
 {
     bool flag{ false };
     if (isMouseEnter) {
@@ -178,8 +177,7 @@ void Input::MouseDown(const float& x, const float& y, Win* win)
         isFocus = flag;
         showTextIbeam = true;
         if (isFocus) {
-            SetTimer(win->hwnd, timerID, 600, (TIMERPROC)nullptr);
-            setImm(x, y,win);
+            SetTimer(win->hwnd, timerID, 600, (TIMERPROC)nullptr);            
         }
         else {
             KillTimer(win->hwnd, timerID);
@@ -191,6 +189,7 @@ void Input::MouseDown(const float& x, const float& y, Win* win)
         auto rectObj = (Rect*)Element::GetPtr(rect);
         textObj->SetTextPos(rectObj->rect, textObj->lineRect); //todo 只需要第一次这样就可以了，没必要每次mousedown都这样
         std::tie(textIndex, textIbeamPos) = textObj->getTextCursorPos(x);
+        setImm();
         win->paint();
     }
 }
@@ -210,6 +209,7 @@ void Input::CharInput(const unsigned int& val)
     textIndex += 1;
     textObj->resetLineRect();
     textIbeamPos = textObj->getTextCursorPosByWordIndex(textIndex);
+    setImm();
 }
 
 void Input::Dispose()
@@ -228,19 +228,19 @@ void Input::Timeout(const unsigned int& id, Win* win)
     win->paint();
 }
 
-void Input::setImm(const int& x, const int& y, Win* win)
+void Input::setImm()
 {
     if (HIMC himc = ImmGetContext(win->hwnd))
     {
         COMPOSITIONFORM comp = {};
-        comp.ptCurrentPos.x = x;
-        comp.ptCurrentPos.y = y;
+        comp.ptCurrentPos.x = textIbeamPos.fX * win->scaleFactor;
+        comp.ptCurrentPos.y = textIbeamPos.fY * win->scaleFactor;
         comp.dwStyle = CFS_FORCE_POSITION;
         ImmSetCompositionWindow(himc, &comp);
         CANDIDATEFORM cand = {};
         cand.dwStyle = CFS_CANDIDATEPOS;
-        cand.ptCurrentPos.x = x;
-        cand.ptCurrentPos.y = y;
+        cand.ptCurrentPos.x = textIbeamPos.fX * win->scaleFactor;
+        cand.ptCurrentPos.y = textIbeamPos.fY * win->scaleFactor;
         ImmSetCandidateWindow(himc, &cand);
         ImmReleaseContext(win->hwnd, himc);
     }

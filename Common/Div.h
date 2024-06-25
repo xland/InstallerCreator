@@ -13,7 +13,7 @@ public:
 	void Paint(Win* win) override;
     void Dispose() override;
     void MouseMove(const float& x, const float& y) override;
-    void MouseDown(const float& x, const float& y, Win* win) override;
+    void MouseDown(const float& x, const float& y) override;
     void MouseUp() override;
     JSValue GetChildById(const std::string& id);
 private:

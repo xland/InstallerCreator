@@ -1,6 +1,10 @@
 - Element
   - setLinearShader unfinished
   - setRadialShader unfinished
+- Win
+  - Win parent class should be Element
+  - reuse Element paint obj
+  - set id
 - Rect
   - border size
   - four border
@@ -11,6 +15,7 @@
   - download file
   - unzip target file to folder
   - app.init(()=>{})
+  - get win obj by id
 - input
   - ime follow
   - input accept

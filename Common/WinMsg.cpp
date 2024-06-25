@@ -97,7 +97,7 @@ void Win::lBtnDown(const LPARAM& lParam)
             }
             auto element = Element::GetPtr(elements[i]);
             if (!element) continue;
-            element->MouseDown(x,y,this);
+            element->MouseDown(x,y);
         }
     }
 }

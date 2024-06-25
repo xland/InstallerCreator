@@ -10,7 +10,7 @@ public:
 	static void Reg(JSContext* ctx);
 	void Paint(Win* win) override;
 	void MouseMove(const float& x, const float& y) override;
-	void MouseDown(const float& x, const float& y, Win* win) override;
+	void MouseDown(const float& x, const float& y) override;
 	void MouseUp() override;
     void CharInput(const unsigned int& val);
 	void Dispose() override;
@@ -27,7 +27,7 @@ private:
     static JSValue onMouseLeave(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue onMouseDown(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
     static JSValue onMouseUp(JSContext* ctx, JSValueConst thisVal, int argc, JSValueConst* argv);
-    void setImm(const int& x, const int& y, Win* win);    
+    void setImm();    
     JSValue text{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     JSValue placeHolder{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
     JSValue rect{ JS::MakeVal(0, JS_TAG_UNDEFINED) };
@@ -45,6 +45,6 @@ private:
     std::chrono::system_clock::time_point mouseDownTime;
     bool showTextIbeam{ false };
     int timerID{ 0 };
-    float textIbeamPos{ 0.f };
+    SkPoint textIbeamPos;
     int textIndex{ 0 };
 };
