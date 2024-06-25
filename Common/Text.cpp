@@ -75,6 +75,16 @@ std::tuple<int, float> Text::getTextCursorPos(const int& x1)
     return { text.length(),x + subRect.width() + subRect.fLeft * 2};
 }
 
+float Text::getTextCursorPosByWordIndex(const int& index)
+{
+    SkRect subRect;
+    auto str = text.substr(0, index);
+    auto data = str.data();
+    auto length = wcslen(data) * 2;
+    font->measureText(data, length, SkTextEncoding::kUTF16, &subRect);
+    return x + subRect.width() + subRect.fLeft * 2;
+}
+
 void Text::resetLineRect()
 {
 	if (!font.get()) {

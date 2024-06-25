@@ -209,6 +209,7 @@ void Input::CharInput(const unsigned int& val)
     textObj->text = str1 + word + str2;
     textIndex += 1;
     textObj->resetLineRect();
+    textIbeamPos = textObj->getTextCursorPosByWordIndex(textIndex);
 }
 
 void Input::Dispose()

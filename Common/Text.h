@@ -10,6 +10,7 @@ public:
     void Paint(Win* win) override;
     static JSValue constructor(JSContext* ctx, JSValueConst newTarget, int argc, JSValueConst* argv);
     std::tuple<int, float> getTextCursorPos(const int& x);
+    float getTextCursorPosByWordIndex(const int& index);
     void resetLineRect() override;
     std::wstring text;
 protected:
