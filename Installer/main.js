@@ -277,8 +277,8 @@ let getCustomizeBtn = () => {
 }
 let appendCustomizeElements = () => {
     let getInput = () => {
-        let rect = Rect.newXYWH(70, 502, 230, 26);
-        rect.setColor(0xFFffffff);
+        let rect = Rect.newXYWH(70, 502, 236, 26);
+        rect.setColor(0xFFFBFBFB);
         rect.setBorderRadius(3, 0, 0, 3);
         let text = new Text();
         text.setId("inputText")
@@ -301,7 +301,7 @@ let appendCustomizeElements = () => {
         return input;
     }
     let getSelectBtn = () => {
-        let rect = Rect.newXYWH(300, 502, 80, 26);
+        let rect = Rect.newXYWH(300, 502, 68, 26);
         rect.setColor(0xffbae7ff);
         rect.setBorderRadius(0, 3, 3, 0);
         let text = new Text();
