@@ -72,7 +72,7 @@ std::tuple<int, SkPoint> Text::getTextCursorPos(const int& x1)
         }
         tempWidth = subRect.width();
     }
-    return { text.length(),SkPoint(x + subRect.width() + subRect.fLeft * 2,y + subRect.fTop + subRect.height())};
+    return { text.length(),SkPoint(x + lineRect.width() + lineRect.fLeft * 2,y + lineRect.fTop + lineRect.height())};
 }
 
 SkPoint Text::getTextCursorPosByWordIndex(const int& index)
@@ -95,6 +95,7 @@ void Text::resetLineRect()
     if (length == 0) {
         std::wstring temp{ L"中" }; //todo 这样会被执行很多次
         font->measureText(temp.data(), 2, SkTextEncoding::kUTF16, &lineRect);
+        lineRect.setXYWH(lineRect.fLeft, lineRect.fTop, 0, lineRect.height());
     }
     else {
         font->measureText(text.data(), length, SkTextEncoding::kUTF16, &lineRect);

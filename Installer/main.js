@@ -282,8 +282,7 @@ let appendCustomizeElements = () => {
         rect.setBorderRadius(3, 0, 0, 3);
         let text = new Text();
         text.setId("inputText")
-        text.setText("");
-        text.setColor(0xff666666);
+        text.setColor(0xff333333);
         text.setFontSize(12)
         text.setAlign(1, 0);
         text.setIndent(0, 6);
