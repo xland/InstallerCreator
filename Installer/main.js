@@ -1,7 +1,7 @@
 //app.initFont(["Microsoft YaHei", "iconfont.ttf"]);
 //let str = app.getKnownFolder("B4BFCC3A-DB2C-424C-B029-7FE99A87C641");
 
-app.initFileFont("iconfont.ttf","iconFont",1); //app ready之前完成此工作
+app.initFileFont("iconfont.ttf","iconFont",1);
 let windowTitle = "软件名称 - 安装程序";
 let bannerArr = [];
 let win;
@@ -286,8 +286,16 @@ let appendCustomizeElements = () => {
         text.setFontSize(12)
         text.setAlign(1, 0);
         text.setIndent(0, 6);
-        let input = new Div();
+        let placeHolder = new Text();
+        placeHolder.setId("inputPlaceHolder")
+        placeHolder.setColor(0xffAAAAAA);
+        placeHolder.setText("请选择安装路径");
+        placeHolder.setFontSize(12)
+        placeHolder.setAlign(1, 0);
+        placeHolder.setIndent(0, 6);
+        let input = new Input();
         input.setId("input")
+        input.setPlaceHolder(placeHolder)
         input.setText(text);
         input.setRect(rect);
         return input;

@@ -160,31 +160,11 @@ void Input::MouseMove(const float& x, const float& y)
 }
 void Input::MouseDown(const float& x, const float& y)
 {
-    bool flag{ false };
-    if (isMouseEnter) {
-        auto span = std::chrono::system_clock::now() - mouseDownTime;
-        auto msCount = std::chrono::duration_cast<std::chrono::milliseconds>(span).count();
-        if (msCount < 380) {
-            return;
-        }
-        mouseDownTime = std::chrono::system_clock::now();
-        flag = true;
-    }
-    else {
-        flag = false;
-    }
-    if (flag != isFocus) {
-        isFocus = flag;
-        showTextIbeam = true;
-        if (isFocus) {
-            SetTimer(win->hwnd, timerID, 600, (TIMERPROC)nullptr);            
-        }
-        else {
-            KillTimer(win->hwnd, timerID);
-            win->paint();
-        }
-    }
+    KillTimer(win->hwnd, timerID);
+    isFocus = isMouseEnter;
     if (isFocus) {
+        showTextIbeam = true;
+        SetTimer(win->hwnd, timerID, 600, (TIMERPROC)nullptr);
         auto textObj = (Text*)Element::GetPtr(text);
         auto rectObj = (Rect*)Element::GetPtr(rect);
         textObj->SetTextPos(rectObj->rect, textObj->lineRect); //todo 只需要第一次这样就可以了，没必要每次mousedown都这样

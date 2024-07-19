@@ -24,6 +24,9 @@ LRESULT CALLBACK Win::RouteWindowMessage(HWND hWnd, UINT msg, WPARAM wParam, LPA
         {
             return true;
         }
+        case WM_SIZE: {
+            break;
+        }
         case WM_LBUTTONDOWN:
         {
             obj->lBtnDown(lParam);
